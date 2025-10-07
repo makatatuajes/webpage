@@ -352,56 +352,43 @@
     </a>
 
     <script>
-        
 
-    // Countdown Timer - Targeting November 18, 2025
-    function updateCountdown() {
-        // Set the launch date to November 18, 2025 (GMT-3)
-        const launchDate = new Date(2025, 10, 18, 0, 0, 0); // Month is 0-indexed (10 = November)
+    // Simple working countdown for November 18, 2025
+    function startCountdown() {
+        const targetDate = new Date('2025-11-18T00:00:00-03:00');
         
-        const now = new Date();
-        const distance = launchDate - now;
-        
-        // Check if date is valid
-        if (isNaN(distance)) {
-            console.error("Invalid date calculation");
-            return;
+        function update() {
+            const now = new Date();
+            const diff = targetDate - now;
+            
+            if (diff <= 0) {
+                document.querySelector('.countdown').innerHTML = '<div class="message">¡Ya estamos aquí!</div>';
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            // Update elements directly
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
         }
         
-        // Calculate days, hours, minutes and seconds
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        
-        // Display the results
-        document.getElementById("days").textContent = days.toString().padStart(2, '0');
-        document.getElementById("hours").textContent = hours.toString().padStart(2, '0');
-        document.getElementById("minutes").textContent = minutes.toString().padStart(2, '0');
-        document.getElementById("seconds").textContent = seconds.toString().padStart(2, '0');
-        
-        // If the countdown is finished
-        if (distance < 0) {
-            clearInterval(countdownTimer);
-            document.querySelector(".countdown").innerHTML = "<div class='message'>¡Ya estamos aquí!</div>";
-        }
+        // Update immediately and every second
+        update();
+        setInterval(update, 1000);
     }
     
-    // Update the countdown every second
-    let countdownTimer;
-    
-    // Start the countdown when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-        updateCountdown(); // Initial call
-        countdownTimer = setInterval(updateCountdown, 1000);
-        
-        // Debug info
-        console.log("Countdown started for November 18, 2025");
-        console.log("Current time:", new Date());
-        console.log("Target time:", new Date(2025, 10, 18, 0, 0, 0));
-    });
-
-
+    // Start when page is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startCountdown);
+    } else {
+        startCountdown();
+    }
             
             // Check if logo image loaded correctly
             const logoImg = document.querySelector('.logo img');

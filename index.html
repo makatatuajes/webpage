@@ -46,12 +46,33 @@
         }
 
         .logo {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .logo img {
+            max-width: 300px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(255, 0, 255, 0.7));
+            animation: pulse 2s infinite;
+        }
+
+        .logo-text {
             font-size: 3.5rem;
             font-weight: bold;
             color: var(--accent);
             margin-bottom: 2rem;
             text-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
             letter-spacing: 2px;
+            display: none; /* Hidden by default, shown if image fails */
+        }
+
+        .logo.image-loaded + .logo-text {
+            display: none; /* Keep text hidden if image loads successfully */
+        }
+
+        .logo:not(.image-loaded) .logo-text {
+            display: block; /* Show text if image fails to load */
         }
 
         .message {
@@ -165,10 +186,6 @@
             color: var(--text-secondary);
         }
 
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
         /* WhatsApp Button */
         .whatsapp-btn {
             position: fixed;
@@ -201,14 +218,18 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         /* Responsive Styles */
         @media (max-width: 768px) {
-            .logo {
+            .logo img {
+                max-width: 250px;
+            }
+            
+            .logo-text {
                 font-size: 2.5rem;
             }
             
@@ -235,7 +256,11 @@
                 padding: 1rem;
             }
             
-            .logo {
+            .logo img {
+                max-width: 200px;
+            }
+            
+            .logo-text {
                 font-size: 2rem;
             }
             
@@ -260,11 +285,14 @@
 </head>
 <body>
     <div class="container">
-        <div class="logo pulse">
+        <div class="logo">
             <img 
-            src="Logo(2).png" 
-            alt="Logo" 
-          >
+                src="Logo(2).png" 
+                alt="Makatatuajes Logo" 
+                onload="this.parentElement.classList.add('image-loaded')"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"
+            >
+            <div class="logo-text">MAKATATUAJES</div>
         </div>
         
         <div class="message">
@@ -370,6 +398,14 @@
                     this.style.transform = 'scale(1)';
                 });
             });
+            
+            // Check if logo image loaded correctly
+            const logoImg = document.querySelector('.logo img');
+            if (logoImg.naturalHeight === 0) {
+                // Image failed to load
+                logoImg.style.display = 'none';
+                document.querySelector('.logo-text').style.display = 'block';
+            }
         });
     </script>
 </body>

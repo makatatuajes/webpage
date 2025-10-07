@@ -352,52 +352,49 @@
     </a>
 
     <script>
+  // Simple working countdown for November 18, 2025
+  function startCountdown() {
+      const targetDate = new Date('2025-11-18T00:00:00-03:00');
+      
+      function update() {
+          const now = new Date();
+          const diff = targetDate - now;
+          
+          if (diff <= 0) {
+              document.querySelector('.countdown').innerHTML = '<div class="message">¡Ya estamos aquí!</div>';
+              return;
+          }
+          
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+          
+          // Update elements directly
+          document.getElementById('days').textContent = String(days).padStart(2, '0');
+          document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+          document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+          document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+      }
+      
+      // Update immediately and every second
+      update();
+      setInterval(update, 1000);
+  }
 
-    // Simple working countdown for November 18, 2025
-    function startCountdown() {
-        const targetDate = new Date('2025-11-18T00:00:00-03:00');
-        
-        function update() {
-            const now = new Date();
-            const diff = targetDate - now;
-            
-            if (diff <= 0) {
-                document.querySelector('.countdown').innerHTML = '<div class="message">¡Ya estamos aquí!</div>';
-                return;
-            }
-            
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            
-            // Update elements directly
-            document.getElementById('days').textContent = String(days).padStart(2, '0');
-            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-        }
-        
-        // Update immediately and every second
-        update();
-        setInterval(update, 1000);
-    }
-    
-    // Start when page is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', startCountdown);
-    } else {
-        startCountdown();
-    }
-            
-            // Check if logo image loaded correctly
-            const logoImg = document.querySelector('.logo img');
-            if (logoImg.naturalHeight === 0) {
-                // Image failed to load
-                logoImg.style.display = 'none';
-                document.querySelector('.logo-text').style.display = 'block';
-            }
-        });
+  // Start when page is ready
+  if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', startCountdown);
+  } else {
+      startCountdown();
+  }
+
+  // Check if logo image loaded correctly
+  const logoImg = document.querySelector('.logo img');
+  logoImg.addEventListener('error', () => {
+      logoImg.style.display = 'none';
+      document.querySelector('.logo-text').style.display = 'block';
+  });
     </script>
 </body>
 </html>

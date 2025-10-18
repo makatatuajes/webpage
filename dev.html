@@ -328,6 +328,35 @@
             resize: vertical;
         }
 
+        .logo {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .logo img {
+            max-width: 300px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(255, 0, 255, 0.7));
+            animation: pulse 2s infinite;
+        }
+
+        .logo-text {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            text-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
+            letter-spacing: 2px;
+            display: none; /* Hidden by default, shown if image fails */
+        }
+
+        .logo.image-loaded + .logo-text {
+            display: none; /* Keep text hidden if image loads successfully */
+        }
+
+        .logo:not(.image-loaded) .logo-text {
+            display: block; /* Show text if image fails to load */
+        }
         .submit-btn {
             width: 100%;
             padding: 1rem;
@@ -466,7 +495,15 @@
 
     <!-- Hero Section -->
     <section id="hero" class="hero">
-        <h1 class="hero-logo">MAKATATUAJES</h1>
+        <div class="logo">
+            <img 
+                src="Logo (2).png" 
+                alt="Makatatuajes Logo" 
+                onload="this.parentElement.classList.add('image-loaded')"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"
+            >
+            <div class="logo-text">MAKATATUAJES</div>
+        </div>
         <p class="hero-description">Arte en piel con estilo urbano y profesional. Transformando ideas en tatuajes únicos en Santiago de Chile.</p>
         <a href="#arte" class="btn">Ver mi trabajo</a>
     </section>
@@ -598,7 +635,13 @@
                 section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                 observer.observe(section);
             });
-        });
+    
+            // Check if logo image loaded correctly
+            const logoImg = document.querySelector('.logo img');
+            logoImg.addEventListener('error', () => {
+                logoImg.style.display = 'none';
+                document.querySelector('.logo-text').style.display = 'block';
+  });
     </script>
 </body>
 </html>

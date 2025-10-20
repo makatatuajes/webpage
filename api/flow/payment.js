@@ -104,7 +104,7 @@ module.exports = async function handler(req, res) {
     const flowParams = {
       apiKey: FLOW_CONFIG.API_KEY,
       commerceOrder: commerceOrder,
-      subject: `Vinculemos - ${experience}`,
+      subject: `Maka Tatuajes - ${nombre}`,
       currency: 'CLP',
       amount: amount,
       email: email,

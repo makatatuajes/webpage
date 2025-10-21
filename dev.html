@@ -377,16 +377,150 @@
             box-shadow: 0 5px 15px rgba(255, 0, 255, 0.4);
         }
 
-        .floating-heart {
-            bottom: 15px;
-            left: 15px;
-            padding: 10px 15px;
-            font-size: 0.9rem;
-        }
-        .floating-heart i {
-            font-size: 1rem;
-            margin-right: 5px;
-        }
+/* Floating Heart Button */
+.floating-heart {
+    position: fixed;
+    bottom: 80px;
+    left: 20px;
+    background: var(--accent);
+    color: var(--text-primary);
+    padding: 12px 18px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    z-index: 99;
+    box-shadow: 0 5px 15px rgba(255, 0, 255, 0.3);
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.floating-heart:hover {
+    background: var(--accent-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 0, 255, 0.4);
+}
+
+.floating-heart i {
+    font-size: 1.2rem;
+}
+
+/* Popup Overlay */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.popup-content {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 0, 255, 0.2);
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.popup-header h3 {
+    color: var(--accent);
+    margin: 0;
+}
+
+.popup-close {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.popup-close:hover {
+    color: var(--accent);
+}
+
+.popup-body {
+    padding: 1.5rem;
+}
+
+.popup-body .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.popup-body .form-control {
+    width: 100%;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.popup-body .form-control:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.2);
+}
+
+.btn-payment {
+    width: 100%;
+    padding: 1rem;
+    background: var(--accent);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-payment:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+}
+
+.legal-toggle {
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.legal-disclaimer {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+/* Show popup when active */
+.popup-overlay.active {
+    display: flex;
+}
         
         /* WhatsApp Button */
         .whatsapp-btn {
@@ -634,11 +768,11 @@
         </div>
     </footer>
     
-  <!-- New Floating Heart Button -->
-  <div class="floating-heart" id="floating-heart">
+<!-- New Floating Heart Button -->
+<div class="floating-heart" id="floating-heart">
     <i class="fas fa-heart"></i>
     <span>Reserva tu hora ya!</span>
-  </div>
+</div>
 
 <!-- Popup Form for Payment -->
 <div class="popup-overlay" id="popup-overlay">
@@ -653,16 +787,16 @@
             <form id="payment-form">
                 <div class="form-group">
                     <label for="abono">Selecciona tu Experiencia</label>
-                    <select id="abono" class="form-control" required style="background: rgba(71, 85, 105, 0.8); color: white; border: 1px solid var(--secondary-celeste);">
-                        <option value="" disabled selected style="background: var(--primary-azul); color: white;">Elige tu abono</option>
-                        <option value="Abono $15.000 CLP" data-price="15000" style="background: var(--primary-azul); color: white;">Abono $15.000 CLP</option>
-                        <option value="Abono $20.000 CLP" data-price="20000" style="background: var(--primary-azul); color: white;">Abono $20.000 CLP</option>
-                        <option value="Abono $30.000 CLP" data-price="30000" style="background: var(--primary-azul); color: white;">Abono $30.000 CLP</option>
-                        <option value="Abono $40.000 CLP" data-price="40000" style="background: var(--primary-azul); color: white;">Abono $40.000 CLP</option>
+                    <select id="abono" class="form-control" required>
+                        <option value="" disabled selected>Elige tu abono</option>
+                        <option value="Abono $15.000 CLP" data-price="15000">Abono $15.000 CLP</option>
+                        <option value="Abono $20.000 CLP" data-price="20000">Abono $20.000 CLP</option>
+                        <option value="Abono $30.000 CLP" data-price="30000">Abono $30.000 CLP</option>
+                        <option value="Abono $40.000 CLP" data-price="40000">Abono $40.000 CLP</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="nombre">Nombre Completo</label>
+                    <label for="name">Nombre Completo</label>
                     <input type="text" id="name" class="form-control" required>
                 </div>
                 <div class="form-group">
@@ -670,23 +804,21 @@
                     <input type="email" id="email" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="celular">Teléfono</label>
+                    <label for="phone">Teléfono</label>
                     <input type="tel" id="phone" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label for="date">Fecha Preferida</label>
                     <input type="date" id="date" class="form-control" required>
                 </div>
-              
-              <div class="form-group">
-              <label for="genero">Género</label>
-              <select id="genero" class="form-control" required style="background: rgba(71, 85, 105, 0.8); color: white; border: 1px solid var(--secondary-celeste);">
-              <option value="" disabled selected style="background: var(--primary-azul); color: white;">Selecciona tu género</option>
-              <option value="masculino" style="background: var(--primary-azul); color: white;">Masculino</option>
-              <option value="femenino" style="background: var(--primary-azul); color: white;">Femenino</option>
-              </select>
-              </div>
-              
+                <div class="form-group">
+                    <label for="genero">Género</label>
+                    <select id="genero" class="form-control" required>
+                        <option value="" disabled selected>Selecciona tu género</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="comments">Comentarios Adicionales</label>
                     <textarea id="comments" class="form-control" rows="3"></textarea>
@@ -718,6 +850,49 @@
     </div>
 </div>
     <script>
+
+        // Add this to your existing script
+document.addEventListener('DOMContentLoaded', function() {
+    // Floating heart button functionality
+    const floatingHeart = document.getElementById('floating-heart');
+    const popupOverlay = document.getElementById('popup-overlay');
+    const popupClose = document.getElementById('popup-close');
+    const legalToggle = document.getElementById('legal-toggle');
+    const legalDisclaimer = document.getElementById('legal-disclaimer');
+
+    // Open popup when heart is clicked
+    floatingHeart.addEventListener('click', function(e) {
+        e.preventDefault();
+        popupOverlay.classList.add('active');
+    });
+
+    // Close popup when X is clicked
+    popupClose.addEventListener('click', function() {
+        popupOverlay.classList.remove('active');
+    });
+
+    // Close popup when clicking outside content
+    popupOverlay.addEventListener('click', function(e) {
+        if (e.target === popupOverlay) {
+            popupOverlay.classList.remove('active');
+        }
+    });
+
+    // Toggle legal disclaimer
+    legalToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        legalDisclaimer.style.display = legalDisclaimer.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Form submission
+    const paymentForm = document.getElementById('payment-form');
+    paymentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Add your form submission logic here
+        alert('Formulario enviado correctamente');
+        popupOverlay.classList.remove('active');
+    });
+});
         // Simple scroll animation for sections
         document.addEventListener('DOMContentLoaded', function() {
             const sections = document.querySelectorAll('section');

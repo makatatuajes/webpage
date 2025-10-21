@@ -850,9 +850,6 @@
     </div>
 </div>
     <script>
-
-        // Add this to your existing script
-document.addEventListener('DOMContentLoaded', function() {
     // Floating heart button functionality
     const floatingHeart = document.getElementById('floating-heart');
     const popupOverlay = document.getElementById('popup-overlay');
@@ -861,69 +858,80 @@ document.addEventListener('DOMContentLoaded', function() {
     const legalDisclaimer = document.getElementById('legal-disclaimer');
 
     // Open popup when heart is clicked
-    floatingHeart.addEventListener('click', function(e) {
-        e.preventDefault();
-        popupOverlay.classList.add('active');
-    });
+    if (floatingHeart) {
+        floatingHeart.addEventListener('click', function(e) {
+            e.preventDefault();
+            popupOverlay.classList.add('active');
+        });
+    }
 
     // Close popup when X is clicked
-    popupClose.addEventListener('click', function() {
-        popupOverlay.classList.remove('active');
-    });
+    if (popupClose) {
+        popupClose.addEventListener('click', function() {
+            popupOverlay.classList.remove('active');
+        });
+    }
 
     // Close popup when clicking outside content
-    popupOverlay.addEventListener('click', function(e) {
-        if (e.target === popupOverlay) {
-            popupOverlay.classList.remove('active');
-        }
-    });
+    if (popupOverlay) {
+        popupOverlay.addEventListener('click', function(e) {
+            if (e.target === popupOverlay) {
+                popupOverlay.classList.remove('active');
+            }
+        });
+    }
 
     // Toggle legal disclaimer
-    legalToggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        legalDisclaimer.style.display = legalDisclaimer.style.display === 'none' ? 'block' : 'none';
-    });
+    if (legalToggle) {
+        legalToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            legalDisclaimer.style.display = legalDisclaimer.style.display === 'none' ? 'block' : 'none';
+        });
+    }
 
     // Form submission
     const paymentForm = document.getElementById('payment-form');
-    paymentForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        // Add your form submission logic here
-        alert('Formulario enviado correctamente');
-        popupOverlay.classList.remove('active');
-    });
-});
-        // Simple scroll animation for sections
-        document.addEventListener('DOMContentLoaded', function() {
-            const sections = document.querySelectorAll('section');
-            
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver(function(entries, observer) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = 1;
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, observerOptions);
-            
-            sections.forEach(section => {
-                section.style.opacity = 0;
-                section.style.transform = 'translateY(20px)';
-                section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                observer.observe(section);
-            });
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Add your form submission logic here
+            alert('Formulario enviado correctamente');
+            popupOverlay.classList.remove('active');
+        });
+    }
+
+    // Simple scroll animation for sections
+    const sections = document.querySelectorAll('section');
     
-            // Check if logo image loaded correctly
-            const logoImg = document.querySelector('.logo img');
-            logoImg.addEventListener('error', () => {
-                logoImg.style.display = 'none';
-                document.querySelector('.logo-text').style.display = 'block';
-  });
-    </script>
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    sections.forEach(section => {
+        section.style.opacity = 0;
+        section.style.transform = 'translateY(20px)';
+        section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        observer.observe(section);
+    });
+
+    // Check if logo image loaded correctly
+    const logoImg = document.querySelector('.logo img');
+    if (logoImg) {
+        logoImg.addEventListener('error', () => {
+            logoImg.style.display = 'none';
+            document.querySelector('.logo-text').style.display = 'block';
+        });
+    }
+</script>
 </body>
 </html>

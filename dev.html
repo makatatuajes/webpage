@@ -377,6 +377,17 @@
             box-shadow: 0 5px 15px rgba(255, 0, 255, 0.4);
         }
 
+        .floating-heart {
+            bottom: 15px;
+            left: 15px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+        }
+        .floating-heart i {
+            font-size: 1rem;
+            margin-right: 5px;
+        }
+        
         /* WhatsApp Button */
         .whatsapp-btn {
             position: fixed;
@@ -622,7 +633,90 @@
             <p class="copyright">© 2025 Makatatuajes. Todos los derechos reservados.</p>
         </div>
     </footer>
+    
+  <!-- New Floating Heart Button -->
+  <div class="floating-heart" id="floating-heart">
+    <i class="fas fa-heart"></i>
+    <span>Reserva tu hora ya!</span>
+  </div>
 
+<!-- Popup Form for Payment -->
+<div class="popup-overlay" id="popup-overlay">
+    <div class="popup-content">
+        <div class="popup-header">
+            <h3>Reserva tu Experiencia</h3>
+            <button class="popup-close" id="popup-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="popup-body">
+            <form id="payment-form">
+                <div class="form-group">
+                    <label for="abono">Selecciona tu Experiencia</label>
+                    <select id="abono" class="form-control" required style="background: rgba(71, 85, 105, 0.8); color: white; border: 1px solid var(--secondary-celeste);">
+                        <option value="" disabled selected style="background: var(--primary-azul); color: white;">Elige tu abono</option>
+                        <option value="Abono $15.000 CLP" data-price="15000" style="background: var(--primary-azul); color: white;">Abono $15.000 CLP</option>
+                        <option value="Abono $20.000 CLP" data-price="20000" style="background: var(--primary-azul); color: white;">Abono $20.000 CLP</option>
+                        <option value="Abono $30.000 CLP" data-price="30000" style="background: var(--primary-azul); color: white;">Abono $30.000 CLP</option>
+                        <option value="Abono $40.000 CLP" data-price="40000" style="background: var(--primary-azul); color: white;">Abono $40.000 CLP</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre Completo</label>
+                    <input type="text" id="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Correo Electrónico</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="celular">Teléfono</label>
+                    <input type="tel" id="phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="date">Fecha Preferida</label>
+                    <input type="date" id="date" class="form-control" required>
+                </div>
+              
+              <div class="form-group">
+              <label for="genero">Género</label>
+              <select id="genero" class="form-control" required style="background: rgba(71, 85, 105, 0.8); color: white; border: 1px solid var(--secondary-celeste);">
+              <option value="" disabled selected style="background: var(--primary-azul); color: white;">Selecciona tu género</option>
+              <option value="masculino" style="background: var(--primary-azul); color: white;">Masculino</option>
+              <option value="femenino" style="background: var(--primary-azul); color: white;">Femenino</option>
+              </select>
+              </div>
+              
+                <div class="form-group">
+                    <label for="comments">Comentarios Adicionales</label>
+                    <textarea id="comments" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <input type="checkbox" id="legal-check" required>
+                        <label for="legal-check">Acepto los <span class="legal-toggle" id="legal-toggle">términos y condiciones</span></label>
+                    </div>
+                    <div class="legal-disclaimer" id="legal-disclaimer" style="display: none;">
+                        <p><strong>Términos y Condiciones de Participación</strong></p>
+                        <p>Al participar en nuestras experiencias, aceptas:</p>
+                        <ul>
+                            <li>Respetar a todos los participantes y mantener un comportamiento adecuado</li>
+                            <li>Asistir puntualmente a la experiencia seleccionada</li>
+                            <li>Cancelar con al menos 48 horas de anticipación para obtener reembolso</li>
+                            <li>Autorizar el uso de fotografías para fines promocionales (opcional)</li>
+                            <li>Cumplir con las normas de seguridad establecidas para cada actividad</li>
+                        </ul>
+                        <p>Vinculemos se reserva el derecho de admisión y puede modificar las condiciones según sea necesario.</p>
+                    </div>
+                </div>
+                <button type="submit" class="btn-payment">
+                    <i class="fas fa-lock"></i>
+                    Proceder al Pago
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
     <script>
         // Simple scroll animation for sections
         document.addEventListener('DOMContentLoaded', function() {

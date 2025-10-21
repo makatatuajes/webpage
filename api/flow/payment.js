@@ -80,14 +80,14 @@ module.exports = async function handler(req, res) {
     console.log('Body:', body);
 
     // VARIABLES
-    const { nombre, apellido, email, celular, genero, comentarios, price } = body;
+    const { abono, nombre, email, celular, genero, comentarios, price } = body;
 
     // 
-    if (!nombre || !apellido || !email || !celular || !genero || !price) {
-      console.log('Missing required fields:', { nombre, apellido, email, celular, genero, price });
+    if (!abono || !nombre || !email || !celular || !genero || !price) {
+      console.log('Missing required fields:', { abono, nombre, email, celular, genero, price });
       return res.status(400).json({ 
         error: 'Faltan datos requeridos',
-        received: { nombre, apellido, email, celular, genero, price }
+        received: { abono, nombre, email, celular, genero, price }
       });
     }
 
@@ -104,7 +104,7 @@ module.exports = async function handler(req, res) {
     const flowParams = {
       apiKey: FLOW_CONFIG.API_KEY,
       commerceOrder: commerceOrder,
-      subject: `Maka Tatuajes - ${nombre}`,
+      subject: `Maka Tatuajes - ${abono}`,
       currency: 'CLP',
       amount: amount,
       email: email,
@@ -114,11 +114,11 @@ module.exports = async function handler(req, res) {
       // Datos adicionales para confirmación
       // FIX: Use 'genero' in the optional data
       optional: JSON.stringify({
-        apellido: apellido,
+        nombre: nombre,
         celular: celular,
         genero: genero,
         comments: comments || '',
-        nombre: nombre
+        abono: abono
       })
     };
 

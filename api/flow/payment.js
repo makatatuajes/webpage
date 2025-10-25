@@ -11,14 +11,10 @@ const FLOW_CONFIG = {
   URL_CONFIRMATION: process.env.VERCEL_URL 
     ? `https://${process.env.VERCEL_URL}/api/flow/confirm` 
     : 'http://localhost:3000/api/flow/confirm',
-  URL_RETURN: 'https://makatatuajes.com/success.html'
+  URL_RETURN: process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}/success` 
+    : 'http://localhost:3000/success'
 };
-
-console.log('Flow config check:', {
-  hasApiKey: !!FLOW_CONFIG.API_KEY,
-  hasSecretKey: !!FLOW_CONFIG.SECRET_KEY,
-  apiUrl: FLOW_CONFIG.API_URL
-});
 
 // Función para generar firma Flow
 function generateFlowSignature(params, secretKey) {
@@ -36,11 +32,11 @@ function generateFlowSignature(params, secretKey) {
 function generateOrderNumber() {
   const timestamp = Date.now();
   const random = Math.floor(Math.random() * 1000);
-  return `VIN-${timestamp}-${random}`;
+  return `MAKA-${timestamp}-${random}`;
 }
 
 module.exports = async function handler(req, res) {
-  console.log('=== HANDLER CALLED ===', {
+  console.log('=== PAYMENT API CALLED ===', {
     method: req.method,
     url: req.url
   });
@@ -64,30 +60,26 @@ module.exports = async function handler(req, res) {
 
   // Validate environment variables
   if (!FLOW_CONFIG.API_KEY || !FLOW_CONFIG.SECRET_KEY) {
-    console.error('MISSING CREDENTIALS:', {
-      API_KEY: FLOW_CONFIG.API_KEY,
-      SECRET_KEY: FLOW_CONFIG.SECRET_KEY
-    });
+    console.error('MISSING FLOW CREDENTIALS');
     return res.status(500).json({ 
       error: 'Configuración incompleta',
-      details: 'Credenciales de Flow no configuradas correctamente'
+      details: 'Credenciales de Flow no configuradas'
     });
   }
 
   try {
-    console.log('Request body received');
-    const body = req.body || {};
-    console.log('Body:', body);
+    console.log('Parsing request body...');
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    console.log('Body received:', body);
 
-    // VARIABLES
-    const { abono, nombre, email, celular, genero, comentarios, price } = body;
+    // Validate required fields
+    const { abono, nombre, email, celular, genero, price } = body;
 
-    // 
     if (!abono || !nombre || !email || !celular || !genero || !price) {
       console.log('Missing required fields:', { abono, nombre, email, celular, genero, price });
       return res.status(400).json({ 
         error: 'Faltan datos requeridos',
-        received: { abono, nombre, email, celular, genero, price }
+        details: 'Todos los campos son obligatorios'
       });
     }
 
@@ -100,7 +92,7 @@ module.exports = async function handler(req, res) {
     const commerceOrder = generateOrderNumber();
     console.log('Generated order:', commerceOrder);
 
-    // Preparar parámetros para Flow
+    // Prepare Flow parameters
     const flowParams = {
       apiKey: FLOW_CONFIG.API_KEY,
       commerceOrder: commerceOrder,
@@ -108,35 +100,33 @@ module.exports = async function handler(req, res) {
       currency: 'CLP',
       amount: amount,
       email: email,
-      paymentMethod: 9, // 9 = Todos los medios de pago
+      paymentMethod: 9, // All payment methods
       urlConfirmation: FLOW_CONFIG.URL_CONFIRMATION,
       urlReturn: FLOW_CONFIG.URL_RETURN,
-      // Datos adicionales para confirmación
-      // FIX: Use 'genero' in the optional data
       optional: JSON.stringify({
         nombre: nombre,
         celular: celular,
         genero: genero,
-        comments: comments || '',
+        comentarios: body.comentarios || '',
         abono: abono
       })
     };
 
-    console.log('Flow params prepared:', flowParams);
+    console.log('Flow params:', flowParams);
 
-    // Generar firma
+    // Generate signature
     const signature = generateFlowSignature(flowParams, FLOW_CONFIG.SECRET_KEY);
     flowParams.s = signature;
 
-    // Crear formulario URL-encoded para Flow
+    // Create URL-encoded form data for Flow
     const formData = new URLSearchParams();
     Object.keys(flowParams).forEach(key => {
       formData.append(key, flowParams[key]);
     });
 
-    console.log('Calling Flow API...', FLOW_CONFIG.API_URL);
+    console.log('Calling Flow API...');
 
-    // Llamar a Flow API
+    // Call Flow API
     const flowResponse = await fetch(`${FLOW_CONFIG.API_URL}/payment/create`, {
       method: 'POST',
       headers: {
@@ -146,6 +136,10 @@ module.exports = async function handler(req, res) {
     });
 
     console.log('Flow API response status:', flowResponse.status);
+
+    if (!flowResponse.ok) {
+      throw new Error(`Flow API error: ${flowResponse.status}`);
+    }
 
     const flowResult = await flowResponse.json();
     console.log('Flow API response:', flowResult);
@@ -160,12 +154,12 @@ module.exports = async function handler(req, res) {
         token: flowResult.token
       });
     } else {
-      console.error('Flow API error response:', flowResult);
-      throw new Error(flowResult.message || 'Error al crear el pago en Flow');
+      console.error('Flow API error:', flowResult);
+      throw new Error(flowResult.message || 'Error en la respuesta de Flow');
     }
 
   } catch (error) {
-    console.error('FATAL ERROR in handler:', error);
+    console.error('FATAL ERROR:', error);
     return res.status(500).json({ 
       error: 'Error interno del servidor',
       details: error.message

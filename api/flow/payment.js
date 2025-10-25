@@ -1,9 +1,7 @@
-// /api/flow/payment.js - Vercel Serverless Function para integración con Flow (CommonJS)
+// /api/flow/payment.js - Vercel Serverless Function
 const crypto = require('crypto');
 
-console.log('=== PAYMENT.JS LOADED ===');
-
-// Configuración de Flow
+// Configuration - make sure these are set in Vercel environment variables
 const FLOW_CONFIG = {
   API_URL: process.env.FLOW_API_URL || 'https://sandbox.flow.cl/api',
   API_KEY: process.env.FLOW_API_KEY,
@@ -16,82 +14,71 @@ const FLOW_CONFIG = {
     : 'http://localhost:3000/success'
 };
 
-// Función para generar firma Flow
+// Generate Flow signature
 function generateFlowSignature(params, secretKey) {
-  try {
-    const sortedKeys = Object.keys(params).sort();
-    const signString = sortedKeys.map(key => `${key}${params[key]}`).join('');
-    return crypto.createHmac('sha256', secretKey).update(signString).digest('hex');
-  } catch (error) {
-    console.error('Signature generation error:', error);
-    throw error;
-  }
+  const sortedKeys = Object.keys(params).sort();
+  const signString = sortedKeys.map(key => `${key}${params[key]}`).join('');
+  return crypto.createHmac('sha256', secretKey).update(signString).digest('hex');
 }
 
-// Función para generar número de orden único
+// Generate unique order number
 function generateOrderNumber() {
-  const timestamp = Date.now();
-  const random = Math.floor(Math.random() * 1000);
-  return `MAKA-${timestamp}-${random}`;
+  return `MAKA-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 }
 
-module.exports = async function handler(req, res) {
-  console.log('=== PAYMENT API CALLED ===', {
-    method: req.method,
-    url: req.url
-  });
-
+module.exports = async (req, res) => {
+  console.log('=== FLOW PAYMENT API CALLED ===');
+  
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
   
-  // Handle preflight OPTIONS request
+  // Handle preflight
   if (req.method === 'OPTIONS') {
-    console.log('Handling OPTIONS request');
     return res.status(200).end();
   }
-
+  
   // Only allow POST
   if (req.method !== 'POST') {
-    console.log('Method not allowed:', req.method);
-    return res.status(405).json({ error: 'Método no permitido' });
-  }
-
-  // Validate environment variables
-  if (!FLOW_CONFIG.API_KEY || !FLOW_CONFIG.SECRET_KEY) {
-    console.error('MISSING FLOW CREDENTIALS');
-    return res.status(500).json({ 
-      error: 'Configuración incompleta',
-      details: 'Credenciales de Flow no configuradas'
-    });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    console.log('Parsing request body...');
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    console.log('Body received:', body);
+    // Parse JSON body
+    let body;
+    try {
+      body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    } catch (parseError) {
+      return res.status(400).json({ error: 'Invalid JSON' });
+    }
+
+    const { abono, nombre, email, celular, genero, comentarios, price } = body;
 
     // Validate required fields
-    const { abono, nombre, email, celular, genero, price } = body;
-
     if (!abono || !nombre || !email || !celular || !genero || !price) {
-      console.log('Missing required fields:', { abono, nombre, email, celular, genero, price });
       return res.status(400).json({ 
-        error: 'Faltan datos requeridos',
-        details: 'Todos los campos son obligatorios'
+        error: 'Missing required fields',
+        details: 'All fields are required'
       });
     }
 
     const amount = parseInt(price);
     if (isNaN(amount) || amount <= 0) {
-      console.log('Invalid price:', price);
-      return res.status(400).json({ error: 'Precio inválido' });
+      return res.status(400).json({ error: 'Invalid price' });
+    }
+
+    // Check if Flow credentials are configured
+    if (!FLOW_CONFIG.API_KEY || !FLOW_CONFIG.SECRET_KEY) {
+      console.error('Flow credentials not configured');
+      return res.status(500).json({ 
+        error: 'Payment system not configured',
+        details: 'Please contact administrator'
+      });
     }
 
     const commerceOrder = generateOrderNumber();
-    console.log('Generated order:', commerceOrder);
-
+    
     // Prepare Flow parameters
     const flowParams = {
       apiKey: FLOW_CONFIG.API_KEY,
@@ -100,31 +87,27 @@ module.exports = async function handler(req, res) {
       currency: 'CLP',
       amount: amount,
       email: email,
-      paymentMethod: 9, // All payment methods
+      paymentMethod: 9,
       urlConfirmation: FLOW_CONFIG.URL_CONFIRMATION,
       urlReturn: FLOW_CONFIG.URL_RETURN,
       optional: JSON.stringify({
         nombre: nombre,
         celular: celular,
         genero: genero,
-        comentarios: body.comentarios || '',
+        comentarios: comentarios || '',
         abono: abono
       })
     };
-
-    console.log('Flow params:', flowParams);
 
     // Generate signature
     const signature = generateFlowSignature(flowParams, FLOW_CONFIG.SECRET_KEY);
     flowParams.s = signature;
 
-    // Create URL-encoded form data for Flow
+    // Create form data for Flow API
     const formData = new URLSearchParams();
     Object.keys(flowParams).forEach(key => {
       formData.append(key, flowParams[key]);
     });
-
-    console.log('Calling Flow API...');
 
     // Call Flow API
     const flowResponse = await fetch(`${FLOW_CONFIG.API_URL}/payment/create`, {
@@ -135,18 +118,13 @@ module.exports = async function handler(req, res) {
       body: formData.toString()
     });
 
-    console.log('Flow API response status:', flowResponse.status);
-
     if (!flowResponse.ok) {
       throw new Error(`Flow API error: ${flowResponse.status}`);
     }
 
     const flowResult = await flowResponse.json();
-    console.log('Flow API response:', flowResult);
 
     if (flowResult.url && flowResult.token) {
-      console.log('Payment created successfully');
-      
       return res.status(200).json({
         success: true,
         flowUrl: `${flowResult.url}?token=${flowResult.token}`,
@@ -154,14 +132,13 @@ module.exports = async function handler(req, res) {
         token: flowResult.token
       });
     } else {
-      console.error('Flow API error:', flowResult);
-      throw new Error(flowResult.message || 'Error en la respuesta de Flow');
+      throw new Error(flowResult.message || 'Error from Flow API');
     }
 
   } catch (error) {
-    console.error('FATAL ERROR:', error);
+    console.error('Payment error:', error);
     return res.status(500).json({ 
-      error: 'Error interno del servidor',
+      error: 'Payment processing failed',
       details: error.message
     });
   }

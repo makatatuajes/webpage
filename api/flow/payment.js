@@ -1,7 +1,9 @@
-// /api/flow/payment.js - Vercel Serverless Function
+// /api/flow/payment.js - Vercel Serverless Function para Makatatuajes
 const crypto = require('crypto');
 
-// Configuration - make sure these are set in Vercel environment variables
+console.log('=== MAKATATUAJES PAYMENT.JS LOADED ===');
+
+// Configuración de Flow para Makatatuajes
 const FLOW_CONFIG = {
   API_URL: process.env.FLOW_API_URL || 'https://sandbox.flow.cl/api',
   API_KEY: process.env.FLOW_API_KEY,
@@ -11,75 +13,105 @@ const FLOW_CONFIG = {
     : 'http://localhost:3000/api/flow/confirm',
   URL_RETURN: process.env.VERCEL_URL 
     ? `https://${process.env.VERCEL_URL}/success` 
-    : 'http://localhost:3000/success'
+    : 'https://makatatuajes.com/success'
 };
 
-// Generate Flow signature
+console.log('Makatatuajes Flow config check:', {
+  hasApiKey: !!FLOW_CONFIG.API_KEY,
+  hasSecretKey: !!FLOW_CONFIG.SECRET_KEY,
+  apiUrl: FLOW_CONFIG.API_URL
+});
+
+// Función para generar firma Flow (igual que tu proyecto funcionando)
 function generateFlowSignature(params, secretKey) {
-  const sortedKeys = Object.keys(params).sort();
-  const signString = sortedKeys.map(key => `${key}${params[key]}`).join('');
-  return crypto.createHmac('sha256', secretKey).update(signString).digest('hex');
+  try {
+    const sortedKeys = Object.keys(params).sort();
+    const signString = sortedKeys.map(key => `${key}${params[key]}`).join('');
+    return crypto.createHmac('sha256', secretKey).update(signString).digest('hex');
+  } catch (error) {
+    console.error('Signature generation error:', error);
+    throw error;
+  }
 }
 
-// Generate unique order number
+// Función para generar número de orden único para Makatatuajes
 function generateOrderNumber() {
-  return `MAKA-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  const timestamp = Date.now();
+  const random = Math.floor(Math.random() * 1000);
+  return `MAKA-${timestamp}-${random}`;
 }
 
-module.exports = async (req, res) => {
-  console.log('=== FLOW PAYMENT API CALLED ===');
-  
-  // Set CORS headers
+// Handler principal - IDÉNTICO a tu proyecto funcionando
+module.exports = async function handler(req, res) {
+  console.log('=== MAKATATUAJES HANDLER CALLED ===', {
+    method: req.method,
+    url: req.url
+  });
+
+  // Set CORS headers - IDÉNTICO
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
   
-  // Handle preflight
+  // Handle preflight OPTIONS request - IDÉNTICO
   if (req.method === 'OPTIONS') {
+    console.log('Handling OPTIONS request');
     return res.status(200).end();
   }
-  
-  // Only allow POST
+
+  // Only allow POST - IDÉNTICO
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    console.log('Method not allowed:', req.method);
+    return res.status(405).json({ error: 'Método no permitido' });
+  }
+
+  // Validate environment variables - IDÉNTICO
+  if (!FLOW_CONFIG.API_KEY || !FLOW_CONFIG.SECRET_KEY) {
+    console.error('MISSING CREDENTIALS:', {
+      API_KEY: FLOW_CONFIG.API_KEY,
+      SECRET_KEY: FLOW_CONFIG.SECRET_KEY
+    });
+    return res.status(500).json({ 
+      error: 'Configuración incompleta',
+      details: 'Credenciales de Flow no configuradas correctamente'
+    });
   }
 
   try {
-    // Parse JSON body
+    console.log('Request body received');
+    
+    // Parse body - MANTÉN EL MISMO FORMATO
     let body;
-    try {
-      body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    } catch (parseError) {
-      return res.status(400).json({ error: 'Invalid JSON' });
+    if (typeof req.body === 'string') {
+      body = JSON.parse(req.body);
+    } else {
+      body = req.body;
     }
+    
+    console.log('Body:', body);
 
+    // VARIABLES - AJUSTADO A TUS CAMPOS DEL FORMULARIO
     const { abono, nombre, email, celular, genero, comentarios, price } = body;
 
-    // Validate required fields
+    // Validación de campos requeridos
     if (!abono || !nombre || !email || !celular || !genero || !price) {
+      console.log('Missing required fields:', { abono, nombre, email, celular, genero, price });
       return res.status(400).json({ 
-        error: 'Missing required fields',
-        details: 'All fields are required'
+        error: 'Faltan datos requeridos',
+        received: { abono, nombre, email, celular, genero, price }
       });
     }
 
     const amount = parseInt(price);
     if (isNaN(amount) || amount <= 0) {
-      return res.status(400).json({ error: 'Invalid price' });
-    }
-
-    // Check if Flow credentials are configured
-    if (!FLOW_CONFIG.API_KEY || !FLOW_CONFIG.SECRET_KEY) {
-      console.error('Flow credentials not configured');
-      return res.status(500).json({ 
-        error: 'Payment system not configured',
-        details: 'Please contact administrator'
-      });
+      console.log('Invalid price:', price);
+      return res.status(400).json({ error: 'Precio inválido' });
     }
 
     const commerceOrder = generateOrderNumber();
-    
-    // Prepare Flow parameters
+    console.log('Generated order:', commerceOrder);
+
+    // Preparar parámetros para Flow - IDÉNTICO
     const flowParams = {
       apiKey: FLOW_CONFIG.API_KEY,
       commerceOrder: commerceOrder,
@@ -87,9 +119,10 @@ module.exports = async (req, res) => {
       currency: 'CLP',
       amount: amount,
       email: email,
-      paymentMethod: 9,
+      paymentMethod: 9, // 9 = Todos los medios de pago
       urlConfirmation: FLOW_CONFIG.URL_CONFIRMATION,
       urlReturn: FLOW_CONFIG.URL_RETURN,
+      // Datos adicionales para confirmación
       optional: JSON.stringify({
         nombre: nombre,
         celular: celular,
@@ -99,17 +132,21 @@ module.exports = async (req, res) => {
       })
     };
 
-    // Generate signature
+    console.log('Flow params prepared:', flowParams);
+
+    // Generar firma - IDÉNTICO
     const signature = generateFlowSignature(flowParams, FLOW_CONFIG.SECRET_KEY);
     flowParams.s = signature;
 
-    // Create form data for Flow API
+    // Crear formulario URL-encoded para Flow - IDÉNTICO
     const formData = new URLSearchParams();
     Object.keys(flowParams).forEach(key => {
       formData.append(key, flowParams[key]);
     });
 
-    // Call Flow API
+    console.log('Calling Flow API...', FLOW_CONFIG.API_URL);
+
+    // Llamar a Flow API - IDÉNTICO
     const flowResponse = await fetch(`${FLOW_CONFIG.API_URL}/payment/create`, {
       method: 'POST',
       headers: {
@@ -118,13 +155,14 @@ module.exports = async (req, res) => {
       body: formData.toString()
     });
 
-    if (!flowResponse.ok) {
-      throw new Error(`Flow API error: ${flowResponse.status}`);
-    }
+    console.log('Flow API response status:', flowResponse.status);
 
     const flowResult = await flowResponse.json();
+    console.log('Flow API response:', flowResult);
 
     if (flowResult.url && flowResult.token) {
+      console.log('Payment created successfully for Makatatuajes');
+      
       return res.status(200).json({
         success: true,
         flowUrl: `${flowResult.url}?token=${flowResult.token}`,
@@ -132,13 +170,14 @@ module.exports = async (req, res) => {
         token: flowResult.token
       });
     } else {
-      throw new Error(flowResult.message || 'Error from Flow API');
+      console.error('Flow API error response:', flowResult);
+      throw new Error(flowResult.message || 'Error al crear el pago en Flow');
     }
 
   } catch (error) {
-    console.error('Payment error:', error);
+    console.error('FATAL ERROR in handler:', error);
     return res.status(500).json({ 
-      error: 'Payment processing failed',
+      error: 'Error interno del servidor',
       details: error.message
     });
   }

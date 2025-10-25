@@ -890,15 +890,60 @@
     }
 
     // Form submission
-    const paymentForm = document.getElementById('payment-form');
-    if (paymentForm) {
-        paymentForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Add your form submission logic here
-            alert('Formulario enviado correctamente');
-            popupOverlay.classList.remove('active');
-        });
-    }
+const paymentForm = document.getElementById('payment-form');
+if (paymentForm) {
+    paymentForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = {
+            abono: document.getElementById('abono').value,
+            nombre: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            celular: document.getElementById('phone').value,
+            genero: document.getElementById('genero').value,
+            comentarios: document.getElementById('comments').value,
+            price: document.getElementById('abono').selectedOptions[0].getAttribute('data-price')
+        };
+
+        console.log('Form data:', formData);
+
+        try {
+            // Show loading state
+            const submitBtn = document.querySelector('.btn-payment');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+            submitBtn.disabled = true;
+
+            // Call your payment API
+            const response = await fetch('/api/flow/payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.success && result.flowUrl) {
+                // Redirect to Flow payment page
+                window.location.href = result.flowUrl;
+            } else {
+                throw new Error(result.error || 'Error al procesar el pago');
+            }
+
+        } catch (error) {
+            console.error('Payment error:', error);
+            alert('Error: ' + error.message);
+            
+            // Reset button
+            const submitBtn = document.querySelector('.btn-payment');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+}
 
     // Simple scroll animation for sections
     const sections = document.querySelectorAll('section');

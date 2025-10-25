@@ -1,4 +1,4 @@
-// /api/flow/confirm.js - CommonJS version
+// /api/flow/confirm.js - CommonJS version 
 const crypto = require('crypto');
 
 // Configuración de Flow

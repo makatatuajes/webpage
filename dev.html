@@ -889,7 +889,7 @@
         });
     }
 
-    // Form submission
+// Form submission handler - ACTUALIZADO
 const paymentForm = document.getElementById('payment-form');
 if (paymentForm) {
     paymentForm.addEventListener('submit', async function(e) {
@@ -903,7 +903,7 @@ if (paymentForm) {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
             submitBtn.disabled = true;
 
-            // Get form data
+            // Get form data - AJUSTADO A TUS CAMPOS
             const selectedOption = document.getElementById('abono').selectedOptions[0];
             const formData = {
                 abono: document.getElementById('abono').value,
@@ -915,9 +915,9 @@ if (paymentForm) {
                 price: selectedOption.getAttribute('data-price')
             };
 
-            console.log('Sending form data:', formData);
+            console.log('Sending to Makatatuajes API:', formData);
 
-            // Call the API - use the correct endpoint
+            // Call the API - USANDO LA MISMA ESTRUCTURA
             const response = await fetch('/api/flow/payment', {
                 method: 'POST',
                 headers: {
@@ -926,20 +926,23 @@ if (paymentForm) {
                 body: JSON.stringify(formData)
             });
 
-            console.log('Response status:', response.status);
+            console.log('API Response status:', response.status);
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                // If not 200, try to get error message
+                const errorData = await response.json().catch(() => ({ error: 'Error del servidor' }));
+                throw new Error(errorData.error || `Error HTTP: ${response.status}`);
             }
 
             const result = await response.json();
-            console.log('API response:', result);
+            console.log('API Success response:', result);
 
             if (result.success && result.flowUrl) {
+                console.log('Redirecting to Flow:', result.flowUrl);
                 // Redirect to Flow payment page
                 window.location.href = result.flowUrl;
             } else {
-                throw new Error(result.error || 'Error processing payment');
+                throw new Error(result.error || 'Error al procesar el pago');
             }
 
         } catch (error) {

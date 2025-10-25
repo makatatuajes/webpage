@@ -786,8 +786,8 @@
         <div class="popup-body">
             <form id="payment-form">
                 <div class="form-group">
-                    <label for="abono">Selecciona tu Experiencia</label>
-                    <select id="abono" class="form-control" required>
+                    <label for="popup-abono">Selecciona tu Experiencia</label>
+                    <select id="popup-abono" class="form-control" required>
                         <option value="" disabled selected>Elige tu abono</option>
                         <option value="Abono $15.000 CLP" data-price="15000">Abono $15.000 CLP</option>
                         <option value="Abono $20.000 CLP" data-price="20000">Abono $20.000 CLP</option>
@@ -796,39 +796,39 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="name">Nombre Completo</label>
-                    <input type="text" id="name" class="form-control" required>
+                    <label for="popup-name">Nombre Completo</label>
+                    <input type="text" id="popup-name" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="email">Correo Electrónico</label>
-                    <input type="email" id="email" class="form-control" required>
+                    <label for="popup-email">Correo Electrónico</label>
+                    <input type="email" id="popup-email" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="phone">Teléfono</label>
-                    <input type="tel" id="phone" class="form-control" required>
+                    <label for="popup-phone">Teléfono</label>
+                    <input type="tel" id="popup-phone" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="date">Fecha Preferida</label>
-                    <input type="date" id="date" class="form-control" required>
+                    <label for="popup-date">Fecha Preferida</label>
+                    <input type="date" id="popup-date" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="genero">Género</label>
-                    <select id="genero" class="form-control" required>
+                    <label for="popup-genero">Género</label>
+                    <select id="popup-genero" class="form-control" required>
                         <option value="" disabled selected>Selecciona tu género</option>
                         <option value="masculino">Masculino</option>
                         <option value="femenino">Femenino</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="comments">Comentarios Adicionales</label>
-                    <textarea id="comments" class="form-control" rows="3"></textarea>
+                    <label for="popup-comments">Comentarios Adicionales</label>
+                    <textarea id="popup-comments" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="form-group">
                     <div>
-                        <input type="checkbox" id="legal-check" required>
-                        <label for="legal-check">Acepto los <span class="legal-toggle" id="legal-toggle">términos y condiciones</span></label>
+                        <input type="checkbox" id="popup-legal-check" required>
+                        <label for="popup-legal-check">Acepto los <span class="legal-toggle" id="popup-legal-toggle">términos y condiciones</span></label>
                     </div>
-                    <div class="legal-disclaimer" id="legal-disclaimer" style="display: none;">
+                    <div class="legal-disclaimer" id="popup-legal-disclaimer" style="display: none;">
                         <p><strong>Términos y Condiciones de Participación</strong></p>
                         <p>Al participar en nuestras experiencias, aceptas:</p>
                         <ul>
@@ -889,7 +889,7 @@
         });
     }
 
-// Form submission handler - UPDATED WITH CORRECT API URL
+// Form submission handler - UPDATED WITH POPUP IDs
 const paymentForm = document.getElementById('payment-form');
 if (paymentForm) {
     paymentForm.addEventListener('submit', async function(e) {
@@ -903,26 +903,26 @@ if (paymentForm) {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
             submitBtn.disabled = true;
 
-            // Get form data
-            const selectedOption = document.getElementById('abono').selectedOptions[0];
+            // Get form data - USING POPUP IDs
+            const selectedOption = document.getElementById('popup-abono').selectedOptions[0];
             const formData = {
-                abono: document.getElementById('abono').value,
-                nombre: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                celular: document.getElementById('phone').value,
-                genero: document.getElementById('genero').value,
-                comentarios: document.getElementById('comments').value,
+                abono: document.getElementById('popup-abono').value,
+                nombre: document.getElementById('popup-name').value,
+                email: document.getElementById('popup-email').value, // ← NOW USING POPUP-EMAIL
+                celular: document.getElementById('popup-phone').value,
+                genero: document.getElementById('popup-genero').value,
+                comentarios: document.getElementById('popup-comments').value,
                 price: selectedOption.getAttribute('data-price')
             };
 
-            console.log('Sending to API:', formData);
+            console.log('Form data with popup IDs:', formData);
 
-            // Validate email (you have empty email in logs)
+            // Validate email
             if (!formData.email || formData.email.trim() === '') {
                 throw new Error('Por favor ingresa tu email');
             }
 
-            // USE THE CORRECT API URL - Your working Vercel deployment
+            // API call
             const API_URL = 'https://webpage-nine-mu.vercel.app/api/flow/payment';
             
             const response = await fetch(API_URL, {
@@ -936,8 +936,6 @@ if (paymentForm) {
             console.log('API Response status:', response.status);
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Error response:', errorText);
                 throw new Error(`Error del servidor: ${response.status}`);
             }
 
@@ -946,7 +944,6 @@ if (paymentForm) {
 
             if (result.success && result.flowUrl) {
                 console.log('Redirecting to Flow:', result.flowUrl);
-                // Redirect to Flow payment page
                 window.location.href = result.flowUrl;
             } else {
                 throw new Error(result.error || 'Error al procesar el pago');
@@ -960,6 +957,17 @@ if (paymentForm) {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
         }
+    });
+}
+
+// Also update the legal toggle functionality
+const legalToggle = document.getElementById('popup-legal-toggle');
+const legalDisclaimer = document.getElementById('popup-legal-disclaimer');
+
+if (legalToggle) {
+    legalToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        legalDisclaimer.style.display = legalDisclaimer.style.display === 'none' ? 'block' : 'none';
     });
 }
 

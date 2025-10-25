@@ -849,13 +849,13 @@
         </div>
     </div>
 </div>
-    <script>
+<script>
     // Floating heart button functionality
     const floatingHeart = document.getElementById('floating-heart');
     const popupOverlay = document.getElementById('popup-overlay');
     const popupClose = document.getElementById('popup-close');
-    const legalToggle = document.getElementById('legal-toggle');
-    const legalDisclaimer = document.getElementById('legal-disclaimer');
+    const legalToggle = document.getElementById('popup-legal-toggle');
+    const legalDisclaimer = document.getElementById('popup-legal-disclaimer');
 
     // Open popup when heart is clicked
     if (floatingHeart) {
@@ -882,94 +882,83 @@
     }
 
     // Toggle legal disclaimer
-    if (legalToggle) {
+    if (legalToggle && legalDisclaimer) {
         legalToggle.addEventListener('click', function(e) {
             e.preventDefault();
             legalDisclaimer.style.display = legalDisclaimer.style.display === 'none' ? 'block' : 'none';
         });
     }
 
-// Form submission handler - UPDATED WITH POPUP IDs
-const paymentForm = document.getElementById('payment-form');
-if (paymentForm) {
-    paymentForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const submitBtn = document.querySelector('.btn-payment');
-        const originalText = submitBtn.innerHTML;
-        
-        try {
-            // Show loading state
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
-            submitBtn.disabled = true;
-
-            // Get form data - USING POPUP IDs
-            const selectedOption = document.getElementById('popup-abono').selectedOptions[0];
-            const formData = {
-                abono: document.getElementById('popup-abono').value,
-                nombre: document.getElementById('popup-name').value,
-                email: document.getElementById('popup-email').value, // ← NOW USING POPUP-EMAIL
-                celular: document.getElementById('popup-phone').value,
-                genero: document.getElementById('popup-genero').value,
-                comentarios: document.getElementById('popup-comments').value,
-                price: selectedOption.getAttribute('data-price')
-            };
-
-            console.log('Form data with popup IDs:', formData);
-
-            // Validate email
-            if (!formData.email || formData.email.trim() === '') {
-                throw new Error('Por favor ingresa tu email');
-            }
-
-            // API call
-            const API_URL = 'https://webpage-nine-mu.vercel.app/api/flow/payment';
+    // Form submission handler
+    const paymentForm = document.getElementById('payment-form');
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            });
-
-            console.log('API Response status:', response.status);
-
-            if (!response.ok) {
-                throw new Error(`Error del servidor: ${response.status}`);
-            }
-
-            const result = await response.json();
-            console.log('API Success response:', result);
-
-            if (result.success && result.flowUrl) {
-                console.log('Redirecting to Flow:', result.flowUrl);
-                window.location.href = result.flowUrl;
-            } else {
-                throw new Error(result.error || 'Error al procesar el pago');
-            }
-
-        } catch (error) {
-            console.error('Payment error:', error);
-            alert('Error: ' + error.message);
+            const submitBtn = document.querySelector('.btn-payment');
+            const originalText = submitBtn.innerHTML;
             
-            // Reset button
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        }
-    });
-}
+            try {
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+                submitBtn.disabled = true;
 
-// Also update the legal toggle functionality
-const legalToggle = document.getElementById('popup-legal-toggle');
-const legalDisclaimer = document.getElementById('popup-legal-disclaimer');
+                // Get form data - USING POPUP IDs
+                const selectedOption = document.getElementById('popup-abono').selectedOptions[0];
+                const formData = {
+                    abono: document.getElementById('popup-abono').value,
+                    nombre: document.getElementById('popup-name').value,
+                    email: document.getElementById('popup-email').value,
+                    celular: document.getElementById('popup-phone').value,
+                    genero: document.getElementById('popup-genero').value,
+                    comentarios: document.getElementById('popup-comments').value,
+                    price: selectedOption.getAttribute('data-price')
+                };
 
-if (legalToggle) {
-    legalToggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        legalDisclaimer.style.display = legalDisclaimer.style.display === 'none' ? 'block' : 'none';
-    });
-}
+                console.log('Form data:', formData);
+
+                // Validate required fields
+                if (!formData.email || formData.email.trim() === '') {
+                    throw new Error('Por favor ingresa tu email');
+                }
+
+                // API call
+                const API_URL = 'https://webpage-nine-mu.vercel.app/api/flow/payment';
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                console.log('API Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`Error del servidor: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('API Success response:', result);
+
+                if (result.success && result.flowUrl) {
+                    console.log('Redirecting to Flow:', result.flowUrl);
+                    window.location.href = result.flowUrl;
+                } else {
+                    throw new Error(result.error || 'Error al procesar el pago');
+                }
+
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Error: ' + error.message);
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
 
     // Simple scroll animation for sections
     const sections = document.querySelectorAll('section');

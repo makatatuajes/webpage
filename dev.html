@@ -889,7 +889,7 @@
         });
     }
 
-// Form submission handler - ACTUALIZADO
+// Form submission handler - UPDATED WITH CORRECT API URL
 const paymentForm = document.getElementById('payment-form');
 if (paymentForm) {
     paymentForm.addEventListener('submit', async function(e) {
@@ -903,7 +903,7 @@ if (paymentForm) {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
             submitBtn.disabled = true;
 
-            // Get form data - AJUSTADO A TUS CAMPOS
+            // Get form data
             const selectedOption = document.getElementById('abono').selectedOptions[0];
             const formData = {
                 abono: document.getElementById('abono').value,
@@ -915,10 +915,17 @@ if (paymentForm) {
                 price: selectedOption.getAttribute('data-price')
             };
 
-            console.log('Sending to Makatatuajes API:', formData);
+            console.log('Sending to API:', formData);
 
-            // Call the API - USANDO LA MISMA ESTRUCTURA
-            const response = await fetch('/api/flow/payment', {
+            // Validate email (you have empty email in logs)
+            if (!formData.email || formData.email.trim() === '') {
+                throw new Error('Por favor ingresa tu email');
+            }
+
+            // USE THE CORRECT API URL - Your working Vercel deployment
+            const API_URL = 'https://webpage-nine-mu.vercel.app/api/flow/payment';
+            
+            const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -929,9 +936,9 @@ if (paymentForm) {
             console.log('API Response status:', response.status);
 
             if (!response.ok) {
-                // If not 200, try to get error message
-                const errorData = await response.json().catch(() => ({ error: 'Error del servidor' }));
-                throw new Error(errorData.error || `Error HTTP: ${response.status}`);
+                const errorText = await response.text();
+                console.error('Error response:', errorText);
+                throw new Error(`Error del servidor: ${response.status}`);
             }
 
             const result = await response.json();
@@ -947,7 +954,7 @@ if (paymentForm) {
 
         } catch (error) {
             console.error('Payment error:', error);
-            alert('Error al procesar el pago: ' + error.message);
+            alert('Error: ' + error.message);
             
             // Reset button
             submitBtn.innerHTML = originalText;

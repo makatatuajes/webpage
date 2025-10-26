@@ -671,6 +671,30 @@
     border-color: var(--accent);
     box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.2);
 }
+
+/* Custom price input styling */
+#custom-price-group {
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    padding: 15px;
+    background: rgba(255, 0, 255, 0.1);
+    border-radius: 5px;
+    border: 1px solid rgba(255, 0, 255, 0.2);
+}
+
+#custom-price-group .form-text {
+    margin-top: 5px;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+#popup-custom-price:invalid {
+    border-color: #ff4444;
+}
+
+#popup-custom-price:valid {
+    border-color: #00ff00;
+}
     </style>
 </head>
 <body>
@@ -817,80 +841,86 @@
 
 <!-- Popup Form for Payment -->
 <div class="popup-overlay" id="popup-overlay">
-    <div class="popup-content">
-        <div class="popup-header">
-            <h3>Reserva tu Experiencia</h3>
-            <button class="popup-close" id="popup-close">
-                <i class="fas fa-times"></i>
-            </button>
+    <div class="popup-body">
+    <form id="payment-form">
+        <div class="form-group">
+            <label for="popup-abono">Selecciona tu Experiencia</label>
+            <select id="popup-abono" class="form-control" required>
+                <option value="" disabled selected>Elige tu abono</option>
+                <option value="Abono $15.000 CLP" data-price="15000">Abono $15.000 CLP</option>
+                <option value="Abono $20.000 CLP" data-price="20000">Abono $20.000 CLP</option>
+                <option value="Abono $30.000 CLP" data-price="30000">Abono $30.000 CLP</option>
+                <option value="Abono $40.000 CLP" data-price="40000">Abono $40.000 CLP</option>
+                <option value="Abono $60.000 CLP" data-price="60000">Abono $60.000 CLP</option>
+                <option value="Abono $80.000 CLP" data-price="80000">Abono $80.000 CLP</option>
+                <option value="Abono $100.000 CLP" data-price="100000">Abono $100.000 CLP</option>
+                <option value="Abono $120.000 CLP" data-price="120000">Abono $120.000 CLP</option>
+                <option value="custom" data-price="custom">💰 Personalizar monto</option>
+            </select>
         </div>
-        <div class="popup-body">
-            <form id="payment-form">
-                <div class="form-group">
-                    <label for="popup-abono">Selecciona tu Experiencia</label>
-                    <select id="popup-abono" class="form-control" required>
-                        <option value="" disabled selected>Elige tu abono</option>
-                        <option value="Abono $15.000 CLP" data-price="15000">Abono $15.000 CLP</option>
-                        <option value="Abono $20.000 CLP" data-price="20000">Abono $20.000 CLP</option>
-                        <option value="Abono $30.000 CLP" data-price="30000">Abono $30.000 CLP</option>
-                        <option value="Abono $40.000 CLP" data-price="40000">Abono $40.000 CLP</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="popup-name">Nombre Completo</label>
-                    <input type="text" id="popup-name" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="popup-email">Correo Electrónico</label>
-                    <input type="email" id="popup-email" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="popup-phone">Teléfono</label>
-                    <input type="tel" id="popup-phone" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="popup-date">Fecha Preferida</label>
-                    <input type="date" id="popup-date" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="popup-genero">Género</label>
-                    <select id="popup-genero" class="form-control" required>
-                        <option value="" disabled selected>Selecciona tu género</option>
-                        <option value="masculino">Masculino</option>
-                        <option value="femenino">Femenino</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="popup-comments">Comentarios Adicionales</label>
-                    <textarea id="popup-comments" class="form-control" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <div>
-                        <input type="checkbox" id="popup-legal-check" required>
-                        <label for="popup-legal-check">Acepto los <span class="legal-toggle" id="popup-legal-toggle">términos y condiciones</span></label>
-                    </div>
-                    <div class="legal-disclaimer" id="popup-legal-disclaimer" style="display: none;">
-                        <p><strong>Términos y Condiciones de Participación</strong></p>
-                        <p>Al participar en nuestras experiencias, aceptas:</p>
-                        <ul>
-                            <li>Respetar a todos los participantes y mantener un comportamiento adecuado</li>
-                            <li>Asistir puntualmente a la experiencia seleccionada</li>
-                            <li>Cancelar con al menos 48 horas de anticipación para obtener reembolso</li>
-                            <li>Autorizar el uso de fotografías para fines promocionales (opcional)</li>
-                            <li>Cumplir con las normas de seguridad establecidas para cada actividad</li>
-                        </ul>
-                        <p>Vinculemos se reserva el derecho de admisión y puede modificar las condiciones según sea necesario.</p>
-                    </div>
-                </div>
-                <button type="submit" class="btn-payment">
-                    <i class="fas fa-lock"></i>
-                    Proceder al Pago
-                </button>
-            </form>
+
+        <!-- Custom Price Input (Hidden by Default) -->
+        <div class="form-group" id="custom-price-group" style="display: none;">
+            <label for="popup-custom-price">Monto Personalizado (Mínimo: $15.000 CLP)</label>
+            <input type="number" id="popup-custom-price" class="form-control" min="15000" step="1000" placeholder="Ingresa el monto deseado">
+            <small class="form-text" style="color: var(--text-secondary);">Monto mínimo: $15.000 CLP</small>
         </div>
-    </div>
+
+        <div class="form-group">
+            <label for="popup-name">Nombre Completo</label>
+            <input type="text" id="popup-name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="popup-email">Correo Electrónico</label>
+            <input type="email" id="popup-email" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="popup-phone">Teléfono</label>
+            <input type="tel" id="popup-phone" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="popup-date">Fecha Preferida</label>
+            <input type="date" id="popup-date" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="popup-genero">Género</label>
+            <select id="popup-genero" class="form-control" required>
+                <option value="" disabled selected>Selecciona tu género</option>
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="popup-comments">Comentarios Adicionales</label>
+            <textarea id="popup-comments" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <div>
+                <input type="checkbox" id="popup-legal-check" required>
+                <label for="popup-legal-check">Acepto los <span class="legal-toggle" id="popup-legal-toggle">términos y condiciones</span></label>
+            </div>
+            <div class="legal-disclaimer" id="popup-legal-disclaimer" style="display: none;">
+                <p><strong>Términos y Condiciones de Participación</strong></p>
+                <p>Al participar en nuestras experiencias, aceptas:</p>
+                <ul>
+                    <li>Respetar a todos los participantes y mantener un comportamiento adecuado</li>
+                    <li>Asistir puntualmente a la experiencia seleccionada</li>
+                    <li>Cancelar con al menos 48 horas de anticipación para obtener reembolso</li>
+                    <li>Autorizar el uso de fotografías para fines promocionales (opcional)</li>
+                    <li>Cumplir con las normas de seguridad establecidas para cada actividad</li>
+                </ul>
+                <p>Vinculemos se reserva el derecho de admisión y puede modificar las condiciones según sea necesario.</p>
+            </div>
+        </div>
+        <button type="submit" class="btn-payment">
+            <i class="fas fa-lock"></i>
+            Proceder al Pago
+        </button>
+    </form>
 </div>
+    
 <script>
+    
     // Floating heart button functionality
     const floatingHeart = document.getElementById('floating-heart');
     const popupOverlay = document.getElementById('popup-overlay');
@@ -930,77 +960,125 @@
         });
     }
 
-    // Form submission handler
-    const paymentForm = document.getElementById('payment-form');
-    if (paymentForm) {
-        paymentForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
+// Custom price functionality
+const abonoSelect = document.getElementById('popup-abono');
+const customPriceGroup = document.getElementById('custom-price-group');
+const customPriceInput = document.getElementById('popup-custom-price');
+
+if (abonoSelect && customPriceGroup && customPriceInput) {
+    abonoSelect.addEventListener('change', function() {
+        if (this.value === 'custom') {
+            // Show custom price input
+            customPriceGroup.style.display = 'block';
+            customPriceInput.required = true;
+        } else {
+            // Hide custom price input
+            customPriceGroup.style.display = 'none';
+            customPriceInput.required = false;
+            customPriceInput.value = '';
+        }
+    });
+
+    // Validate custom price on input
+    customPriceInput.addEventListener('input', function() {
+        const value = parseInt(this.value);
+        if (value < 15000) {
+            this.setCustomValidity('El monto mínimo es $15.000 CLP');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+}
+
+// Update the form submission handler to handle custom prices
+const paymentForm = document.getElementById('payment-form');
+if (paymentForm) {
+    paymentForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.querySelector('.btn-payment');
+        const originalText = submitBtn.innerHTML;
+        
+        try {
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+            submitBtn.disabled = true;
+
+            // Get selected option
+            const selectedOption = document.getElementById('popup-abono').selectedOptions[0];
+            const isCustomPrice = selectedOption.value === 'custom';
             
-            const submitBtn = document.querySelector('.btn-payment');
-            const originalText = submitBtn.innerHTML;
+            // Get custom price if applicable
+            let finalPrice;
+            let abonoDescription;
             
-            try {
-                // Show loading state
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
-                submitBtn.disabled = true;
-
-                // Get form data - USING POPUP IDs
-                const selectedOption = document.getElementById('popup-abono').selectedOptions[0];
-                const formData = {
-                    abono: document.getElementById('popup-abono').value,
-                    nombre: document.getElementById('popup-name').value,
-                    email: document.getElementById('popup-email').value,
-                    celular: document.getElementById('popup-phone').value,
-                    genero: document.getElementById('popup-genero').value,
-                    comentarios: document.getElementById('popup-comments').value,
-                    price: selectedOption.getAttribute('data-price')
-                };
-
-                console.log('Form data:', formData);
-
-                // Validate required fields
-                if (!formData.email || formData.email.trim() === '') {
-                    throw new Error('Por favor ingresa tu email');
+            if (isCustomPrice) {
+                const customPrice = document.getElementById('popup-custom-price').value;
+                if (!customPrice || parseInt(customPrice) < 15000) {
+                    throw new Error('Por favor ingresa un monto válido (mínimo $15.000 CLP)');
                 }
-
-                // API call
-                const API_URL = 'https://webpage-nine-mu.vercel.app/api/flow/payment';
-                
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                console.log('API Response status:', response.status);
-
-                if (!response.ok) {
-                    throw new Error(`Error del servidor: ${response.status}`);
-                }
-
-                const result = await response.json();
-                console.log('API Success response:', result);
-
-                if (result.success && result.flowUrl) {
-                    console.log('Redirecting to Flow:', result.flowUrl);
-                    window.location.href = result.flowUrl;
-                } else {
-                    throw new Error(result.error || 'Error al procesar el pago');
-                }
-
-            } catch (error) {
-                console.error('Payment error:', error);
-                alert('Error: ' + error.message);
-                
-                // Reset button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
+                finalPrice = customPrice;
+                abonoDescription = `Abono Personalizado $${parseInt(customPrice).toLocaleString('es-CL')} CLP`;
+            } else {
+                finalPrice = selectedOption.getAttribute('data-price');
+                abonoDescription = selectedOption.value;
             }
-        });
-    }
 
+            // Get form data
+            const formData = {
+                abono: abonoDescription,
+                nombre: document.getElementById('popup-name').value,
+                email: document.getElementById('popup-email').value,
+                celular: document.getElementById('popup-phone').value,
+                genero: document.getElementById('popup-genero').value,
+                comentarios: document.getElementById('popup-comments').value,
+                price: finalPrice
+            };
+
+            console.log('Form data with custom price:', formData);
+
+            // Validate required fields
+            if (!formData.email || formData.email.trim() === '') {
+                throw new Error('Por favor ingresa tu email');
+            }
+
+            // API call
+            const API_URL = 'https://webpage-nine-mu.vercel.app/api/flow/payment';
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+
+            console.log('API Response status:', response.status);
+
+            if (!response.ok) {
+                throw new Error(`Error del servidor: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('API Success response:', result);
+
+            if (result.success && result.flowUrl) {
+                console.log('Redirecting to Flow:', result.flowUrl);
+                window.location.href = result.flowUrl;
+            } else {
+                throw new Error(result.error || 'Error al procesar el pago');
+            }
+
+        } catch (error) {
+            console.error('Payment error:', error);
+            alert('Error: ' + error.message);
+            
+            // Reset button
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+}
     // Simple scroll animation for sections
     const sections = document.querySelectorAll('section');
     

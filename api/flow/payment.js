@@ -94,11 +94,11 @@ module.exports = async function handler(req, res) {
     const { abono, nombre, email, celular, genero, comentarios, price } = body;
 
     // Validación de campos requeridos
-    if (!abono || !nombre || !email || !celular || !genero || !price) {
-      console.log('Missing required fields:', { abono, nombre, email, celular, genero, price });
+    if (!abono || !nombre || !email || !celular || !genero || !comentarios || !price) {
+      console.log('Missing required fields:', { abono, nombre, email, celular, genero, comentarios, price });
       return res.status(400).json({ 
         error: 'Faltan datos requeridos',
-        received: { abono, nombre, email, celular, genero, price }
+        received: { abono, nombre, email, celular, genero, comentarios, price }
       });
     }
 

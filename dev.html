@@ -912,82 +912,107 @@
 
 <!-- Popup Form for Payment -->
 <div class="popup-overlay" id="popup-overlay">
-    <div class="popup-body">
-    <form id="payment-form">
-        <div class="form-group">
-            <label for="popup-abono">Selecciona tu Experiencia</label>
-            <select id="popup-abono" class="form-control" required>
-                <option value="" disabled selected>Elige tu abono</option>
-                <option value="Abono $15.000 CLP" data-price="15000">Abono $15.000 CLP</option>
-                <option value="Abono $20.000 CLP" data-price="20000">Abono $20.000 CLP</option>
-                <option value="Abono $30.000 CLP" data-price="30000">Abono $30.000 CLP</option>
-                <option value="Abono $40.000 CLP" data-price="40000">Abono $40.000 CLP</option>
-                <option value="Abono $60.000 CLP" data-price="60000">Abono $60.000 CLP</option>
-                <option value="Abono $80.000 CLP" data-price="80000">Abono $80.000 CLP</option>
-                <option value="Abono $100.000 CLP" data-price="100000">Abono $100.000 CLP</option>
-                <option value="Abono $120.000 CLP" data-price="120000">Abono $120.000 CLP</option>
-                <option value="custom" data-price="custom">💰 Personalizar monto</option>
-            </select>
+    <div class="popup-content">
+        <div class="popup-header">
+            <h3>Reserva tu Experiencia</h3>
+            <button class="popup-close" id="popup-close">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-
-        <!-- Custom Price Input (Hidden by Default) -->
-        <div class="form-group" id="custom-price-group" style="display: none;">
-            <label for="popup-custom-price">Monto Personalizado (Mínimo: $15.000 CLP)</label>
-            <input type="number" id="popup-custom-price" class="form-control" min="15000" step="1000" placeholder="Ingresa el monto deseado">
-            <small class="form-text" style="color: var(--text-secondary);">Monto mínimo: $15.000 CLP</small>
-        </div>
-
-        <div class="form-group">
-            <label for="popup-name">Nombre Completo</label>
-            <input type="text" id="popup-name" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="popup-email">Correo Electrónico</label>
-            <input type="email" id="popup-email" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="popup-phone">Teléfono</label>
-            <input type="tel" id="popup-phone" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="popup-date">Fecha Preferida</label>
-            <input type="date" id="popup-date" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="popup-genero">Género</label>
-            <select id="popup-genero" class="form-control" required>
-                <option value="" disabled selected>Selecciona tu género</option>
-                <option value="masculino">Masculino</option>
-                <option value="femenino">Femenino</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="popup-comments">Comentame, en qué zona lo deseas? Cuantos centimetros? (largo por ancho) Tienes alguna imagen de referencia? Dejame un link para verlo :) </label>
-            <textarea id="popup-comments" class="form-control" rows="3"></textarea>
-        </div>
-        <div class="form-group">
-            <div>
-                <input type="checkbox" id="popup-legal-check" required>
-                <label for="popup-legal-check">Acepto los <span class="legal-toggle" id="popup-legal-toggle">términos y condiciones</span></label>
+        <div class="popup-body">
+            <!-- Required Fields Note -->
+            <div class="required-note" style="color: var(--accent); margin-bottom: 1.5rem; padding: 10px; background: rgba(255, 0, 255, 0.1); border-radius: 5px; border-left: 3px solid var(--accent);">
+                <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+                <strong>Todos los campos son obligatorios</strong>
             </div>
-            <div class="legal-disclaimer" id="popup-legal-disclaimer" style="display: none;">
-                <p><strong>Términos y Condiciones de Participación</strong></p>
-                <p>Al participar en nuestras experiencias, aceptas:</p>
-                <ul>
-                    <li>Respetar a todos los participantes y mantener un comportamiento adecuado</li>
-                    <li>Asistir puntualmente a la experiencia seleccionada</li>
-                    <li>Cancelar con al menos 48 horas de anticipación para obtener reembolso</li>
-                    <li>Autorizar el uso de fotografías para fines promocionales (opcional)</li>
-                    <li>Cumplir con las normas de seguridad establecidas para cada actividad</li>
-                </ul>
-                <p>Vinculemos se reserva el derecho de admisión y puede modificar las condiciones según sea necesario.</p>
-            </div>
+
+            <form id="payment-form">
+                <div class="form-group">
+                    <label for="popup-abono">Selecciona tu Abono</label>
+                    <select id="popup-abono" class="form-control" required>
+                        <option value="" disabled selected>Elige tu abono</option>
+                        <option value="Abono $15.000 CLP" data-price="15000">Abono $15.000 CLP</option>
+                        <option value="Abono $20.000 CLP" data-price="20000">Abono $20.000 CLP</option>
+                        <option value="Abono $30.000 CLP" data-price="30000">Abono $30.000 CLP</option>
+                        <option value="Abono $40.000 CLP" data-price="40000">Abono $40.000 CLP</option>
+                        <option value="Abono $60.000 CLP" data-price="60000">Abono $60.000 CLP</option>
+                        <option value="Abono $80.000 CLP" data-price="80000">Abono $80.000 CLP</option>
+                        <option value="Abono $100.000 CLP" data-price="100000">Abono $100.000 CLP</option>
+                        <option value="Abono $120.000 CLP" data-price="120000">Abono $120.000 CLP</option>
+                        <option value="custom" data-price="custom">💰 Personalizar monto</option>
+                    </select>
+                </div>
+
+                <!-- Custom Price Input (Hidden by Default) -->
+                <div class="form-group" id="custom-price-group" style="display: none;">
+                    <label for="popup-custom-price">Monto Personalizado (Mínimo: $15.000 CLP)</label>
+                    <input type="number" id="popup-custom-price" class="form-control" min="15000" step="1000" placeholder="Ingresa el monto deseado">
+                    <small class="form-text" style="color: var(--text-secondary);">Monto mínimo: $15.000 CLP</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="popup-name">Nombre Completo</label>
+                    <input type="text" id="popup-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="popup-email">Correo Electrónico</label>
+                    <input type="email" id="popup-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="popup-phone">Teléfono</label>
+                    <input type="tel" id="popup-phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="popup-date">Fecha Preferida</label>
+                    <input type="date" id="popup-date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="popup-genero">Género</label>
+                    <select id="popup-genero" class="form-control" required>
+                        <option value="" disabled selected>Selecciona tu género</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="popup-comments">Comentame, en qué zona lo deseas? Cuantos centimetros? (largo por ancho) Tienes alguna imagen de referencia? Dejame un link para verlo :)</label>
+                    <textarea id="popup-comments" class="form-control" rows="3"></textarea>
+                </div>
+
+                <!-- Optional Photo/Video Authorization Checkbox -->
+                <div class="form-group">
+                    <div style="padding: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <input type="checkbox" id="popup-photo-auth">
+                        <label for="popup-photo-auth" style="font-weight: normal;">
+                            Autorizo el uso de fotografías y videos de mi tatuaje para fines promocionales en redes sociales y página web (opcional)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <input type="checkbox" id="popup-legal-check" required>
+                        <label for="popup-legal-check">Acepto los <span class="legal-toggle" id="popup-legal-toggle">términos y condiciones</span></label>
+                    </div>
+                    <div class="legal-disclaimer" id="popup-legal-disclaimer" style="display: none;">
+                        <p><strong>Términos y Condiciones de Participación</strong></p>
+                        <p>Al reservar tu hora, aceptas:</p>
+                        <ul>
+                            <li>Respetar a la artista tatuadora y mantener un comportamiento adecuado</li>
+                            <li>Asistir puntualmente a cita acordada</li>
+                            <li>Cancelar con al menos 48 horas de anticipación para obtener reembolso</li>
+                            <li>Cumplir con las normas de seguridad recomendadas tales como: no beber alcohol antes ni durante la sesión, presentarse a la sesión con la higiene adecuada en la zona a tatuar.</li>
+                        </ul>
+                        <p>Maka Tatuajes se reserva el derecho de admisión y puede cancelar la sesión ante comportamientos inadecuados durante la sesión, no devolviendo el monto abonado.</p>
+                    </div>
+                </div>
+                <button type="submit" class="btn-payment">
+                    <i class="fas fa-lock"></i>
+                    Proceder al Pago
+                </button>
+            </form>
         </div>
-        <button type="submit" class="btn-payment">
-            <i class="fas fa-lock"></i>
-            Proceder al Pago
-        </button>
-    </form>
+    </div>
 </div>
     
 <script>

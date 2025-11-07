@@ -118,7 +118,6 @@ nav a:hover::after {
     transform: translateY(-3px);
 }
 
-    
 /* Burger Menu Styles */
 .burger-menu {
     display: none;
@@ -154,7 +153,7 @@ nav a:hover::after {
 
 .burger-menu.active span:nth-child(3) {
     transform: translateY(-9px) rotate(-45deg);
-}    
+}
     /* Section Common Styles */
     section {
         min-height: 100vh;
@@ -704,7 +703,7 @@ nav a:hover::after {
         right: -100%;
         width: 70%;
         height: 100vh;
-        background-color: rgba(0, 0, 0, 0.95);
+        background-color: rgba(0, 0, 0, 0.98);
         backdrop-filter: blur(15px);
         transition: var(--transition);
         z-index: 1000;
@@ -737,50 +736,29 @@ nav a:hover::after {
     .social-icons a {
         font-size: 1.5rem;
     }
+    
+    /* Adjust section padding for thinner header */
+    section {
+        padding: 5rem 2rem 2rem; /* Reduced from 6rem to 5rem */
+    }
+    
+    /* Mobile responsive adjustments for popup */
+    .popup-overlay {
+        padding: 10px 0;
+        align-items: flex-start;
+    }
+    
+    .popup-content {
+        width: 95%;
+        max-height: 95vh;
+        margin: 10px auto;
+    }
+    
+    .popup-body {
+        max-height: calc(95vh - 100px);
+        padding: 1rem;
+    }
 }
-
-        /* Mobile responsive adjustments for popup */
-        .popup-overlay {
-            padding: 10px 0;
-            align-items: flex-start;
-        }
-        
-        .popup-content {
-            width: 95%;
-            max-height: 95vh;
-            margin: 10px auto;
-        }
-        
-        .popup-body {
-            max-height: calc(95vh - 100px);
-            padding: 1rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        section {
-            padding: 5rem 1rem 1rem;
-        }
-        
-        .hero-logo {
-            font-size: 2.5rem;
-        }
-        
-        .contact-form {
-            padding: 1.5rem;
-        }
-    }
-
-    @media (max-height: 600px) {
-        .popup-content {
-            max-height: 98vh;
-        }
-        
-        .popup-body {
-            max-height: calc(98vh - 120px);
-        }
-    }
-
     /* Style for select dropdown options */
     .popup-body select.form-control {
         color: var(--text-primary) !important;
@@ -1294,14 +1272,15 @@ if (paymentForm) {
         });
     }
 
-    <script>
-    // Burger Menu Functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const burgerMenu = document.getElementById('burgerMenu');
-        const mainNav = document.getElementById('mainNav');
-        
+// Burger Menu Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const burgerMenu = document.getElementById('burgerMenu');
+    const mainNav = document.getElementById('mainNav');
+    
+    if (burgerMenu && mainNav) {
         // Toggle mobile menu
-        burgerMenu.addEventListener('click', function() {
+        burgerMenu.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent event bubbling
             burgerMenu.classList.toggle('active');
             mainNav.classList.toggle('active');
             document.body.style.overflow = mainNav.classList.contains('active') ? 'hidden' : '';
@@ -1337,8 +1316,9 @@ if (paymentForm) {
                 document.body.style.overflow = '';
             }
         });
-    });
-</script>
+    }
+});
+
 </script>
 </body>
 </html>

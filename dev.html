@@ -46,27 +46,34 @@ header {
     backdrop-filter: blur(15px);
     z-index: 1000;
     padding: 0.5rem 2rem;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
+    gap: 2rem;
     border-bottom: 1px solid rgba(255, 0, 255, 0.2);
-    min-height: 60px; /* Reduced from 80px */
+    min-height: 50px;
     transition: var(--transition);
 }
 
 .logo {
     display: flex;
     align-items: center;
-    z-index: 1001; /* Ensure logo stays above menu */
+    z-index: 1001;
 }
 
 .logo img {
-    height: 40px; /* Reduced logo size */
+    height: 35px;
     width: auto;
     transition: var(--transition);
 }
 
 /* Navigation Styles */
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 nav ul {
     display: flex;
     list-style: none;
@@ -80,7 +87,7 @@ nav a {
     font-weight: 500;
     transition: var(--transition);
     position: relative;
-    font-size: 0.95rem; /* Slightly smaller font */
+    font-size: 0.9rem;
 }
 
 nav a:hover {
@@ -105,17 +112,22 @@ nav a:hover::after {
 .social-icons {
     display: flex;
     gap: 1rem;
+    justify-content: flex-end;
 }
 
 .social-icons a {
     color: var(--text-primary);
-    font-size: 1.1rem; /* Slightly smaller icons */
+    font-size: 1rem;
     transition: var(--transition);
 }
 
 .social-icons a:hover {
     color: var(--accent);
     transform: translateY(-3px);
+}
+
+.social-icons-mobile {
+    display: none;
 }
 
 /* Burger Menu Styles */
@@ -686,15 +698,23 @@ nav a:hover::after {
 @media (max-width: 768px) {
     header {
         padding: 0.5rem 1rem;
-        min-height: 50px; /* Even thinner on mobile */
+        min-height: 50px;
+        grid-template-columns: auto 1fr;
     }
     
     .logo img {
-        height: 35px; /* Smaller logo on mobile */
+        height: 32px;
+    }
+    
+    /* Hide desktop social icons on mobile */
+    .social-icons {
+        display: none;
     }
     
     .burger-menu {
         display: flex;
+        grid-column: 2;
+        justify-self: end;
     }
     
     nav {
@@ -712,6 +732,7 @@ nav a:hover::after {
         justify-content: center;
         align-items: center;
         border-left: 1px solid rgba(255, 0, 255, 0.2);
+        grid-column: 1 / -1;
     }
     
     nav.active {
@@ -729,17 +750,28 @@ nav a:hover::after {
         padding: 0.5rem 0;
     }
     
-    .social-icons {
+    /* Show mobile social icons inside nav */
+    .social-icons-mobile {
+        display: flex;
+        gap: 1.5rem;
         margin-top: 2rem;
+        justify-content: center;
     }
     
-    .social-icons a {
+    .social-icons-mobile a {
+        color: var(--text-primary);
         font-size: 1.5rem;
+        transition: var(--transition);
+    }
+    
+    .social-icons-mobile a:hover {
+        color: var(--accent);
+        transform: translateY(-3px);
     }
     
     /* Adjust section padding for thinner header */
     section {
-        padding: 5rem 2rem 2rem; /* Reduced from 6rem to 5rem */
+        padding: 4.5rem 2rem 2rem;
     }
     
     /* Mobile responsive adjustments for popup */
@@ -832,13 +864,6 @@ nav a:hover::after {
         <img src="Logo (2).png" alt="MAKATATUAJES" width="150" height="100">
     </a>
     
-    <!-- Burger Menu Button -->
-    <button class="burger-menu" id="burgerMenu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-    
     <nav id="mainNav">
         <ul>
             <li><a href="#hero">Inicio</a></li>
@@ -846,11 +871,23 @@ nav a:hover::after {
             <li><a href="#sobre-mi">Sobre Mí</a></li>
             <li><a href="#contacto">Contacto</a></li>
         </ul>
-        <div class="social-icons">
-            <a href="https://www.instagram.com/maka.tatuajes"><i class="fab fa-instagram"></i></a>
-            <a href="https://facebook.com/mvjaque"><i class="fab fa-facebook"></i></a>
+        <div class="social-icons-mobile">
+            <a href="https://www.instagram.com/maka.tatuajes" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+            <a href="https://facebook.com/mvjaque" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
         </div>
     </nav>
+    
+    <div class="social-icons">
+        <a href="https://www.instagram.com/maka.tatuajes" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+        <a href="https://facebook.com/mvjaque" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
+    </div>
+    
+    <!-- Burger Menu Button -->
+    <button class="burger-menu" id="burgerMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
 </header>
 
     <!-- Hero Section -->

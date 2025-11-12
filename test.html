@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Makatatuajes - Tatuadora Profesional</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+<style>
+    /* Variables and Base Styles */
+    :root {
+        --bg-primary: #000000;
+        --bg-secondary: #111111;
+        --text-primary: #ffffff;
+        --text-secondary: #cccccc;
+        --accent: #ff00ff;
+        --accent-hover: #ff66ff;
+        --transition: all 0.3s ease;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+
+/* Updated Header Styles */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(15px);
+    z-index: 1000;
+    padding: 0.3rem 1.5rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 2rem;
+    border-bottom: 1px solid rgba(255, 0, 255, 0.2);
+    min-height: 42px;
+    transition: var(--transition);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    z-index: 1001;
+}
+
+.logo img {
+    height: 35px;
+    width: auto;
+    transition: var(--transition);
+}
+
+/* Navigation Styles */
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+    margin: 0;
+}
+
+nav a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+    font-size: 0.9rem;
+}
+
+nav a:hover {
+    color: var(--accent);
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--accent);
+    transition: var(--transition);
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+.social-icons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.social-icons a {
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.social-icons a:hover {
+    color: var(--accent);
+    transform: translateY(-3px);
+}
+
+.social-icons-mobile {
+    display: none;
+}
+
+/* Burger Menu Styles */
+.burger-menu {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1001;
+}
+
+.burger-menu span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: var(--text-primary);
+    border-radius: 3px;
+    transition: var(--transition);
+    transform-origin: center;
+}
+
+/* Burger menu animation when active */
+.burger-menu.active span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.burger-menu.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.burger-menu.active span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+    /* Section Common Styles */
+    section {
+        min-height: 100vh;
+        padding: 6rem 2rem 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        margin-bottom: 3rem;
+        text-align: center;
+        color: var(--accent);
+        position: relative;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background-color: var(--accent);
+    }
+
+    /* Hero Section */
+    .hero {
+        text-align: center;
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('./wallpaper.png') center/cover no-repeat;
+    }
+
+    .hero-logo {
+        font-size: 4rem;
+        font-weight: bold;
+        color: var(--accent);
+        margin-bottom: 1.5rem;
+        text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+    }
+
+    .hero-description {
+        max-width: 600px;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        color: var(--text-secondary);
+    }
+
+    /* Conoce mi Arte Section */
+    .art-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        max-width: 1200px;
+        width: 100%;
+    }
+
+    .art-card {
+        background-color: var(--bg-secondary);
+        border-radius: 10px;
+        overflow: hidden;
+        transition: var(--transition);
+        position: relative;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .art-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(255, 0, 255, 0.2);
+    }
+
+    .art-image {
+        height: 250px;
+        background-color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .art-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .art-card:hover .art-image img {
+        transform: scale(1.1);
+    }
+
+    .art-title {
+        padding: 1.5rem;
+        font-size: 1.5rem;
+        color: var(--accent);
+        text-align: center;
+    }
+
+    .art-description {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        opacity: 0;
+        transition: var(--transition);
+    }
+
+    .art-card:hover .art-description {
+        opacity: 1;
+    }
+
+    .art-description p {
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 0.8rem 1.5rem;
+        background-color: var(--accent);
+        color: var(--text-primary);
+        text-decoration: none;
+        border-radius: 30px;
+        font-weight: bold;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: var(--accent-hover);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 0, 255, 0.4);
+    }
+
+    /* Sobre Mi Section */
+    .about-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        max-width: 1200px;
+        width: 100%;
+        align-items: center;
+    }
+
+    .about-text {
+        padding-right: 1rem;
+    }
+
+    .about-text p {
+        margin-bottom: 1.5rem;
+        color: var(--text-secondary);
+    }
+
+    .about-image {
+        height: 400px;
+        background-color: #333;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .about-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Contacto Section */
+    .contact-form {
+        max-width: 600px;
+        width: 100%;
+        background-color: var(--bg-secondary);
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-secondary);
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+        color: var(--text-primary);
+        font-family: inherit;
+        transition: var(--transition);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.2);
+    }
+
+    .form-group textarea {
+        height: 150px;
+        resize: vertical;
+    }
+
+    .logo {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .logo img {
+        max-width: 300px;
+        height: auto;
+        filter: drop-shadow(0 0 15px rgba(255, 0, 255, 0.7));
+        animation: pulse 2s infinite;
+    }
+
+    .logo-text {
+        font-size: 3.5rem;
+        font-weight: bold;
+        color: var(--accent);
+        margin-bottom: 2rem;
+        text-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
+        letter-spacing: 2px;
+        display: none; /* Hidden by default, shown if image fails */
+    }
+
+    .logo.image-loaded + .logo-text {
+        display: none; /* Keep text hidden if image loads successfully */
+    }
+
+    .logo:not(.image-loaded) .logo-text {
+        display: block; /* Show text if image fails to load */
+    }
+    .submit-btn {
+        width: 100%;
+        padding: 1rem;
+        background-color: var(--accent);
+        color: var(--text-primary);
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .submit-btn:hover {
+        background-color: var(--accent-hover);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 0, 255, 0.4);
+    }
+
+    /* Floating Heart Button */
+    .floating-heart {
+        position: fixed;
+        bottom: 2rem;
+        left: 2rem;
+        background: var(--accent);
+        color: var(--text-primary);
+        padding: 12px 18px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        z-index: 99;
+        box-shadow: 0 5px 15px rgba(255, 0, 255, 0.3);
+        transition: var(--transition);
+        font-weight: 500;
+    }
+
+    .floating-heart:hover {
+        background: var(--accent-hover);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(255, 0, 255, 0.4);
+    }
+
+    .floating-heart i {
+        font-size: 1.2rem;
+    }
+
+    /* Popup Overlay - UPDATED FOR SCROLLING */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: flex-start; /* Changed from center to flex-start */
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+        overflow-y: auto; /* Enable vertical scrolling */
+        padding: 20px 0; /* Add some padding */
+    }
+
+    .popup-content {
+        background: var(--bg-secondary);
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 90vh; /* Limit height to 90% of viewport */
+        overflow-y: auto; /* Enable scrolling inside content */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 0, 255, 0.2);
+        margin: auto; /* Center the popup */
+    }
+
+    /* Popup Body - UPDATED FOR SCROLLING */
+    .popup-body {
+        padding: 1.5rem;
+        max-height: calc(90vh - 120px); /* Account for header height */
+        overflow-y: auto;
+    }
+
+    /* Custom scrollbar styling for webkit browsers */
+    .popup-content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .popup-content::-webkit-scrollbar-track {
+        background: var(--bg-primary);
+        border-radius: 4px;
+    }
+
+    .popup-content::-webkit-scrollbar-thumb {
+        background: var(--accent);
+        border-radius: 4px;
+    }
+
+    .popup-content::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-hover);
+    }
+
+    .popup-body::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .popup-body::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .popup-body::-webkit-scrollbar-thumb {
+        background: var(--accent);
+        border-radius: 3px;
+    }
+
+    /* For Firefox */
+    .popup-content {
+        scrollbar-width: thin;
+        scrollbar-color: var(--accent) var(--bg-primary);
+    }
+
+    .popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .popup-header h3 {
+        color: var(--accent);
+        margin: 0;
+    }
+
+    .popup-close {
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .popup-close:hover {
+        color: var(--accent);
+    }
+
+    .popup-body .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .popup-body .form-control {
+        width: 100%;
+        padding: 0.8rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+        color: var(--text-primary);
+        font-family: inherit;
+    }
+
+    .popup-body .form-control:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.2);
+    }
+
+    .btn-payment {
+        width: 100%;
+        padding: 1rem;
+        background: var(--accent);
+        color: var(--text-primary);
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-payment:hover {
+        background: var(--accent-hover);
+        transform: translateY(-2px);
+    }
+
+    .legal-toggle {
+        color: var(--accent);
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    .legal-disclaimer {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+        font-size: 0.9rem;
+    }
+
+    /* Show popup when active */
+    .popup-overlay.active {
+        display: flex;
+    }
+    
+    /* WhatsApp Button */
+    .whatsapp-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 60px;
+        height: 60px;
+        background-color: #25D366;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 1.8rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        z-index: 100;
+        transition: var(--transition);
+        text-decoration: none;
+    }
+
+    .whatsapp-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Footer */
+    footer {
+        background-color: var(--bg-secondary);
+        padding: 2rem;
+        text-align: center;
+        border-top: 1px solid rgba(255, 0, 255, 0.2);
+    }
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .copyright {
+        color: var(--text-secondary);
+        margin-top: 1rem;
+    }
+
+     /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.9; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+        .art-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .about-container {
+            grid-template-columns: 1fr;
+        }
+        
+        .about-text {
+            padding-right: 0;
+        }
+            .logo {
+        height: 40px;
+        }
+    }
+
+   /* Mobile Navigation */
+@media (max-width: 768px) {
+    header {
+        padding: 0.5rem 1rem;
+        min-height: 50px;
+        grid-template-columns: auto 1fr;
+    }
+    
+    .logo img {
+        height: 32px;
+    }
+    
+    /* Hide desktop social icons on mobile */
+    .social-icons {
+        display: none;
+    }
+    
+    .burger-menu {
+        display: flex;
+        grid-column: 2;
+        justify-self: end;
+    }
+    
+    nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.98);
+        backdrop-filter: blur(15px);
+        transition: var(--transition);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-left: 1px solid rgba(255, 0, 255, 0.2);
+        grid-column: 1 / -1;
+    }
+    
+    nav.active {
+        right: 0;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    nav a {
+        font-size: 1.2rem;
+        padding: 0.5rem 0;
+    }
+    
+    /* Show mobile social icons inside nav */
+    .social-icons-mobile {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 2rem;
+        justify-content: center;
+    }
+    
+    .social-icons-mobile a {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        transition: var(--transition);
+    }
+    
+    .social-icons-mobile a:hover {
+        color: var(--accent);
+        transform: translateY(-3px);
+    }
+    
+    /* Adjust section padding for thinner header */
+    section {
+        padding: 4.5rem 2rem 2rem;
+    }
+    
+    /* Mobile responsive adjustments for popup */
+    .popup-overlay {
+        padding: 10px 0;
+        align-items: flex-start;
+    }
+    
+    .popup-content {
+        width: 95%;
+        max-height: 95vh;
+        margin: 10px auto;
+    }
+    
+    .popup-body {
+        max-height: calc(95vh - 100px);
+        padding: 1rem;
+    }
+}
+    /* Style for select dropdown options */
+    .popup-body select.form-control {
+        color: var(--text-primary) !important;
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .popup-body select.form-control option {
+        color: var(--text-primary) !important;
+        background-color: var(--bg-secondary) !important;
+        padding: 10px;
+    }
+
+    .popup-body select.form-control option:hover,
+    .popup-body select.form-control option:focus {
+        background-color: var(--accent) !important;
+        color: var(--text-primary) !important;
+    }
+
+    /* Style for the select dropdown itself */
+    .popup-body select.form-control {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23ff00ff' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 12px;
+        padding-right: 40px;
+    }
+
+    /* For Firefox */
+    .popup-body select.form-control::-moz-focus-inner {
+        border: 0;
+    }
+
+    /* Focus state */
+    .popup-body select.form-control:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.2);
+    }
+
+    /* Custom price input styling */
+    #custom-price-group {
+        transition: all 0.3s ease;
+        margin-top: 10px;
+        padding: 15px;
+        background: rgba(255, 0, 255, 0.1);
+        border-radius: 5px;
+        border: 1px solid rgba(255, 0, 255, 0.2);
+    }
+
+    #custom-price-group .form-text {
+        margin-top: 5px;
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+
+    #popup-custom-price:invalid {
+        border-color: #ff4444;
+    }
+
+    #popup-custom-price:valid {
+        border-color: #00ff00;
+    }
+
+  .time-slot-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    padding: 12px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .time-slot-btn:hover {
+    background: rgba(255, 0, 255, 0.2);
+    border-color: var(--accent);
+  }
+
+  .time-slot-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+</style>
+</head>
+<body>
+    <!-- Updated Header -->
+<header>
+   <!-- <a href="#" class="logo img">
+        <img src="Logo (2).png" alt="MAKATATUAJES">
+    </a>-->
+    
+    <nav id="mainNav">
+        <ul>
+            <li><a href="#hero">Inicio</a></li>
+            <li><a href="#arte">Arte</a></li>
+            <li><a href="#sobre-mi">Sobre Mí</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+        <div class="social-icons-mobile">
+            <a href="https://www.instagram.com/maka.tatuajes" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+            <a href="https://facebook.com/mvjaque" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
+        </div>
+    </nav>
+    
+    <div class="social-icons">
+        <a href="https://www.instagram.com/maka.tatuajes" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+        <a href="https://facebook.com/mvjaque" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
+    </div>
+    
+    <!-- Burger Menu Button -->
+    <button class="burger-menu" id="burgerMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+</header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="logo">
+            <img 
+                src="Logo (2).png" 
+                alt="Makatatuajes Logo" 
+                onload="this.parentElement.classList.add('image-loaded')"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"
+            >
+        </div>
+        <p class="hero-description">Arte en piel con estilo urbano y profesional. Transformando ideas en tatuajes únicos en Santiago de Chile.</p>
+        <a href="#arte" class="btn">Ver mi trabajo</a>
+    </section>
+
+    <!-- Conoce mi Trabajo Section -->
+    <section id="arte">
+        <h2 class="section-title">Conoce mi Trabajo</h2>
+        <div class="art-grid">
+            <!-- Card 1 - Linea Fina -->
+            <div class="art-card">
+            <div class="art-image">
+            <img src="https://images.unsplash.com/photo-1613082442324-62e7e55445a7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80" alt="Tatuaje Linea Fina">
+            </div>
+            <h3 class="art-title">Línea Fina</h3>
+            <div class="art-description">
+            <p><strong>Diseños delicados y minimalistas realizados con líneas precisas y finas.</strong> Perfectos para tatuajes discretos, símbolos elegantes y composiciones que destacan por su simplicidad y elegancia.</p>
+            <a href="#" class="btn">Ver más</a>
+            </div>
+        </div>
+
+<!-- Card 2 - Botanico -->
+            <div class="art-card">
+            <div class="art-image">
+            <img src="https://images.unsplash.com/photo-1577985057584-707f7e88179c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Tatuaje Botánico">
+            </div>
+            <h3 class="art-title">Botánico</h3>
+            <div class="art-description">
+            <p><strong>Inspirado en la naturaleza con flores, hojas y elementos orgánicos.</strong> Desde ramos delicados hasta jardines completos, capturo la belleza de la flora con detalles realistas y composiciones armónicas que celebran la naturaleza.</p>
+            <a href="#" class="btn">Ver más</a>
+            </div>
+        </div>
+
+<!-- Card 3 - Full Color -->
+            <div class="art-card">
+            <div class="art-image">
+            <img src="https://images.unsplash.com/photo-1611339555312-e4c52d2e9d2c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80" alt="Tatuaje Full Color">
+            </div>
+            <h3 class="art-title">Full Color</h3>
+            <div class="art-description">
+            <p><strong>Tatuajes vibrantes con una paleta completa de colores intensos.</strong> Desde diseños neotradicionales hasta piezas con mezclas cromáticas únicas, trabajo con pigmentos de alta calidad para crear obras que destacan por su vitalidad y profundidad de color.</p>
+            <a href="#" class="btn">Ver más</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre Mi Section -->
+    <section id="sobre-mi">
+        <h2 class="section-title">Sobre Mí</h2>
+        <div class="about-container">
+            <div class="about-text">
+                <p>Nacida en 1991 en Santiago de Chile, soy una tatuadora profesional con más de una década de experiencia en la industria. Comencé mi viaje en el mundo del tatuaje a los 17 años, descubriendo mi pasión por el arte corporal desde muy joven.</p>
+                <p>Mi formación como Diseñadora Profesional en la Universidad Santo Tomás me ha permitido combinar técnicas tradicionales con un enfoque contemporáneo, creando piezas únicas que reflejan la personalidad de cada cliente.</p>
+                <p>Valoro profundamente la relación con mis clientes, priorizando siempre un ambiente profesional, responsable y de confianza. Mi objetivo es que cada experiencia de tatuaje sea tan memorable como el arte que permanecerá en su piel.</p>
+            </div>
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1593705114312-a0ee03a3f7d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Makatatuajes - Tatuadora">
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacto Section -->
+    <section id="contacto">
+        <h2 class="section-title">Contacto</h2>
+        <form class="contact-form" action="https://formsubmit.co/your-email@example.com" method="POST">
+            <input type="hidden" name="_subject" value="Nuevo mensaje desde makatatuajes.com">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="apellido">Apellido</label>
+                <input type="text" id="apellido" name="apellido" required>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="comentario">Comentario</label>
+                <textarea id="comentario" name="comentario" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Enviar Mensaje</button>
+        </form>
+    </section>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/56912345678" class="whatsapp-btn" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+            </div>
+            <p class="copyright">© 2025 Makatatuajes. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    
+<!-- New Floating Heart Button -->
+<div class="floating-heart" id="floating-heart">
+    <i class="fas fa-heart"></i>
+    <span>Reserva tu hora ya!</span>
+</div>
+
+<!-- Popup Form for Payment -->
+<div class="popup-overlay" id="popup-overlay">
+    <div class="popup-content">
+        <div class="popup-header">
+            <h3>Reserva tu Experiencia</h3>
+            <button class="popup-close" id="popup-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="popup-body">
+            <!-- Required Fields Note -->
+            <div class="required-note" style="color: var(--accent); margin-bottom: 1.5rem; padding: 10px; background: rgba(255, 0, 255, 0.1); border-radius: 5px; border-left: 3px solid var(--accent);">
+                <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+                <strong>Todos los campos son obligatorios</strong>
+            </div>
+
+            <form id="payment-form">
+                <div class="form-group">
+                    <label for="popup-abono">Selecciona tu Abono</label>
+                    <select id="popup-abono" class="form-control" required>
+                        <option value="" disabled selected>Elige tu abono</option>
+                        <option value="Abono $15.000 CLP" data-price="15000">Abono $15.000 CLP</option>
+                        <option value="Abono $20.000 CLP" data-price="20000">Abono $20.000 CLP</option>
+                        <option value="Abono $30.000 CLP" data-price="30000">Abono $30.000 CLP</option>
+                        <option value="Abono $40.000 CLP" data-price="40000">Abono $40.000 CLP</option>
+                        <option value="Abono $60.000 CLP" data-price="60000">Abono $60.000 CLP</option>
+                        <option value="Abono $80.000 CLP" data-price="80000">Abono $80.000 CLP</option>
+                        <option value="Abono $100.000 CLP" data-price="100000">Abono $100.000 CLP</option>
+                        <option value="Abono $120.000 CLP" data-price="120000">Abono $120.000 CLP</option>
+                        <option value="custom" data-price="custom">💰 Personalizar monto</option>
+                    </select>
+                </div>
+
+                <!-- Custom Price Input (Hidden by Default) -->
+                <div class="form-group" id="custom-price-group" style="display: none;">
+                    <label for="popup-custom-price">Monto Personalizado (Mínimo: $15.000 CLP)</label>
+                    <input type="number" id="popup-custom-price" class="form-control" min="15000" step="1000" placeholder="Ingresa el monto deseado">
+                    <small class="form-text" style="color: var(--text-secondary);">Monto mínimo: $15.000 CLP</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="popup-name">Nombre Completo</label>
+                    <input type="text" id="popup-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="popup-email">Correo Electrónico</label>
+                    <input type="email" id="popup-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="popup-phone">Teléfono</label>
+                    <input type="tel" id="popup-phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="popup-date">Fecha Preferida</label>
+                    <input type="date" id="popup-date" class="form-control" required>
+                </div>
+              <!-- Time slots container - Add this after the date input -->
+              <div class="form-group" id="time-slots-group" style="display: none;">
+                <label>Horarios Disponibles</label>
+                <div id="time-slots-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;"></div>
+                <div id="no-slots-message" style="display: none; color: var(--accent); padding: 10px; background: rgba(255, 0, 255, 0.1); border-radius: 5px;">No hay horarios disponibles para esta fecha. Por favor selecciona otra fecha.</div>
+              </div>
+                <div class="form-group">
+                    <label for="popup-genero">Género</label>
+                    <select id="popup-genero" class="form-control" required>
+                        <option value="" disabled selected>Selecciona tu género</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="popup-comments">Comentame, en qué zona lo deseas? Cuantos centimetros? (largo por ancho) Tienes alguna imagen de referencia? Dejame un link para verlo :)</label>
+                    <textarea id="popup-comments" class="form-control" rows="3"></textarea>
+                </div>
+
+                <!-- Optional Photo/Video Authorization Checkbox -->
+                <div class="form-group">
+                    <div style="padding: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <input type="checkbox" id="popup-photo-auth">
+                        <label for="popup-photo-auth" style="font-weight: normal;">
+                            Autorizo el uso de fotografías y videos de mi tatuaje para fines promocionales en redes sociales y página web (opcional)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <input type="checkbox" id="popup-legal-check" required>
+                        <label for="popup-legal-check">Acepto los <span class="legal-toggle" id="popup-legal-toggle">términos y condiciones</span></label>
+                    </div>
+                    <div class="legal-disclaimer" id="popup-legal-disclaimer" style="display: none;">
+                        <p><strong>Términos y Condiciones de Participación</strong></p>
+                        <p>Al reservar tu hora, aceptas:</p>
+                        <ul>
+                            <li>Respetar a la artista tatuadora y mantener un comportamiento adecuado.</li>
+                            <li>Asistir puntualmente a la cita acordada.</li>
+                            <li>Si deseas cancelar tu hora debes hacerlo con al menos 48 horas de anticipación para tener derecho a reagendar la cita según disponibilidad de horas de Maka Tatuajes.</li> <li><strong>No se realizan devoluciones de los montos abonados.</strong></li>
+                            <li>Cumplir con las normas de seguridad recomendadas tales como: no beber alcohol antes ni durante la sesión, presentarse a la sesión con la higiene adecuada en la zona a tatuar.</li>
+                            <li>Maka Tatuajes se reserva el derecho de admisión y puede cancelar la sesión ante comportamientos inadecuados durante la sesión.</li>
+                        </ul>
+                    </div>
+                </div>
+                <button type="submit" class="btn-payment">
+                    <i class="fas fa-lock"></i>
+                    Proceder al Pago
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+    
+<script>
+    
+    // Floating heart button functionality
+    const floatingHeart = document.getElementById('floating-heart');
+    const popupOverlay = document.getElementById('popup-overlay');
+    const popupClose = document.getElementById('popup-close');
+    const legalToggle = document.getElementById('popup-legal-toggle');
+    const legalDisclaimer = document.getElementById('popup-legal-disclaimer');
+
+    // Open popup when heart is clicked
+    if (floatingHeart) {
+        floatingHeart.addEventListener('click', function(e) {
+            e.preventDefault();
+            popupOverlay.classList.add('active');
+        });
+    }
+
+    // Close popup when X is clicked
+    if (popupClose) {
+        popupClose.addEventListener('click', function() {
+            popupOverlay.classList.remove('active');
+        });
+    }
+
+    // Close popup when clicking outside content
+    if (popupOverlay) {
+        popupOverlay.addEventListener('click', function(e) {
+            if (e.target === popupOverlay) {
+                popupOverlay.classList.remove('active');
+            }
+        });
+    }
+
+    // Toggle legal disclaimer
+    if (legalToggle && legalDisclaimer) {
+        legalToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            legalDisclaimer.style.display = legalDisclaimer.style.display === 'none' ? 'block' : 'none';
+        });
+    }
+
+// Custom price functionality
+const abonoSelect = document.getElementById('popup-abono');
+const customPriceGroup = document.getElementById('custom-price-group');
+const customPriceInput = document.getElementById('popup-custom-price');
+
+if (abonoSelect && customPriceGroup && customPriceInput) {
+    abonoSelect.addEventListener('change', function() {
+        if (this.value === 'custom') {
+            // Show custom price input
+            customPriceGroup.style.display = 'block';
+            customPriceInput.required = true;
+        } else {
+            // Hide custom price input
+            customPriceGroup.style.display = 'none';
+            customPriceInput.required = false;
+            customPriceInput.value = '';
+        }
+    });
+
+    // Validate custom price on input
+    customPriceInput.addEventListener('input', function() {
+        const value = parseInt(this.value);
+        if (value < 15000) {
+            this.setCustomValidity('El monto mínimo es $15.000 CLP');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+}
+
+// Update the form submission handler to handle custom prices
+const paymentForm = document.getElementById('payment-form');
+if (paymentForm) {
+    paymentForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.querySelector('.btn-payment');
+        const originalText = submitBtn.innerHTML;
+        
+        try {
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+            submitBtn.disabled = true;
+
+            // Get selected option
+            const selectedOption = document.getElementById('popup-abono').selectedOptions[0];
+            const isCustomPrice = selectedOption.value === 'custom';
+            
+            // Get custom price if applicable
+            let finalPrice;
+            let abonoDescription;
+            
+            if (isCustomPrice) {
+                const customPrice = document.getElementById('popup-custom-price').value;
+                if (!customPrice || parseInt(customPrice) < 15000) {
+                    throw new Error('Por favor ingresa un monto válido (mínimo $15.000 CLP)');
+                }
+                finalPrice = customPrice;
+                abonoDescription = `Abono Personalizado $${parseInt(customPrice).toLocaleString('es-CL')} CLP`;
+            } else {
+                finalPrice = selectedOption.getAttribute('data-price');
+                abonoDescription = selectedOption.value;
+            }
+
+            // Get form data
+            const formData = {
+                abono: abonoDescription,
+                nombre: document.getElementById('popup-name').value,
+                email: document.getElementById('popup-email').value,
+                celular: document.getElementById('popup-phone').value,
+                genero: document.getElementById('popup-genero').value,
+                comentarios: document.getElementById('popup-comments').value,
+                price: finalPrice
+            };
+
+            console.log('Form data with custom price:', formData);
+
+            // Validate required fields
+            if (!formData.email || formData.email.trim() === '') {
+                throw new Error('Por favor ingresa tu email');
+            }
+
+            // API call
+            const API_URL = 'https://webpage-nine-mu.vercel.app/api/flow/payment';
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+
+            console.log('API Response status:', response.status);
+
+            if (!response.ok) {
+                throw new Error(`Error del servidor: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('API Success response:', result);
+
+            if (result.success && result.flowUrl) {
+                console.log('Redirecting to Flow:', result.flowUrl);
+                window.location.href = result.flowUrl;
+            } else {
+                throw new Error(result.error || 'Error al procesar el pago');
+            }
+
+        } catch (error) {
+            console.error('Payment error:', error);
+            alert('Error: ' + error.message);
+            
+            // Reset button
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+}
+    // Simple scroll animation for sections
+    const sections = document.querySelectorAll('section');
+    
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    sections.forEach(section => {
+        section.style.opacity = 0;
+        section.style.transform = 'translateY(20px)';
+        section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        observer.observe(section);
+    });
+
+    // Check if logo image loaded correctly
+    const logoImg = document.querySelector('.logo img');
+    if (logoImg) {
+        logoImg.addEventListener('error', () => {
+            logoImg.style.display = 'none';
+            document.querySelector('.logo-text').style.display = 'block';
+        });
+    }
+
+// Burger Menu Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const burgerMenu = document.getElementById('burgerMenu');
+    const mainNav = document.getElementById('mainNav');
+    
+    if (burgerMenu && mainNav) {
+        // Toggle mobile menu
+        burgerMenu.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent event bubbling
+            burgerMenu.classList.toggle('active');
+            mainNav.classList.toggle('active');
+            document.body.style.overflow = mainNav.classList.contains('active') ? 'hidden' : '';
+        });
+        
+        // Close menu when clicking on a link
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                burgerMenu.classList.remove('active');
+                mainNav.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const isClickInsideNav = mainNav.contains(event.target);
+            const isClickOnBurger = burgerMenu.contains(event.target);
+            
+            if (!isClickInsideNav && !isClickOnBurger && mainNav.classList.contains('active')) {
+                burgerMenu.classList.remove('active');
+                mainNav.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+        
+        // Close menu on window resize if it goes back to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                burgerMenu.classList.remove('active');
+                mainNav.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+      // Add this to your existing JavaScript
+const VERCEL_BASE_URL = 'https://your-vercel-app.vercel.app/api'; // Replace with your actual Vercel URL
+
+// Load available time slots when date changes
+document.getElementById('popup-date').addEventListener('change', async function(e) {
+    const selectedDate = e.target.value;
+    const timeSlotsGroup = document.getElementById('time-slots-group');
+    const timeSlotsContainer = document.getElementById('time-slots-container');
+    const noSlotsMessage = document.getElementById('no-slots-message');
+    
+    if (!selectedDate) {
+        timeSlotsGroup.style.display = 'none';
+        return;
+    }
+    
+    try {
+        // Show loading
+        timeSlotsContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Cargando horarios disponibles...</div>';
+        timeSlotsGroup.style.display = 'block';
+        noSlotsMessage.style.display = 'none';
+        
+        // Fetch available slots from Vercel API
+        const response = await fetch(`${VERCEL_BASE_URL}/available-slots?date=${selectedDate}`);
+        const result = await response.json();
+        
+        if (result.success && result.slots.length > 0) {
+            timeSlotsContainer.innerHTML = '';
+            result.slots.forEach(slot => {
+                const slotButton = document.createElement('button');
+                slotButton.type = 'button';
+                slotButton.className = 'time-slot-btn';
+                slotButton.innerHTML = `
+                    <i class="fas fa-clock"></i>
+                    ${slot.display}
+                `;
+                slotButton.dataset.start = slot.start;
+                slotButton.dataset.end = slot.end;
+                slotButton.dataset.display = slot.display;
+                
+                slotButton.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.time-slot-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    // Store selected time
+                    document.getElementById('payment-form').dataset.selectedSlot = JSON.stringify(slot);
+                });
+                
+                timeSlotsContainer.appendChild(slotButton);
+            });
+        } else {
+            timeSlotsContainer.innerHTML = '';
+            noSlotsMessage.style.display = 'block';
+        }
+        
+    } catch (error) {
+        console.error('Error loading time slots:', error);
+        timeSlotsContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: var(--accent);">Error cargando horarios</div>';
+    }
+});
+
+// Update form submission to include calendar integration
+const originalFormSubmit = document.getElementById('payment-form').onsubmit;
+document.getElementById('payment-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const selectedSlot = this.dataset.selectedSlot;
+    if (!selectedSlot) {
+        alert('Por favor selecciona un horario disponible');
+        return;
+    }
+    
+    const formData = {
+        name: document.getElementById('popup-name').value,
+        email: document.getElementById('popup-email').value,
+        phone: document.getElementById('popup-phone').value,
+        date: document.getElementById('popup-date').value,
+        timeSlot: JSON.parse(selectedSlot),
+        deposit: document.getElementById('popup-abono').value,
+        gender: document.getElementById('popup-genero').value,
+        comments: document.getElementById('popup-comments').value,
+        photoAuth: document.getElementById('popup-photo-auth').checked
+    };
+
+    try {
+        // Show loading
+        const submitBtn = document.querySelector('.btn-payment');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cita...';
+        submitBtn.disabled = true;
+
+        // First create the calendar event
+        const response = await fetch(`${VERCEL_BASE_URL}/create-appointment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Calendar event created successfully, now proceed with payment
+            alert('¡Cita creada exitosamente! Ahora serás redirigido al pago.');
+            
+            // Here you can proceed with your existing payment flow
+            // For example, call your existing payment function:
+            // processPayment(formData);
+            
+        } else {
+            throw new Error(result.error || 'Error creating appointment');
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al crear la cita: ' + error.message);
+    } finally {
+        // Reset button
+        const submitBtn = document.querySelector('.btn-payment');
+        submitBtn.innerHTML = '<i class="fas fa-lock"></i> Proceder al Pago';
+        submitBtn.disabled = false;
+    }
+});
+    }
+});
+
+</script>
+</body>
+</html>

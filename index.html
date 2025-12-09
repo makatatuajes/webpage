@@ -494,6 +494,72 @@
     #popup-custom-price:valid {
         border-color: #00ff00;
     }
+
+    
+    /* Style for select dropdown options */
+    .popup-body select.form-control {
+        color: var(--text-primary) !important;
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .popup-body select.form-control option {
+        color: var(--text-primary) !important;
+        background-color: var(--bg-secondary) !important;
+        padding: 10px;
+    }
+
+    .popup-body select.form-control option:hover,
+    .popup-body select.form-control option:focus {
+        background-color: var(--accent) !important;
+        color: var(--text-primary) !important;
+    }
+
+    /* Style for the select dropdown itself */
+    .popup-body select.form-control {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23ff00ff' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 12px;
+        padding-right: 40px;
+    }
+
+    /* For Firefox */
+    .popup-body select.form-control::-moz-focus-inner {
+        border: 0;
+    }
+
+    /* Focus state */
+    .popup-body select.form-control:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.2);
+    }
+
+    /* Custom price input styling */
+    #custom-price-group {
+        transition: all 0.3s ease;
+        margin-top: 10px;
+        padding: 15px;
+        background: rgba(255, 0, 255, 0.1);
+        border-radius: 5px;
+        border: 1px solid rgba(255, 0, 255, 0.2);
+    }
+
+    #custom-price-group .form-text {
+        margin-top: 5px;
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+
+    #popup-custom-price:invalid {
+        border-color: #ff4444;
+    }
+
+    #popup-custom-price:valid {
+        border-color: #00ff00;
+    }
     </style>
 </head>
 <body>
@@ -546,10 +612,12 @@
                     <i class="fas fa-envelope"></i>
                     <span>hola@makatatuajes.com</span>
                 </div>
+                <!--
                 <div class="contact-item">
                     <i class="fas fa-phone"></i>
                     <span>+56 9 1234 5678</span>
                 </div>
+                -->
                 <div class="contact-item">
                     <i class="fas fa-map-marker-alt"></i>
                     <span>Santiago, Chile</span>
@@ -670,10 +738,12 @@
 </div>
 
     
-    <!-- WhatsApp Button -->
+    <!-- WhatsApp Button 
     <a href="https://wa.me/56912345678?text=Hola%20Maka,%20me%20interesa%20cotizar%20un%20tatuaje%20contigo"" class="whatsapp-btn" target="_blank">
         <i class="fab fa-whatsapp"></i>
     </a>
+    -->
+    
 
     <script>
 
@@ -838,7 +908,7 @@ if (paymentForm) {
 }
   // Simple working countdown for December 10, 2025
   function startCountdown() {
-      const targetDate = new Date('2025-12-10T00:00:00-03:00');
+      const targetDate = new Date('2025-12-14T00:00:00-03:00');
       
       function update() {
           const now = new Date();

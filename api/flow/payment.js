@@ -13,7 +13,7 @@ const FLOW_CONFIG = {
     : 'http://localhost:3000/api/flow/confirm',
   URL_RETURN: process.env.VERCEL_URL 
     ? `https://${process.env.VERCEL_URL}/success` 
-    : 'https://makatatuajes.com/success'
+    : 'https://makatatuajes.com/success.html'
 };
 
 console.log('Makatatuajes Flow config check:', {

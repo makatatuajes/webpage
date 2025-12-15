@@ -36,137 +36,138 @@
         overflow-x: hidden;
     }
 
-/* Updated Header Styles */
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 50px;
-    background-color: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(15px);
-    z-index: 1000;
-    padding: 0.3rem 1.5rem;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 2rem;
-    border-bottom: 1px solid rgba(255, 0, 255, 0.2);
-    min-height: 42px;
-    transition: var(--transition);
-}
+    /* Updated Header Styles */
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50px;
+        background-color: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(15px);
+        z-index: 1000;
+        padding: 0.3rem 1.5rem;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 2rem;
+        border-bottom: 1px solid rgba(255, 0, 255, 0.2);
+        min-height: 42px;
+        transition: var(--transition);
+    }
 
-.logo {
-    display: flex;
-    align-items: center;
-    z-index: 1001;
-}
+    .logo {
+        display: flex;
+        align-items: center;
+        z-index: 1001;
+    }
 
-.logo img {
-    height: 35px;
-    width: auto;
-    transition: var(--transition);
-}
+    .logo img {
+        height: 35px;
+        width: auto;
+        transition: var(--transition);
+    }
 
-/* Navigation Styles */
-nav {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    /* Navigation Styles */
+    nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-nav ul {
-    display: flex;
-    list-style: none;
-    gap: 2rem;
-    margin: 0;
-}
+    nav ul {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+        margin: 0;
+    }
 
-nav a {
-    color: var(--text-primary);
-    text-decoration: none;
-    font-weight: 500;
-    transition: var(--transition);
-    position: relative;
-    font-size: 0.9rem;
-}
+    nav a {
+        color: var(--text-primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        position: relative;
+        font-size: 0.9rem;
+    }
 
-nav a:hover {
-    color: var(--accent);
-}
+    nav a:hover {
+        color: var(--accent);
+    }
 
-nav a::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--accent);
-    transition: var(--transition);
-}
+    nav a::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--accent);
+        transition: var(--transition);
+    }
 
-nav a:hover::after {
-    width: 100%;
-}
+    nav a:hover::after {
+        width: 100%;
+    }
 
-.social-icons {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-}
+    .social-icons {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
 
-.social-icons a {
-    color: var(--text-primary);
-    font-size: 1rem;
-    transition: var(--transition);
-}
+    .social-icons a {
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: var(--transition);
+    }
 
-.social-icons a:hover {
-    color: var(--accent);
-    transform: translateY(-3px);
-}
+    .social-icons a:hover {
+        color: var(--accent);
+        transform: translateY(-3px);
+    }
 
-.social-icons-mobile {
-    display: none;
-}
+    .social-icons-mobile {
+        display: none;
+    }
 
-/* Burger Menu Styles */
-.burger-menu {
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 30px;
-    height: 21px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    z-index: 1001;
-}
+    /* Burger Menu Styles */
+    .burger-menu {
+        display: none;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 21px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 1001;
+    }
 
-.burger-menu span {
-    display: block;
-    height: 3px;
-    width: 100%;
-    background-color: var(--text-primary);
-    border-radius: 3px;
-    transition: var(--transition);
-    transform-origin: center;
-}
+    .burger-menu span {
+        display: block;
+        height: 3px;
+        width: 100%;
+        background-color: var(--text-primary);
+        border-radius: 3px;
+        transition: var(--transition);
+        transform-origin: center;
+    }
 
-/* Burger menu animation when active */
-.burger-menu.active span:nth-child(1) {
-    transform: translateY(9px) rotate(45deg);
-}
+    /* Burger menu animation when active */
+    .burger-menu.active span:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
 
-.burger-menu.active span:nth-child(2) {
-    opacity: 0;
-}
+    .burger-menu.active span:nth-child(2) {
+        opacity: 0;
+    }
 
-.burger-menu.active span:nth-child(3) {
-    transform: translateY(-9px) rotate(-45deg);
-}
+    .burger-menu.active span:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+
     /* Section Common Styles */
     section {
         min-height: 100vh;
@@ -217,6 +218,34 @@ nav a:hover::after {
         color: var(--text-secondary);
     }
 
+    /* FIXED: Hero logo image size for mobile */
+    .hero .logo {
+        margin-bottom: 2rem;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .hero .logo img {
+        max-width: 300px;
+        width: 100%;
+        height: auto;
+        filter: drop-shadow(0 0 15px rgba(255, 0, 255, 0.7));
+        animation: pulse 2s infinite;
+    }
+
+    @media (max-width: 768px) {
+        .hero .logo img {
+            max-width: 250px; /* Adjusted for better mobile display */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero .logo img {
+            max-width: 200px; /* Smaller for very small screens */
+        }
+    }
+
     /* Conoce mi Arte Section */
     .art-grid {
         display: grid;
@@ -224,6 +253,20 @@ nav a:hover::after {
         gap: 2rem;
         max-width: 1200px;
         width: 100%;
+    }
+
+    /* FIXED: Changed mobile grid to 1 column instead of 2 */
+    @media (max-width: 992px) {
+        .art-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .art-grid {
+            grid-template-columns: 1fr; /* Changed from 2 to 1 column */
+            gap: 1.5rem;
+        }
     }
 
     .art-card {
@@ -388,18 +431,6 @@ nav a:hover::after {
         resize: vertical;
     }
 
-    .logo {
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-
-    .logo img {
-        max-width: 300px;
-        height: auto;
-        filter: drop-shadow(0 0 15px rgba(255, 0, 255, 0.7));
-        animation: pulse 2s infinite;
-    }
-
     .logo-text {
         font-size: 3.5rem;
         font-weight: bold;
@@ -417,6 +448,7 @@ nav a:hover::after {
     .logo:not(.image-loaded) .logo-text {
         display: block; /* Show text if image fails to load */
     }
+
     .submit-btn {
         width: 100%;
         padding: 1rem;
@@ -656,11 +688,26 @@ nav a:hover::after {
         padding: 2rem;
         text-align: center;
         border-top: 1px solid rgba(255, 0, 255, 0.2);
+        display: block !important; /* Ensure footer is always displayed */
     }
 
     .footer-content {
         max-width: 1200px;
         margin: 0 auto;
+    }
+
+    /* FIXED: Footer social icons display on mobile */
+    footer .social-icons {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        footer .social-icons {
+            display: flex !important; /* Force display on mobile */
+            gap: 1.5rem;
+        }
     }
 
     .copyright {
@@ -682,10 +729,6 @@ nav a:hover::after {
     
     /* Responsive Styles */
     @media (max-width: 992px) {
-        .art-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        
         .about-container {
             grid-template-columns: 1fr;
         }
@@ -693,108 +736,134 @@ nav a:hover::after {
         .about-text {
             padding-right: 0;
         }
-            .logo {
-        height: 40px;
+        
+        .logo {
+            height: 40px;
         }
     }
 
    /* Mobile Navigation */
-@media (max-width: 768px) {
-    header {
-        padding: 0.5rem 1rem;
-        min-height: 50px;
-        grid-template-columns: auto 1fr;
+   @media (max-width: 768px) {
+        header {
+            padding: 0.5rem 1rem;
+            min-height: 50px;
+            grid-template-columns: auto 1fr;
+        }
+        
+        .logo img {
+            height: 32px;
+        }
+        
+        /* Hide desktop social icons on mobile */
+        .social-icons {
+            display: none;
+        }
+        
+        .burger-menu {
+            display: flex;
+            grid-column: 2;
+            justify-self: end;
+        }
+        
+        nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 70%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(15px);
+            transition: var(--transition);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-left: 1px solid rgba(255, 0, 255, 0.2);
+            grid-column: 1 / -1;
+        }
+        
+        nav.active {
+            right: 0;
+        }
+        
+        nav ul {
+            flex-direction: column;
+            gap: 2rem;
+            text-align: center;
+        }
+        
+        nav a {
+            font-size: 1.2rem;
+            padding: 0.5rem 0;
+        }
+        
+        /* FIXED: Mobile social icons inside nav - added TikTok */
+        .social-icons-mobile {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+        
+        .social-icons-mobile a {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+        
+        .social-icons-mobile a:hover {
+            color: var(--accent);
+            transform: translateY(-3px);
+        }
+        
+        /* Adjust section padding for thinner header */
+        section {
+            padding: 4.5rem 2rem 2rem;
+        }
+        
+        /* Mobile responsive adjustments for popup */
+        .popup-overlay {
+            padding: 10px 0;
+            align-items: flex-start;
+        }
+        
+        .popup-content {
+            width: 95%;
+            max-height: 95vh;
+            margin: 10px auto;
+        }
+        
+        .popup-body {
+            max-height: calc(95vh - 100px);
+            padding: 1rem;
+        }
+        
+        /* Adjust hero section padding for mobile */
+        .hero {
+            padding-top: 4rem;
+        }
     }
-    
-    .logo img {
-        height: 32px;
+
+    @media (max-width: 480px) {
+        .section-title {
+            font-size: 2rem;
+        }
+        
+        .hero-description {
+            font-size: 1rem;
+            padding: 0 1rem;
+        }
+        
+        .art-image {
+            height: 200px;
+        }
+        
+        .about-image {
+            height: 300px;
+        }
     }
-    
-    /* Hide desktop social icons on mobile */
-    .social-icons {
-        display: none;
-    }
-    
-    .burger-menu {
-        display: flex;
-        grid-column: 2;
-        justify-self: end;
-    }
-    
-    nav {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 70%;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.98);
-        backdrop-filter: blur(15px);
-        transition: var(--transition);
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border-left: 1px solid rgba(255, 0, 255, 0.2);
-        grid-column: 1 / -1;
-    }
-    
-    nav.active {
-        right: 0;
-    }
-    
-    nav ul {
-        flex-direction: column;
-        gap: 2rem;
-        text-align: center;
-    }
-    
-    nav a {
-        font-size: 1.2rem;
-        padding: 0.5rem 0;
-    }
-    
-    /* Show mobile social icons inside nav */
-    .social-icons-mobile {
-        display: flex;
-        gap: 1.5rem;
-        margin-top: 2rem;
-        justify-content: center;
-    }
-    
-    .social-icons-mobile a {
-        color: var(--text-primary);
-        font-size: 1.5rem;
-        transition: var(--transition);
-    }
-    
-    .social-icons-mobile a:hover {
-        color: var(--accent);
-        transform: translateY(-3px);
-    }
-    
-    /* Adjust section padding for thinner header */
-    section {
-        padding: 4.5rem 2rem 2rem;
-    }
-    
-    /* Mobile responsive adjustments for popup */
-    .popup-overlay {
-        padding: 10px 0;
-        align-items: flex-start;
-    }
-    
-    .popup-content {
-        width: 95%;
-        max-height: 95vh;
-        margin: 10px auto;
-    }
-    
-    .popup-body {
-        max-height: calc(95vh - 100px);
-        padding: 1rem;
-    }
-}
+
     /* Style for select dropdown options */
     .popup-body select.form-control {
         color: var(--text-primary) !important;
@@ -875,16 +944,18 @@ nav a:hover::after {
             <li><a href="#sobre-mi">Sobre Mí</a></li>
             <li><a href="#contacto">Contacto</a></li>
         </ul>
+        <!-- FIXED: Added TikTok icon to mobile navigation -->
         <div class="social-icons-mobile">
             <a href="https://www.instagram.com/maka.tatuajes" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
             <a href="https://facebook.com/mvjaque" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.tiktok.com/@maka.tatuajes0?_r=1&_t=ZM-925Ivfzqxie" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i></a>
         </div>
     </nav>
     
     <div class="social-icons">
         <a href="https://www.instagram.com/maka.tatuajes" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
         <a href="https://facebook.com/mvjaque" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
-        <a href="https://www.tiktok.com/@maka.tatuajes0?_r=1&_t=ZM-925Ivfzqxie"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="https://www.tiktok.com/@maka.tatuajes0?_r=1&_t=ZM-925Ivfzqxie" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i></a>
     </div>
     
     <!-- Burger Menu Button -->
@@ -904,6 +975,7 @@ nav a:hover::after {
                 onload="this.parentElement.classList.add('image-loaded')"
                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"
             >
+            <div class="logo-text">MAKATATUAJES</div>
         </div>
         <p class="hero-description">Arte en piel con estilo urbano y profesional. Transformando ideas en tatuajes únicos en Santiago de Chile.</p>
         <a href="#arte" class="btn">Ver mi trabajo</a>
@@ -1003,10 +1075,11 @@ nav a:hover::after {
     <!-- Footer -->
     <footer>
         <div class="footer-content">
+            <!-- FIXED: Footer social icons will now display on mobile -->
             <div class="social-icons">
                 <a href="https://www.instagram.com/maka.tatuajes" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
                 <a href="https://facebook.com/mvjaque" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.tiktok.com/@maka.tatuajes0?_r=1&_t=ZM-925Ivfzqxie"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="https://www.tiktok.com/@maka.tatuajes0?_r=1&_t=ZM-925Ivfzqxie" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i></a>
             </div>
             <p class="copyright">© 2026 Makatatuajes. Todos los derechos reservados.</p>
         </div>

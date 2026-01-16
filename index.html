@@ -1501,13 +1501,6 @@ document.addEventListener('DOMContentLoaded', function() {
         carousel.addEventListener('mouseleave', () => {
             startAutoAdvance();
         });
-        
-        // Prevent clicks on images from bubbling
-        slides.forEach(slide => {
-            slide.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-        });
     });
 });
 

@@ -974,6 +974,7 @@
     transition: background 0.3s;
     opacity: 0;
     transition: opacity 0.3s, background 0.3s;
+    pointer-events: auto;
 }
 
 .art-carousel:hover .carousel-prev,
@@ -1012,10 +1013,17 @@
     background: rgba(255, 255, 255, 0.5);
     cursor: pointer;
     transition: background 0.3s;
+    pointer-events: auto;
 }
 
 .dot.active {
     background: white;
+}
+
+/* Asegurar que el carrusel no interfiera con otros elementos */
+.art-image {
+    position: relative;
+    z-index: 1;
 }
 
 /* Media query for responsive design */
@@ -1091,10 +1099,11 @@
             <div class="art-image">
                 <!-- Carrusel container -->
                 <div class="art-carousel">
-                    <!-- Image 0 -->
+                    <!--
                     <div class="carousel-slide active">
                         <img src="lineafina.jpeg" alt="Tatuaje Linea Fina">
                     </div>
+                    -->
                     <!-- Image 1 -->
                     <div class="carousel-slide">
                         <img src="lineafina1.jpeg" alt="Tatuaje Linea Fina 1">
@@ -1112,8 +1121,8 @@
                         <img src="lineafina4.jpeg" alt="Tatuaje Linea Fina 4">
                     </div>
                     <!-- Navigation arrows -->
-                    <button class="carousel-prev" aria-label="Imagen anterior">‹</button>
-                    <button class="carousel-next" aria-label="Siguiente imagen">›</button>
+                    <button type="button" class="carousel-prev" aria-label="Imagen anterior">‹</button>
+                    <button type="button" class="carousel-next" aria-label="Siguiente imagen">›</button>
                     
                     <!-- Dots indicator -->
                     <div class="carousel-dots">
@@ -1148,8 +1157,8 @@
                     </div>
                     -->
                     <!-- Navigation arrows -->
-                    <button class="carousel-prev" aria-label="Imagen anterior">‹</button>
-                    <button class="carousel-next" aria-label="Siguiente imagen">›</button>
+                    <button type="button" class="carousel-prev" aria-label="Imagen anterior">‹</button>
+                    <button type="button" class="carousel-next" aria-label="Siguiente imagen">›</button>
                     
                     <!-- Dots indicator -->
                     <div class="carousel-dots">
@@ -1184,8 +1193,8 @@
                     </div>
                     -->
                     <!-- Navigation arrows -->
-                    <button class="carousel-prev" aria-label="Imagen anterior">‹</button>
-                    <button class="carousel-next" aria-label="Siguiente imagen">›</button>
+                    <button type="button" class="carousel-prev" aria-label="Imagen anterior">‹</button>
+                    <button type="button" class="carousel-next" aria-label="Siguiente imagen">›</button>
                     
                     <!-- Dots indicator -->
                     <div class="carousel-dots">
@@ -1395,49 +1404,94 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Only initialize if there's more than one slide
         if (slides.length <= 1) {
-            prevBtn.style.display = 'none';
-            nextBtn.style.display = 'none';
-            carousel.querySelector('.carousel-dots').style.display = 'none';
+            if (prevBtn) prevBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
+            const dotsContainer = carousel.querySelector('.carousel-dots');
+            if (dotsContainer) dotsContainer.style.display = 'none';
             return;
         }
         
         let currentSlide = 0;
+        let slideInterval;
         
         function showSlide(index) {
-            // Hide all slides
-            slides.forEach(slide => slide.classList.remove('active'));
-            dots.forEach(dot => dot.classList.remove('active'));
+            // Validate index
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
             
-            // Show current slide
+            // Hide all slides
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // Remove active class from all dots
+            dots.forEach(dot => {
+                dot.classList.remove('active');
+            });
+            
+            // Show current slide and activate corresponding dot
             slides[index].classList.add('active');
-            dots[index].classList.add('active');
+            if (dots[index]) {
+                dots[index].classList.add('active');
+            }
+            
             currentSlide = index;
         }
         
-        // Next slide
-        nextBtn.addEventListener('click', () => {
+        function nextSlide() {
             let nextIndex = (currentSlide + 1) % slides.length;
             showSlide(nextIndex);
-        });
+        }
         
-        // Previous slide
-        prevBtn.addEventListener('click', () => {
+        function prevSlide() {
             let prevIndex = (currentSlide - 1 + slides.length) % slides.length;
             showSlide(prevIndex);
-        });
+        }
         
-        // Dot click events
+        // Next slide - with stopPropagation
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                nextSlide();
+                resetAutoAdvance();
+            });
+        }
+        
+        // Previous slide - with stopPropagation
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                prevSlide();
+                resetAutoAdvance();
+            });
+        }
+        
+        // Dot click events - with stopPropagation
         dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
+            dot.addEventListener('click', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
                 showSlide(index);
+                resetAutoAdvance();
             });
         });
         
-        // Auto-advance (optional - remove if not needed)
-        let slideInterval = setInterval(() => {
-            let nextIndex = (currentSlide + 1) % slides.length;
-            showSlide(nextIndex);
-        }, 5000);
+        // Auto-advance function
+        function startAutoAdvance() {
+            slideInterval = setInterval(() => {
+                nextSlide();
+            }, 5000);
+        }
+        
+        function resetAutoAdvance() {
+            clearInterval(slideInterval);
+            startAutoAdvance();
+        }
+        
+        // Start auto-advance
+        startAutoAdvance();
         
         // Pause on hover
         carousel.addEventListener('mouseenter', () => {
@@ -1445,13 +1499,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         carousel.addEventListener('mouseleave', () => {
-            slideInterval = setInterval(() => {
-                let nextIndex = (currentSlide + 1) % slides.length;
-                showSlide(nextIndex);
-            }, 5000);
+            startAutoAdvance();
+        });
+        
+        // Prevent clicks on images from bubbling
+        slides.forEach(slide => {
+            slide.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
         });
     });
-});    
+});
+    
     // Floating heart button functionality
     const floatingHeart = document.getElementById('floating-heart');
     const popupOverlay = document.getElementById('popup-overlay');

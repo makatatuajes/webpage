@@ -1511,8 +1511,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-    // Agrega este código si necesitas prevenir conflictos con otros event listeners
-document.addEventListener('click', function(e) {
+
     // Si el clic fue en un botón del carrusel, no hacer nada más
     if (e.target.classList.contains('carousel-prev') || 
         e.target.classList.contains('carousel-next') ||

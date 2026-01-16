@@ -928,6 +928,7 @@
     #popup-custom-price:valid {
         border-color: #00ff00;
     }
+
 .art-carousel {
     position: relative;
     width: 100%;
@@ -971,6 +972,13 @@
     cursor: pointer;
     z-index: 10;
     transition: background 0.3s;
+    opacity: 0;
+    transition: opacity 0.3s, background 0.3s;
+}
+
+.art-carousel:hover .carousel-prev,
+.art-carousel:hover .carousel-next {
+    opacity: 1;
 }
 
 .carousel-prev:hover,
@@ -1008,6 +1016,17 @@
 
 .dot.active {
     background: white;
+}
+
+/* Media query for responsive design */
+@media (max-width: 768px) {
+    .carousel-prev,
+    .carousel-next {
+        opacity: 1;
+        width: 30px;
+        height: 30px;
+        font-size: 18px;
+    }
 }
     
 </style>
@@ -1365,7 +1384,7 @@
     
 <script>
 
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const carousels = document.querySelectorAll('.art-carousel');
     
     carousels.forEach(carousel => {
@@ -1373,6 +1392,14 @@
         const dots = carousel.querySelectorAll('.dot');
         const prevBtn = carousel.querySelector('.carousel-prev');
         const nextBtn = carousel.querySelector('.carousel-next');
+        
+        // Only initialize if there's more than one slide
+        if (slides.length <= 1) {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            carousel.querySelector('.carousel-dots').style.display = 'none';
+            return;
+        }
         
         let currentSlide = 0;
         
@@ -1424,8 +1451,7 @@
             }, 5000);
         });
     });
-});
-    
+});    
     // Floating heart button functionality
     const floatingHeart = document.getElementById('floating-heart');
     const popupOverlay = document.getElementById('popup-overlay');

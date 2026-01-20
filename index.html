@@ -290,6 +290,7 @@
         justify-content: center;
         align-items: center;
         overflow: hidden;
+        position: relative;
     }
 
     .art-image img {
@@ -310,29 +311,108 @@
         text-align: center;
     }
 
+    /* Estilo para el botón de información */
+    .description-toggle {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--accent);
+        font-size: 1.2rem;
+        cursor: pointer;
+        z-index: 15;
+        transition: all 0.3s ease;
+        border: 2px solid var(--accent);
+    }
+
+    .description-toggle:hover {
+        background: var(--accent);
+        color: var(--bg-primary);
+        transform: scale(1.1);
+    }
+
+    /* Ajuste para mostrar descripción */
     .art-description {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.9);
+        background-color: rgba(0, 0, 0, 0.95);
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         padding: 2rem;
         opacity: 0;
-        transition: var(--transition);
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 20;
+        transform: translateY(20px);
     }
 
-    .art-card:hover .art-description {
+    .art-card.show-description .art-description {
         opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .art-card.show-description .art-image .slide-image {
+        opacity: 0.3;
+    }
+
+    /* Botón para cerrar descripción */
+    .art-description::after {
+        content: '✕';
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 30px;
+        height: 30px;
+        background: var(--accent);
+        color: var(--text-primary);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .art-description::after:hover {
+        background: var(--accent-hover);
+        transform: scale(1.1);
     }
 
     .art-description p {
         margin-bottom: 1.5rem;
         text-align: center;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    /* Ajustes para móviles */
+    @media (max-width: 768px) {
+        .art-description {
+            padding: 1.5rem;
+        }
+        
+        .art-description p {
+            font-size: 0.9rem;
+        }
+        
+        .description-toggle {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+        }
     }
 
     .btn {
@@ -955,6 +1035,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: opacity 0.3s ease;
 }
 
 .carousel-prev,
@@ -971,9 +1052,7 @@
     font-size: 24px;
     cursor: pointer;
     z-index: 10;
-    transition: background 0.3s;
-    opacity: 0;
-    transition: opacity 0.3s, background 0.3s;
+    transition: background 0.3s, opacity 0.3s;
     pointer-events: auto;
 }
 
@@ -989,10 +1068,12 @@
 
 .carousel-prev {
     left: 10px;
+    opacity: 0;
 }
 
 .carousel-next {
     right: 10px;
+    opacity: 0;
 }
 
 .carousel-dots {
@@ -1105,20 +1186,20 @@
                     </div>
                     -->
                     <!-- Image 1 -->
-                    <div class="carousel-slide">
-                        <img src="lineafina4.jpeg" alt="Tatuaje Linea Fina 4">
+                    <div class="carousel-slide active">
+                        <img src="lineafina4.jpeg" alt="Tatuaje Linea Fina 4" class="slide-image">
                     </div>
                     <!-- Image 2 -->
                     <div class="carousel-slide">
-                        <img src="lineafina2.jpeg" alt="Tatuaje Linea Fina 2">
+                        <img src="lineafina2.jpeg" alt="Tatuaje Linea Fina 2" class="slide-image">
                     </div>
                     <!-- Image 3 -->
                     <div class="carousel-slide">
-                        <img src="lineafina3.jpeg" alt="Tatuaje Linea Fina 3">
+                        <img src="lineafina3.jpeg" alt="Tatuaje Linea Fina 3" class="slide-image">
                     </div>
                     <!-- Image 4 -->
                     <div class="carousel-slide">
-                        <img src="lineafina1.jpeg" alt="Tatuaje Linea Fina 1">
+                        <img src="lineafina1.jpeg" alt="Tatuaje Linea Fina 1" class="slide-image">
                     </div>
                     <!-- Navigation arrows -->
                     <button type="button" class="carousel-prev" aria-label="Imagen anterior">‹</button>
@@ -1131,6 +1212,10 @@
                         <span class="dot" data-slide="2"></span>
                         <span class="dot" data-slide="3"></span>
                     </div>
+                </div>
+                <!-- Botón para mostrar descripción -->
+                <div class="description-toggle">
+                    <i class="fas fa-info-circle"></i>
                 </div>
             </div>
             <h3 class="art-title">Línea Fina</h3>
@@ -1147,11 +1232,11 @@
                 <div class="art-carousel">
                     <!-- Image 0 -->
                     <div class="carousel-slide active">
-                        <img src="botanico1.jpeg" alt="Tatuaje Botánico">
+                        <img src="botanico1.jpeg" alt="Tatuaje Botánico" class="slide-image">
                     </div>
                     <!-- Image 1-->
                     <div class="carousel-slide">
-                        <img src="botanico.jpeg" alt="Tatuaje Botánico 2">
+                        <img src="botanico.jpeg" alt="Tatuaje Botánico 2" class="slide-image">
                     </div>
                     <!-- Navigation arrows -->
                     <button type="button" class="carousel-prev" aria-label="Imagen anterior">‹</button>
@@ -1160,12 +1245,12 @@
                     <!-- Dots indicator -->
                     <div class="carousel-dots">
                         <span class="dot active" data-slide="0"></span>
-                        <span class="dot active" data-slide="1"></span>
-                        <!-- AGREGAR MÁS PUNTOS AQUÍ -->
-                        <!--
                         <span class="dot" data-slide="1"></span>
-                        -->
                     </div>
+                </div>
+                <!-- Botón para mostrar descripción -->
+                <div class="description-toggle">
+                    <i class="fas fa-info-circle"></i>
                 </div>
             </div>
             <h3 class="art-title">Botánico</h3>
@@ -1182,14 +1267,8 @@
                 <div class="art-carousel">
                     <!-- Image 0 -->
                     <div class="carousel-slide active">
-                        <img src="portadacolor.jpeg" alt="Tatuaje Color">
+                        <img src="portadacolor.jpeg" alt="Tatuaje Color" class="slide-image">
                     </div>
-                    <!-- AGREGAR MÁS IMÁGENES AQUÍ -->
-                    <!-- 
-                    <div class="carousel-slide">
-                        <img src="color2.jpeg" alt="Tatuaje Color 2">
-                    </div>
-                    -->
                     <!-- Navigation arrows -->
                     <button type="button" class="carousel-prev" aria-label="Imagen anterior">‹</button>
                     <button type="button" class="carousel-next" aria-label="Siguiente imagen">›</button>
@@ -1197,11 +1276,11 @@
                     <!-- Dots indicator -->
                     <div class="carousel-dots">
                         <span class="dot active" data-slide="0"></span>
-                        <!-- AGREGAR MÁS PUNTOS AQUÍ -->
-                        <!--
-                        <span class="dot" data-slide="1"></span>
-                        -->
                     </div>
+                </div>
+                <!-- Botón para mostrar descripción -->
+                <div class="description-toggle">
+                    <i class="fas fa-info-circle"></i>
                 </div>
             </div>
             <h3 class="art-title">Color</h3>
@@ -1211,21 +1290,15 @@
             </div>
         </div>
 
-    <!-- Card 4 - Escala de grises -->
+        <!-- Card 4 - Escala de grises -->
         <div class="art-card">
             <div class="art-image">
                 <!-- Carrusel container -->
                 <div class="art-carousel">
                     <!-- Image 0 -->
                     <div class="carousel-slide active">
-                        <img src="grises1.jpeg" alt="Tatuaje Escala de grises1">
+                        <img src="grises1.jpeg" alt="Tatuaje Escala de grises1" class="slide-image">
                     </div>
-                    <!-- AGREGAR MÁS IMÁGENES AQUÍ -->
-                    <!-- 
-                    <div class="carousel-slide">
-                        <img src="color2.jpeg" alt="Tatuaje Color 2">
-                    </div>
-                    -->
                     <!-- Navigation arrows -->
                     <button type="button" class="carousel-prev" aria-label="Imagen anterior">‹</button>
                     <button type="button" class="carousel-next" aria-label="Siguiente imagen">›</button>
@@ -1233,11 +1306,11 @@
                     <!-- Dots indicator -->
                     <div class="carousel-dots">
                         <span class="dot active" data-slide="0"></span>
-                        <!-- AGREGAR MÁS PUNTOS AQUÍ -->
-                        <!--
-                        <span class="dot" data-slide="1"></span>
-                        -->
                     </div>
+                </div>
+                <!-- Botón para mostrar descripción -->
+                <div class="description-toggle">
+                    <i class="fas fa-info-circle"></i>
                 </div>
             </div>
             <h3 class="art-title">Escala de Grises</h3>
@@ -1426,6 +1499,48 @@
 </div>
     
 <script>
+// Funcionalidad para mostrar/ocultar descripción
+document.addEventListener('DOMContentLoaded', function() {
+    // Agregar event listeners a los botones de descripción
+    const descriptionToggles = document.querySelectorAll('.description-toggle');
+    
+    descriptionToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.stopPropagation(); // Evitar que el evento llegue al carrusel
+            const artCard = this.closest('.art-card');
+            artCard.classList.toggle('show-description');
+        });
+    });
+    
+    // Cerrar descripción al hacer click en la X (pseudo-elemento)
+    const artDescriptions = document.querySelectorAll('.art-description');
+    
+    artDescriptions.forEach(desc => {
+        // Usar event delegation para cerrar la descripción
+        desc.addEventListener('click', function(e) {
+            // Verificar si el click fue en el pseudo-elemento (la X)
+            // No podemos detectar directamente el pseudo-elemento, pero podemos verificar
+            // si el click fue cerca de la esquina superior derecha
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Si el click está en el área de la X (esquina superior derecha)
+            if (x > rect.width - 50 && y < 50) {
+                this.parentElement.classList.remove('show-description');
+            }
+        });
+    });
+    
+    // Cerrar descripción al hacer click fuera de ella
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.art-description') && !e.target.closest('.description-toggle')) {
+            document.querySelectorAll('.art-card.show-description').forEach(card => {
+                card.classList.remove('show-description');
+            });
+        }
+    });
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     const carousels = document.querySelectorAll('.art-carousel');
@@ -1530,18 +1645,23 @@ document.addEventListener('DOMContentLoaded', function() {
         // Pause on hover
         carousel.addEventListener('mouseenter', () => {
             clearInterval(slideInterval);
+            // Mostrar flechas al hacer hover
+            if (prevBtn) prevBtn.style.opacity = '1';
+            if (nextBtn) nextBtn.style.opacity = '1';
         });
         
         carousel.addEventListener('mouseleave', () => {
             startAutoAdvance();
+            // Ocultar flechas al salir del hover
+            if (prevBtn) prevBtn.style.opacity = '0';
+            if (nextBtn) nextBtn.style.opacity = '0';
         });
         
-        // Prevent clicks on images from bubbling
-        slides.forEach(slide => {
-            slide.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-        });
+        // Mostrar flechas en móvil siempre
+        if (window.innerWidth <= 768) {
+            if (prevBtn) prevBtn.style.opacity = '1';
+            if (nextBtn) nextBtn.style.opacity = '1';
+        }
     });
 });
     

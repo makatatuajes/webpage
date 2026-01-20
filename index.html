@@ -573,8 +573,92 @@
         box-shadow: 0 8px 20px rgba(255, 0, 255, 0.4);
     }
 
+    .floating-heart.pulse-effect {
+        animation: heartbeat 1.5s infinite;
+        box-shadow: 0 0 20px var(--accent), 0 5px 15px rgba(255, 0, 255, 0.5);
+    }
+
     .floating-heart i {
         font-size: 1.2rem;
+    }
+
+    /* Avatar Invitation Styles */
+    .avatar-container {
+        position: fixed;
+        right: 2rem;
+        bottom: 8rem;
+        z-index: 98;
+        opacity: 0;
+        transform: translateX(100px);
+        transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        pointer-events: none;
+    }
+
+    .avatar-container.visible {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: auto;
+    }
+
+    .avatar-content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .avatar-image {
+        width: 120px;
+        height: auto;
+        filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+        animation: float 3s ease-in-out infinite;
+        transform-origin: center bottom;
+    }
+
+    .speech-bubble {
+        position: absolute;
+        top: -70px;
+        right: 130px;
+        background: var(--bg-secondary);
+        padding: 15px 20px;
+        border-radius: 20px;
+        border: 2px solid var(--accent);
+        max-width: 200px;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        transform: scale(0);
+        opacity: 0;
+        transition: all 0.5s ease 0.5s;
+        text-align: center;
+    }
+
+    .speech-bubble::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: -10px;
+        margin-top: -10px;
+        border-width: 10px 0 10px 15px;
+        border-style: solid;
+        border-color: transparent transparent transparent var(--accent);
+    }
+
+    .speech-bubble::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: -7px;
+        margin-top: -10px;
+        border-width: 10px 0 10px 12px;
+        border-style: solid;
+        border-color: transparent transparent transparent var(--bg-secondary);
+        z-index: 1;
+    }
+
+    .avatar-container.visible .speech-bubble {
+        transform: scale(1);
+        opacity: 1;
     }
 
     /* Popup Overlay - UPDATED FOR SCROLLING */
@@ -795,7 +879,7 @@
         margin-top: 1rem;
     }
 
-     /* Animations */
+    /* Animations */
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
@@ -805,6 +889,42 @@
         0% { transform: scale(1); opacity: 1; }
         50% { transform: scale(1.05); opacity: 0.9; }
         100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* New Animations for Avatar */
+    @keyframes heartbeat {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 20px var(--accent), 0 5px 15px rgba(255, 0, 255, 0.5);
+        }
+        25% {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--accent), 0 5px 20px rgba(255, 0, 255, 0.7);
+        }
+        50% {
+            transform: scale(1);
+            box-shadow: 0 0 20px var(--accent), 0 5px 15px rgba(255, 0, 255, 0.5);
+        }
+        75% {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--accent), 0 5px 20px rgba(255, 0, 255, 0.7);
+        }
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 20px var(--accent), 0 5px 15px rgba(255, 0, 255, 0.5);
+        }
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0) rotate(0deg);
+        }
+        33% {
+            transform: translateY(-10px) rotate(2deg);
+        }
+        66% {
+            transform: translateY(5px) rotate(-2deg);
+        }
     }
     
     /* Responsive Styles */
@@ -923,6 +1043,24 @@
         .hero {
             padding-top: 4rem;
         }
+        
+        /* Avatar adjustments for mobile */
+        .avatar-container {
+            right: 1rem;
+            bottom: 7rem;
+        }
+        
+        .avatar-image {
+            width: 90px;
+        }
+        
+        .speech-bubble {
+            top: -80px;
+            right: 100px;
+            max-width: 150px;
+            font-size: 0.8rem;
+            padding: 10px 15px;
+        }
     }
 
     @media (max-width: 480px) {
@@ -941,6 +1079,31 @@
         
         .about-image {
             height: 300px;
+        }
+        
+        /* Avatar adjustments for small screens */
+        .avatar-container {
+            right: 0.5rem;
+            bottom: 6rem;
+        }
+        
+        .avatar-image {
+            width: 80px;
+        }
+        
+        .speech-bubble {
+            top: -90px;
+            right: 85px;
+            max-width: 130px;
+            font-size: 0.75rem;
+            padding: 8px 12px;
+        }
+        
+        .floating-heart {
+            left: 1rem;
+            bottom: 1rem;
+            padding: 10px 15px;
+            font-size: 0.9rem;
         }
     }
 
@@ -1155,6 +1318,16 @@
         <span></span>
     </button>
 </header>
+
+    <!-- Avatar Invitation Container -->
+    <div class="avatar-container" id="avatarContainer">
+        <div class="avatar-content">
+            <div class="speech-bubble">
+                ¡Hola! ¿Listo para tu próximo tatuaje? ¡Reserva ahora!
+            </div>
+            <img src="avatar.png" alt="Avatar invitación" class="avatar-image">
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section id="hero" class="hero">
@@ -1499,6 +1672,89 @@
 </div>
     
 <script>
+// Avatar Invitation Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const avatarContainer = document.getElementById('avatarContainer');
+    const floatingHeart = document.getElementById('floating-heart');
+    const popupOverlay = document.getElementById('popup-overlay');
+    
+    // Check if avatar has already been shown in this session
+    const avatarShown = sessionStorage.getItem('avatarShown');
+    
+    // Show avatar after 5 seconds if not already shown
+    if (!avatarShown) {
+        setTimeout(function() {
+            showAvatar();
+        }, 5000); // 5 seconds
+    }
+    
+    function showAvatar() {
+        // Show avatar with animation
+        avatarContainer.classList.add('visible');
+        
+        // Add pulse effect to floating heart
+        floatingHeart.classList.add('pulse-effect');
+        
+        // Mark as shown in session storage
+        sessionStorage.setItem('avatarShown', 'true');
+        
+        // Auto-hide avatar after 30 seconds
+        setTimeout(function() {
+            if (avatarContainer.classList.contains('visible')) {
+                hideAvatar();
+            }
+        }, 30000);
+    }
+    
+    function hideAvatar() {
+        avatarContainer.classList.remove('visible');
+        floatingHeart.classList.remove('pulse-effect');
+    }
+    
+    // Hide avatar when floating heart is clicked
+    if (floatingHeart) {
+        floatingHeart.addEventListener('click', function(e) {
+            hideAvatar();
+        });
+    }
+    
+    // Hide avatar when popup is opened
+    if (popupOverlay) {
+        // Observe popup overlay for changes
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'class') {
+                    if (popupOverlay.classList.contains('active')) {
+                        hideAvatar();
+                    }
+                }
+            });
+        });
+        
+        observer.observe(popupOverlay, { attributes: true });
+    }
+    
+    // Handle avatar image load error
+    const avatarImage = document.querySelector('.avatar-image');
+    if (avatarImage) {
+        avatarImage.addEventListener('error', function() {
+            console.error('Avatar image failed to load');
+            // Hide avatar container if image fails to load
+            avatarContainer.style.display = 'none';
+        });
+        
+        // Preload avatar image to ensure it's ready
+        const img = new Image();
+        img.src = 'avatar.png';
+        img.onload = function() {
+            console.log('Avatar image loaded successfully');
+        };
+        img.onerror = function() {
+            console.error('Failed to preload avatar image');
+        };
+    }
+});
+
 // Funcionalidad para mostrar/ocultar descripción
 document.addEventListener('DOMContentLoaded', function() {
     // Agregar event listeners a los botones de descripción

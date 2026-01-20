@@ -291,6 +291,7 @@
         align-items: center;
         overflow: hidden;
         position: relative;
+        cursor: pointer; /* Indica que es clickeable */
     }
 
     .art-image img {
@@ -565,12 +566,6 @@
         box-shadow: 0 5px 15px rgba(255, 0, 255, 0.3);
         transition: var(--transition);
         font-weight: 500;
-    }
-
-    .floating-heart:hover {
-        background: var(--accent-hover);
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(255, 0, 255, 0.4);
     }
 
     .floating-heart.pulse-effect {
@@ -1160,12 +1155,6 @@
         border: 1px solid rgba(255, 0, 255, 0.2);
     }
 
-    #custom-price-group .form-text {
-        margin-top: 5px;
-        font-size: 0.8rem;
-        opacity: 0.8;
-    }
-
     #popup-custom-price:invalid {
         border-color: #ff4444;
     }
@@ -1174,124 +1163,357 @@
         border-color: #00ff00;
     }
 
-.art-carousel {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
+    .art-carousel {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
 
-.carousel-slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
+    .carousel-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
 
-.carousel-slide.active {
-    opacity: 1;
-    position: relative;
-}
+    .carousel-slide.active {
+        opacity: 1;
+        position: relative;
+    }
 
-.carousel-slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: opacity 0.3s ease;
-}
+    .carousel-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: opacity 0.3s ease;
+        cursor: pointer; /* Indica que es clickeable */
+    }
 
-.carousel-prev,
-.carousel-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 10;
-    transition: background 0.3s, opacity 0.3s;
-    pointer-events: auto;
-}
-
-.art-carousel:hover .carousel-prev,
-.art-carousel:hover .carousel-next {
-    opacity: 1;
-}
-
-.carousel-prev:hover,
-.carousel-next:hover {
-    background: rgba(0, 0, 0, 0.8);
-}
-
-.carousel-prev {
-    left: 10px;
-    opacity: 0;
-}
-
-.carousel-next {
-    right: 10px;
-    opacity: 0;
-}
-
-.carousel-dots {
-    position: absolute;
-    bottom: 15px;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    z-index: 10;
-}
-
-.dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    transition: background 0.3s;
-    pointer-events: auto;
-}
-
-.dot.active {
-    background: white;
-}
-
-/* Asegurar que el carrusel no interfiera con otros elementos */
-.art-image {
-    position: relative;
-    z-index: 1;
-}
-
-/* Media query for responsive design */
-@media (max-width: 768px) {
     .carousel-prev,
     .carousel-next {
-        opacity: 1;
-        width: 30px;
-        height: 30px;
-        font-size: 18px;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 10;
+        transition: background 0.3s, opacity 0.3s;
+        pointer-events: auto;
     }
-}
-    
+
+    .art-carousel:hover .carousel-prev,
+    .art-carousel:hover .carousel-next {
+        opacity: 1;
+    }
+
+    .carousel-prev:hover,
+    .carousel-next:hover {
+        background: rgba(0, 0, 0, 0.8);
+    }
+
+    .carousel-prev {
+        left: 10px;
+        opacity: 0;
+    }
+
+    .carousel-next {
+        right: 10px;
+        opacity: 0;
+    }
+
+    .carousel-dots {
+        position: absolute;
+        bottom: 15px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        z-index: 10;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: background 0.3s;
+        pointer-events: auto;
+    }
+
+    .dot.active {
+        background: white;
+    }
+
+    /* Asegurar que el carrusel no interfiera con otros elementos */
+    .art-image {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Media query for responsive design */
+    @media (max-width: 768px) {
+        .carousel-prev,
+        .carousel-next {
+            opacity: 1;
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+        }
+    }
+
+    /* LIGHTBOX STYLES - NEW */
+    .lightbox-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .lightbox-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .lightbox-container {
+        position: relative;
+        width: 90%;
+        max-width: 1200px;
+        height: 85vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .lightbox-image-container {
+        width: 100%;
+        height: 80vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .lightbox-image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+        transform-origin: center;
+    }
+
+    .lightbox-image.zoomed {
+        transform: scale(1.5);
+        cursor: grab;
+    }
+
+    .lightbox-image.zoomed:active {
+        cursor: grabbing;
+    }
+
+    .lightbox-controls {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        pointer-events: none;
+    }
+
+    .lightbox-btn {
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border: none;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        font-size: 24px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+        pointer-events: auto;
+        z-index: 10;
+    }
+
+    .lightbox-btn:hover {
+        background: rgba(255, 0, 255, 0.8);
+        transform: scale(1.1);
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        font-size: 24px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+        z-index: 100;
+    }
+
+    .lightbox-close:hover {
+        background: rgba(255, 0, 255, 0.8);
+        transform: scale(1.1);
+    }
+
+    .lightbox-thumbnails {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+        padding: 10px;
+        overflow-x: auto;
+        max-width: 100%;
+    }
+
+    .lightbox-thumbnail {
+        width: 80px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 5px;
+        cursor: pointer;
+        opacity: 0.6;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .lightbox-thumbnail:hover {
+        opacity: 0.8;
+    }
+
+    .lightbox-thumbnail.active {
+        opacity: 1;
+        border: 2px solid var(--accent);
+    }
+
+    .lightbox-info {
+        color: var(--text-primary);
+        text-align: center;
+        margin-top: 15px;
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+
+    .lightbox-zoom-btn {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+
+    .lightbox-zoom-btn:hover {
+        background: rgba(255, 0, 255, 0.8);
+    }
+
+    /* Responsive adjustments for lightbox */
+    @media (max-width: 768px) {
+        .lightbox-container {
+            width: 95%;
+            height: 90vh;
+        }
+        
+        .lightbox-image-container {
+            height: 70vh;
+        }
+        
+        .lightbox-btn {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+        }
+        
+        .lightbox-thumbnails {
+            gap: 8px;
+            padding: 5px;
+        }
+        
+        .lightbox-thumbnail {
+            width: 60px;
+            height: 45px;
+        }
+        
+        .lightbox-zoom-btn {
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .lightbox-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            padding: 0;
+        }
+        
+        .lightbox-close {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            top: 10px;
+            right: 10px;
+        }
+        
+        .lightbox-thumbnail {
+            width: 50px;
+            height: 38px;
+        }
+    }
 </style>
 </head>
 <body>
     <!-- Updated Header -->
 <header>
-   <!-- <a href="#" class="logo img">
-        <img src="Logo (2).png" alt="MAKATATUAJES">
-    </a>-->
-    
     <nav id="mainNav">
         <ul>
             <li><a href="#hero">Inicio</a></li>
@@ -1321,12 +1543,43 @@
     </button>
 </header>
 
+    <!-- Lightbox Overlay -->
+    <div class="lightbox-overlay" id="lightbox">
+        <div class="lightbox-container">
+            <button class="lightbox-close" id="lightbox-close">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="lightbox-image-container">
+                <img src="" alt="" class="lightbox-image" id="lightbox-image">
+                
+                <div class="lightbox-controls">
+                    <button class="lightbox-btn" id="lightbox-prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="lightbox-btn" id="lightbox-next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <button class="lightbox-zoom-btn" id="lightbox-zoom">
+                    <i class="fas fa-search-plus"></i>
+                </button>
+            </div>
+            
+            <div class="lightbox-thumbnails" id="lightbox-thumbnails">
+                <!-- Las miniaturas se generarán dinámicamente -->
+            </div>
+            
+            <div class="lightbox-info" id="lightbox-info">
+                <!-- La información de la imagen se actualizará dinámicamente -->
+            </div>
+        </div>
+    </div>
+
     <!-- Avatar Invitation Container -->
     <div class="avatar-container" id="avatarContainer">
         <div class="avatar-content">
-            <!--<div class="speech-bubble">
-                ¡Hola! ¿Listo para tu próximo tatuaje? ¡Reserva ahora!
-            </div> -->
             <img src="avatar.png" alt="Avatar invitación" class="avatar-image">
         </div>
     </div>
@@ -1351,30 +1604,25 @@
     <h2 class="section-title">Conoce mi Trabajo</h2>
     <div class="art-grid">
         <!-- Card 1 - Linea Fina -->
-        <div class="art-card">
+        <div class="art-card" data-category="linea-fina">
             <div class="art-image">
                 <!-- Carrusel container -->
                 <div class="art-carousel">
-                    <!--
-                    <div class="carousel-slide active">
-                        <img src="lineafina.jpeg" alt="Tatuaje Linea Fina">
-                    </div>
-                    -->
                     <!-- Image 1 -->
                     <div class="carousel-slide active">
-                        <img src="lineafina4.jpeg" alt="Tatuaje Linea Fina 4" class="slide-image">
+                        <img src="lineafina4.jpeg" alt="Tatuaje Linea Fina 4" class="slide-image" data-lightbox="linea-fina" data-index="0">
                     </div>
                     <!-- Image 2 -->
                     <div class="carousel-slide">
-                        <img src="lineafina2.jpeg" alt="Tatuaje Linea Fina 2" class="slide-image">
+                        <img src="lineafina2.jpeg" alt="Tatuaje Linea Fina 2" class="slide-image" data-lightbox="linea-fina" data-index="1">
                     </div>
                     <!-- Image 3 -->
                     <div class="carousel-slide">
-                        <img src="lineafina3.jpeg" alt="Tatuaje Linea Fina 3" class="slide-image">
+                        <img src="lineafina3.jpeg" alt="Tatuaje Linea Fina 3" class="slide-image" data-lightbox="linea-fina" data-index="2">
                     </div>
                     <!-- Image 4 -->
                     <div class="carousel-slide">
-                        <img src="lineafina1.jpeg" alt="Tatuaje Linea Fina 1" class="slide-image">
+                        <img src="lineafina1.jpeg" alt="Tatuaje Linea Fina 1" class="slide-image" data-lightbox="linea-fina" data-index="3">
                     </div>
                     <!-- Navigation arrows -->
                     <button type="button" class="carousel-prev" aria-label="Imagen anterior">‹</button>
@@ -1396,22 +1644,21 @@
             <h3 class="art-title">Línea Fina</h3>
             <div class="art-description">
                 <p><strong>Diseños delicados y minimalistas realizados con líneas precisas y finas.</strong> Perfectos para tatuajes discretos, símbolos elegantes y composiciones que destacan por su simplicidad y elegancia.</p>
-                <!-- <a href="#" class="btn">Ver más</a> -->
             </div>
         </div>
 
         <!-- Card 2 - Botanico -->
-        <div class="art-card">
+        <div class="art-card" data-category="botanico">
             <div class="art-image">
                 <!-- Carrusel container -->
                 <div class="art-carousel">
                     <!-- Image 0 -->
                     <div class="carousel-slide active">
-                        <img src="botanico1.jpeg" alt="Tatuaje Botánico" class="slide-image">
+                        <img src="botanico1.jpeg" alt="Tatuaje Botánico" class="slide-image" data-lightbox="botanico" data-index="0">
                     </div>
                     <!-- Image 1-->
                     <div class="carousel-slide">
-                        <img src="botanico.jpeg" alt="Tatuaje Botánico 2" class="slide-image">
+                        <img src="botanico.jpeg" alt="Tatuaje Botánico 2" class="slide-image" data-lightbox="botanico" data-index="1">
                     </div>
                     <!-- Navigation arrows -->
                     <button type="button" class="carousel-prev" aria-label="Imagen anterior">‹</button>
@@ -1431,18 +1678,17 @@
             <h3 class="art-title">Botánico</h3>
             <div class="art-description">
                 <p><strong>Inspirado en la naturaleza con flores, hojas y elementos orgánicos.</strong> Desde ramos delicados hasta jardines completos, capturo la belleza de la flora con detalles realistas y composiciones armónicas que celebran la naturaleza.</p>
-                <!-- <a href="#" class="btn">Ver más</a> -->
             </div>
         </div>
 
         <!-- Card 3 - Full Color -->
-        <div class="art-card">
+        <div class="art-card" data-category="color">
             <div class="art-image">
                 <!-- Carrusel container -->
                 <div class="art-carousel">
                     <!-- Image 0 -->
                     <div class="carousel-slide active">
-                        <img src="portadacolor.jpeg" alt="Tatuaje Color" class="slide-image">
+                        <img src="portadacolor.jpeg" alt="Tatuaje Color" class="slide-image" data-lightbox="color" data-index="0">
                     </div>
                     <!-- Navigation arrows -->
                     <button type="button" class="carousel-prev" aria-label="Imagen anterior">‹</button>
@@ -1461,18 +1707,17 @@
             <h3 class="art-title">Color</h3>
             <div class="art-description">
                 <p><strong>Tatuajes vibrantes con una paleta completa de colores intensos.</strong> Desde diseños neotradicionales hasta piezas con mezclas cromáticas únicas, trabajo con pigmentos de alta calidad para crear obras que destacan por su vitalidad y profundidad de color.</p>
-                <!-- <a href="#" class="btn">Ver más</a> -->
             </div>
         </div>
 
         <!-- Card 4 - Escala de grises -->
-        <div class="art-card">
+        <div class="art-card" data-category="grises">
             <div class="art-image">
                 <!-- Carrusel container -->
                 <div class="art-carousel">
                     <!-- Image 0 -->
                     <div class="carousel-slide active">
-                        <img src="grises1.jpeg" alt="Tatuaje Escala de grises1" class="slide-image">
+                        <img src="grises1.jpeg" alt="Tatuaje Escala de grises1" class="slide-image" data-lightbox="grises" data-index="0">
                     </div>
                     <!-- Navigation arrows -->
                     <button type="button" class="carousel-prev" aria-label="Imagen anterior">‹</button>
@@ -1491,7 +1736,6 @@
             <h3 class="art-title">Escala de Grises</h3>
             <div class="art-description">
                 <p><strong>Dominio completo de la escala de grises para tatuajes de alto impacto.</strong> Utilizando contrastes precisos, degradados sutiles y una cuidadosa aplicación de valores tonales, creo piezas con profundidad, realismo y una elegancia monocromática que trasciende tendencias.</p>
-                <!-- <a href="#" class="btn">Ver más</a> -->
             </div>
         </div>
     </div>
@@ -1540,12 +1784,6 @@
             <button type="submit" class="submit-btn">Enviar Mensaje</button>
         </form>
     </section>
-
-    <!--
-    <a href="https://wa.me/56912345678" class="whatsapp-btn" target="_blank">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-    -->
 
     <!-- Footer -->
     <footer>
@@ -1618,12 +1856,6 @@
                     <label for="popup-phone">Teléfono</label>
                     <input type="tel" id="popup-phone" class="form-control" required>
                 </div>
-                <!--
-                <div class="form-group">
-                    <label for="popup-date">Fecha Preferida</label>
-                    <input type="date" id="popup-date" class="form-control" required>
-                </div>
-                -->
                 <div class="form-group">
                     <label for="popup-genero">Género</label>
                     <select id="popup-genero" class="form-control" required>
@@ -1674,6 +1906,273 @@
 </div>
     
 <script>
+// Lightbox functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxClose = document.getElementById('lightbox-close');
+    const lightboxImage = document.getElementById('lightbox-image');
+    const lightboxPrev = document.getElementById('lightbox-prev');
+    const lightboxNext = document.getElementById('lightbox-next');
+    const lightboxZoom = document.getElementById('lightbox-zoom');
+    const lightboxThumbnails = document.getElementById('lightbox-thumbnails');
+    const lightboxInfo = document.getElementById('lightbox-info');
+    
+    let currentImages = [];
+    let currentIndex = 0;
+    let isZoomed = false;
+    let isDragging = false;
+    let startX, startY, scrollLeft, scrollTop;
+    
+    // Function to open lightbox with specific images
+    function openLightbox(images, startIndex = 0) {
+        currentImages = images;
+        currentIndex = startIndex;
+        
+        // Update lightbox image
+        updateLightboxImage();
+        
+        // Generate thumbnails
+        generateThumbnails();
+        
+        // Show lightbox
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Update info
+        updateImageInfo();
+    }
+    
+    function updateLightboxImage() {
+        if (currentImages.length === 0) return;
+        
+        const img = currentImages[currentIndex];
+        lightboxImage.src = img.src;
+        lightboxImage.alt = img.alt;
+        
+        // Reset zoom state
+        lightboxImage.classList.remove('zoomed');
+        isZoomed = false;
+        lightboxZoom.innerHTML = '<i class="fas fa-search-plus"></i>';
+    }
+    
+    function generateThumbnails() {
+        lightboxThumbnails.innerHTML = '';
+        
+        currentImages.forEach((img, index) => {
+            const thumbnail = document.createElement('img');
+            thumbnail.src = img.src;
+            thumbnail.alt = img.alt;
+            thumbnail.classList.add('lightbox-thumbnail');
+            if (index === currentIndex) {
+                thumbnail.classList.add('active');
+            }
+            
+            thumbnail.addEventListener('click', () => {
+                currentIndex = index;
+                updateLightboxImage();
+                updateThumbnails();
+                updateImageInfo();
+            });
+            
+            lightboxThumbnails.appendChild(thumbnail);
+        });
+    }
+    
+    function updateThumbnails() {
+        const thumbnails = lightboxThumbnails.querySelectorAll('.lightbox-thumbnail');
+        thumbnails.forEach((thumb, index) => {
+            thumb.classList.toggle('active', index === currentIndex);
+        });
+    }
+    
+    function updateImageInfo() {
+        if (currentImages.length === 0) return;
+        
+        const img = currentImages[currentIndex];
+        const category = img.closest('.art-card').querySelector('.art-title').textContent;
+        lightboxInfo.textContent = `${category} - Imagen ${currentIndex + 1} de ${currentImages.length}`;
+    }
+    
+    // Close lightbox
+    lightboxClose.addEventListener('click', () => {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+    
+    // Close lightbox when clicking on overlay
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Navigation
+    lightboxPrev.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentImages.length === 0) return;
+        
+        currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+        updateLightboxImage();
+        updateThumbnails();
+        updateImageInfo();
+    });
+    
+    lightboxNext.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentImages.length === 0) return;
+        
+        currentIndex = (currentIndex + 1) % currentImages.length;
+        updateLightboxImage();
+        updateThumbnails();
+        updateImageInfo();
+    });
+    
+    // Zoom functionality
+    lightboxZoom.addEventListener('click', (e) => {
+        e.stopPropagation();
+        isZoomed = !isZoomed;
+        lightboxImage.classList.toggle('zoomed', isZoomed);
+        lightboxZoom.innerHTML = isZoomed ? 
+            '<i class="fas fa-search-minus"></i>' : 
+            '<i class="fas fa-search-plus"></i>';
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('active')) return;
+        
+        switch(e.key) {
+            case 'Escape':
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+                break;
+            case 'ArrowLeft':
+                lightboxPrev.click();
+                break;
+            case 'ArrowRight':
+                lightboxNext.click();
+                break;
+            case ' ':
+                lightboxZoom.click();
+                break;
+        }
+    });
+    
+    // Click on carousel images to open lightbox
+    const carouselImages = document.querySelectorAll('.slide-image');
+    carouselImages.forEach(img => {
+        img.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            const category = this.getAttribute('data-lightbox');
+            const card = this.closest('.art-card');
+            const allImages = card.querySelectorAll('.slide-image');
+            
+            // Get all images from this category
+            const categoryImages = Array.from(allImages);
+            
+            // Find the index of clicked image
+            const clickedIndex = parseInt(this.getAttribute('data-index') || 0);
+            
+            // Open lightbox with all images from this category
+            openLightbox(categoryImages, clickedIndex);
+        });
+    });
+    
+    // Also make the entire carousel area clickable
+    const artImages = document.querySelectorAll('.art-image');
+    artImages.forEach(artImage => {
+        artImage.addEventListener('click', function(e) {
+            // Don't open lightbox if clicking on buttons or description toggle
+            if (e.target.closest('.carousel-prev') || 
+                e.target.closest('.carousel-next') || 
+                e.target.closest('.dot') ||
+                e.target.closest('.description-toggle')) {
+                return;
+            }
+            
+            const card = this.closest('.art-card');
+            const allImages = card.querySelectorAll('.slide-image');
+            
+            if (allImages.length === 0) return;
+            
+            // Get active image or first image
+            let activeImage = card.querySelector('.slide-image.active');
+            if (!activeImage) activeImage = allImages[0];
+            
+            const categoryImages = Array.from(allImages);
+            const activeIndex = Array.from(allImages).indexOf(activeImage);
+            
+            // Open lightbox
+            openLightbox(categoryImages, activeIndex);
+        });
+    });
+    
+    // Drag functionality for zoomed image
+    lightboxImage.addEventListener('mousedown', startDrag);
+    lightboxImage.addEventListener('touchstart', startDragTouch);
+    
+    function startDrag(e) {
+        if (!isZoomed) return;
+        
+        isDragging = true;
+        startX = e.pageX - lightboxImage.offsetLeft;
+        startY = e.pageY - lightboxImage.offsetTop;
+        scrollLeft = lightboxImage.scrollLeft;
+        scrollTop = lightboxImage.scrollTop;
+        
+        e.preventDefault();
+    }
+    
+    function startDragTouch(e) {
+        if (!isZoomed) return;
+        
+        isDragging = true;
+        const touch = e.touches[0];
+        startX = touch.pageX - lightboxImage.offsetLeft;
+        startY = touch.pageY - lightboxImage.offsetTop;
+        scrollLeft = lightboxImage.scrollLeft;
+        scrollTop = lightboxImage.scrollTop;
+        
+        e.preventDefault();
+    }
+    
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('touchmove', dragTouch);
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('touchend', endDrag);
+    
+    function drag(e) {
+        if (!isDragging || !isZoomed) return;
+        
+        const x = e.pageX - lightboxImage.offsetLeft;
+        const y = e.pageY - lightboxImage.offsetTop;
+        const walkX = (x - startX) * 2;
+        const walkY = (y - startY) * 2;
+        
+        lightboxImage.scrollLeft = scrollLeft - walkX;
+        lightboxImage.scrollTop = scrollTop - walkY;
+    }
+    
+    function dragTouch(e) {
+        if (!isDragging || !isZoomed) return;
+        
+        const touch = e.touches[0];
+        const x = touch.pageX - lightboxImage.offsetLeft;
+        const y = touch.pageY - lightboxImage.offsetTop;
+        const walkX = (x - startX) * 2;
+        const walkY = (y - startY) * 2;
+        
+        lightboxImage.scrollLeft = scrollLeft - walkX;
+        lightboxImage.scrollTop = scrollTop - walkY;
+    }
+    
+    function endDrag() {
+        isDragging = false;
+    }
+});
+
 // Avatar Invitation Functionality
 document.addEventListener('DOMContentLoaded', function() {
     const avatarContainer = document.getElementById('avatarContainer');
@@ -1777,8 +2276,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Usar event delegation para cerrar la descripción
         desc.addEventListener('click', function(e) {
             // Verificar si el click fue en el pseudo-elemento (la X)
-            // No podemos detectar directamente el pseudo-elemento, pero podemos verificar
-            // si el click fue cerca de la esquina superior derecha
             const rect = this.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;

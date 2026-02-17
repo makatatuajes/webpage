@@ -1332,7 +1332,7 @@
     
 <script>
 
-    // Newsletter functionality
+   // Newsletter functionality
 document.addEventListener('DOMContentLoaded', function() {
     const newsletterBtn = document.getElementById('newsletter-btn');
     const newsletterPopup = document.getElementById('newsletter-popup');
@@ -1347,9 +1347,11 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             newsletterPopup.classList.add('active');
             // Reset form
-            if (newsletterForm) newsletterForm.style.display = 'block';
+            if (newsletterForm) {
+                newsletterForm.style.display = 'block';
+                newsletterForm.reset();
+            }
             if (newsletterSuccess) newsletterSuccess.style.display = 'none';
-            newsletterForm.reset();
         });
     }
 
@@ -1389,11 +1391,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Get form data
                 const formData = {
-                    nombre: document.getElementById('newsletter-nombre').value,
-                    apellido: document.getElementById('newsletter-apellido').value,
-                    telefono: document.getElementById('newsletter-telefono').value,
-                    instagram: document.getElementById('newsletter-instagram').value,
-                    email: document.getElementById('newsletter-email').value
+                    nombre: document.getElementById('newsletter-nombre').value.trim(),
+                    apellido: document.getElementById('newsletter-apellido').value.trim(),
+                    telefono: document.getElementById('newsletter-telefono').value.trim(),
+                    instagram: document.getElementById('newsletter-instagram').value.trim(),
+                    email: document.getElementById('newsletter-email').value.trim()
                 };
 
                 // Validate Instagram (remove @ if user included it)
@@ -1416,23 +1418,67 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error('Por favor ingresa un teléfono válido (mínimo 9 dígitos)');
                 }
 
-                // API call
-                const API_URL = '/api/newsletter';
-                
+                // Determine the correct API URL based on environment
+                let API_URL;
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    // Local development
+                    API_URL = 'http://localhost:3000/api/newsletter';
+                } else {
+                    // Production - use relative path
+                    API_URL = '/api/newsletter';
+                }
+
+                console.log('Sending request to:', API_URL);
+                console.log('Form data:', formData);
+
+                // API call with timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(formData),
+                    signal: controller.signal
                 });
 
+                clearTimeout(timeoutId);
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                // Check if response is OK
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `Error del servidor: ${response.status}`);
+                    const text = await response.text();
+                    console.error('Error response text:', text);
+                    
+                    // Try to parse as JSON, but handle HTML responses
+                    try {
+                        const errorData = JSON.parse(text);
+                        throw new Error(errorData.error || `Error del servidor: ${response.status}`);
+                    } catch (parseError) {
+                        // If it's HTML, show a generic error
+                        if (text.includes('<!DOCTYPE html>')) {
+                            throw new Error('Error de conexión con el servidor. Por favor intenta más tarde.');
+                        }
+                        throw new Error(`Error del servidor: ${response.status}`);
+                    }
                 }
 
-                const result = await response.json();
+                // Try to parse the response as JSON
+                const text = await response.text();
+                console.log('Response text:', text);
+
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError);
+                    console.error('Raw response:', text);
+                    throw new Error('Error al procesar la respuesta del servidor');
+                }
 
                 if (result.success) {
                     // Hide form and show success message
@@ -1455,7 +1501,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
             } catch (error) {
                 console.error('Newsletter error:', error);
-                alert('Error: ' + error.message);
+                
+                // Show user-friendly error message
+                let errorMessage = error.message;
+                if (error.name === 'AbortError') {
+                    errorMessage = 'La conexión tardó demasiado. Por favor intenta nuevamente.';
+                } else if (error.message.includes('Failed to fetch')) {
+                    errorMessage = 'No se pudo conectar con el servidor. Por favor verifica tu conexión.';
+                }
+                
+                alert('Error: ' + errorMessage);
                 
                 // Reset button
                 submitBtn.innerHTML = originalText;

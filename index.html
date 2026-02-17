@@ -1510,11 +1510,11 @@
         }
     }
 
-    /* Newsletter Button */
+   /* Newsletter Button */
 .newsletter-btn {
     position: fixed;
     bottom: 5rem;
-    right: 2rem; /* Positioned to the right of floating heart */
+    right: 2rem;
     background: var(--accent);
     color: var(--text-primary);
     padding: 12px 18px;
@@ -1543,8 +1543,9 @@
 /* Responsive adjustments for newsletter button */
 @media (max-width: 768px) {
     .newsletter-btn {
+        bottom: auto; /* Elimina la posición inferior */
+        top: 5rem;    /* Posición superior */
         right: 1rem;
-        top: 4rem; /* Position above floating heart on mobile */
         padding: 10px 15px;
         font-weight: 300;
     }
@@ -1552,8 +1553,9 @@
 
 @media (max-width: 480px) {
     .newsletter-btn {
+        bottom: auto; /* Elimina la posición inferior */
+        top: 4rem;    /* Posición superior ajustada */
         right: 1rem;
-        top: 4rem;
         padding: 8px 12px;
         font-weight: 300;
     }

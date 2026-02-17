@@ -928,6 +928,59 @@
     #popup-custom-price:valid {
         border-color: #00ff00;
     }
+/* Newsletter Button */
+.newsletter-btn {
+    position: fixed;
+    bottom: 2rem;
+    left: 8rem; /* Positioned to the right of floating heart */
+    background: var(--accent);
+    color: var(--text-primary);
+    padding: 12px 18px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    z-index: 99;
+    box-shadow: 0 5px 15px rgba(255, 0, 255, 0.3);
+    transition: var(--transition);
+    font-weight: 500;
+    border: none;
+}
+
+.newsletter-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 0, 255, 0.5);
+}
+
+.newsletter-btn i {
+    font-size: 1.2rem;
+}
+
+/* Responsive adjustments for newsletter button */
+@media (max-width: 768px) {
+    .newsletter-btn {
+        left: 1rem;
+        bottom: 5rem; /* Position above floating heart on mobile */
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .newsletter-btn {
+        left: 1rem;
+        bottom: 5rem;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .newsletter-btn i {
+        font-size: 1rem;
+    }
+}
+    
 </style>
 </head>
 <body>
@@ -1066,6 +1119,85 @@
         </form>
     </section>
 
+    <!-- Newsletter Button -->
+<div class="newsletter-btn" id="newsletter-btn">
+    <i class="fas fa-envelope"></i>
+    <span>Newsletter</span>
+</div>
+
+<!-- Newsletter Popup Form -->
+<div class="popup-overlay" id="newsletter-popup">
+    <div class="popup-content">
+        <div class="popup-header">
+            <h3>📬 Suscríbete al Newsletter</h3>
+            <button class="popup-close" id="newsletter-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="popup-body">
+            <div class="required-note" style="color: var(--accent); margin-bottom: 1.5rem; padding: 10px; background: rgba(255, 0, 255, 0.1); border-radius: 5px; border-left: 3px solid var(--accent);">
+                <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+                <strong>Todos los campos son obligatorios</strong>
+            </div>
+
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; text-align: center;">
+                ¡Suscríbete para recibir novedades, promociones y contenido exclusivo!
+            </p>
+
+            <form id="newsletter-form">
+                <div class="form-group">
+                    <label for="newsletter-nombre">Nombre *</label>
+                    <input type="text" id="newsletter-nombre" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newsletter-apellido">Apellido *</label>
+                    <input type="text" id="newsletter-apellido" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newsletter-telefono">Teléfono *</label>
+                    <input type="tel" id="newsletter-telefono" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newsletter-instagram">Cuenta de Instagram *</label>
+                    <div style="display: flex; align-items: center;">
+                        <span style="color: var(--accent); margin-right: 5px;">@</span>
+                        <input type="text" id="newsletter-instagram" class="form-control" placeholder="usuario" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newsletter-email">Correo Electrónico *</label>
+                    <input type="email" id="newsletter-email" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <div style="padding: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 5px;">
+                        <input type="checkbox" id="newsletter-consent" required>
+                        <label for="newsletter-consent" style="font-weight: normal;">
+                            Acepto recibir comunicaciones comerciales y novedades de Makatatuajes
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-payment" id="newsletter-submit">
+                    <i class="fas fa-bell"></i>
+                    Suscribirme al Newsletter
+                </button>
+            </form>
+
+            <div id="newsletter-success" style="display: none; text-align: center; padding: 2rem;">
+                <i class="fas fa-check-circle" style="color: #00ff00; font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h4 style="color: var(--accent); margin-bottom: 1rem;">¡Gracias por suscribirte!</h4>
+                <p style="color: var(--text-secondary);">Pronto recibirás nuestras novedades en tu correo.</p>
+                <button class="btn" style="margin-top: 1.5rem;" onclick="closeNewsletterPopup()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+    
     <!--
     <a href="https://wa.me/56912345678" class="whatsapp-btn" target="_blank">
         <i class="fab fa-whatsapp"></i>
@@ -1199,6 +1331,139 @@
 </div>
     
 <script>
+
+    // Newsletter functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const newsletterBtn = document.getElementById('newsletter-btn');
+    const newsletterPopup = document.getElementById('newsletter-popup');
+    const newsletterClose = document.getElementById('newsletter-close');
+    const newsletterForm = document.getElementById('newsletter-form');
+    const newsletterSuccess = document.getElementById('newsletter-success');
+    const newsletterSubmit = document.getElementById('newsletter-submit');
+
+    // Open newsletter popup
+    if (newsletterBtn) {
+        newsletterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            newsletterPopup.classList.add('active');
+            // Reset form
+            if (newsletterForm) newsletterForm.style.display = 'block';
+            if (newsletterSuccess) newsletterSuccess.style.display = 'none';
+            newsletterForm.reset();
+        });
+    }
+
+    // Close newsletter popup
+    function closeNewsletterPopup() {
+        newsletterPopup.classList.remove('active');
+    }
+
+    // Make it globally available
+    window.closeNewsletterPopup = closeNewsletterPopup;
+
+    if (newsletterClose) {
+        newsletterClose.addEventListener('click', closeNewsletterPopup);
+    }
+
+    // Close popup when clicking outside
+    if (newsletterPopup) {
+        newsletterPopup.addEventListener('click', function(e) {
+            if (e.target === newsletterPopup) {
+                closeNewsletterPopup();
+            }
+        });
+    }
+
+    // Handle form submission
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = newsletterSubmit;
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+                submitBtn.disabled = true;
+
+                // Get form data
+                const formData = {
+                    nombre: document.getElementById('newsletter-nombre').value,
+                    apellido: document.getElementById('newsletter-apellido').value,
+                    telefono: document.getElementById('newsletter-telefono').value,
+                    instagram: document.getElementById('newsletter-instagram').value,
+                    email: document.getElementById('newsletter-email').value
+                };
+
+                // Validate Instagram (remove @ if user included it)
+                formData.instagram = formData.instagram.replace('@', '');
+
+                // Validate required fields
+                if (!formData.nombre || !formData.apellido || !formData.telefono || !formData.instagram || !formData.email) {
+                    throw new Error('Por favor completa todos los campos');
+                }
+
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(formData.email)) {
+                    throw new Error('Por favor ingresa un email válido');
+                }
+
+                // Phone validation (basic)
+                const phoneRegex = /^[0-9+\-\s]{9,}$/;
+                if (!phoneRegex.test(formData.telefono)) {
+                    throw new Error('Por favor ingresa un teléfono válido (mínimo 9 dígitos)');
+                }
+
+                // API call
+                const API_URL = '/api/newsletter';
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `Error del servidor: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Hide form and show success message
+                    newsletterForm.style.display = 'none';
+                    newsletterSuccess.style.display = 'block';
+                    
+                    // Auto close after 5 seconds
+                    setTimeout(() => {
+                        closeNewsletterPopup();
+                        // Reset for next time
+                        setTimeout(() => {
+                            newsletterForm.style.display = 'block';
+                            newsletterSuccess.style.display = 'none';
+                            newsletterForm.reset();
+                        }, 300);
+                    }, 5000);
+                } else {
+                    throw new Error(result.error || 'Error al procesar la suscripción');
+                }
+
+            } catch (error) {
+                console.error('Newsletter error:', error);
+                alert('Error: ' + error.message);
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
+});
     
     // Floating heart button functionality
     const floatingHeart = document.getElementById('floating-heart');

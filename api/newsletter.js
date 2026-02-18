@@ -113,7 +113,7 @@ export default async function handler(req, res) {
                         <hr>
                         
                         <p style="color: #666; font-size: 12px; text-align: center;">
-                            Este suscriptor se ha registrado a través del formulario de newsletter en makatatuajes.cl<br>
+                            Este suscriptor se ha registrado a través del formulario de newsletter en makatatuajes.com<br>
                             Fecha y hora: ${new Date().toLocaleString('es-CL')}
                         </p>
                     </div>

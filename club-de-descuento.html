@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club de Descuentos - Makatatuajes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+    <style>
+        /* Variables and Base Styles - Copiadas de tu index */
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --accent: #ff00ff;
+            --accent-hover: #ff66ff;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            padding: 0.3rem 1.5rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 0, 255, 0.2);
+        }
+
+        .back-btn {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            color: var(--accent);
+        }
+
+        .back-btn i {
+            font-size: 1rem;
+        }
+
+        .header-title {
+            margin-left: 2rem;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 6rem 2rem 2rem;
+            min-height: 100vh;
+        }
+
+        /* Newsletter Container */
+        .newsletter-container {
+            max-width: 600px;
+            width: 100%;
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 0, 255, 0.2);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .newsletter-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .newsletter-header .logo {
+            margin-bottom: 1.5rem;
+        }
+
+        .newsletter-header .logo img {
+            max-width: 150px;
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(255, 0, 255, 0.5));
+        }
+
+        .newsletter-header h1 {
+            color: var(--accent);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-group label i {
+            color: var(--accent);
+            margin-right: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.2);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .instagram-input {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .instagram-prefix {
+            padding: 0.8rem 0 0.8rem 1rem;
+            color: var(--accent);
+            font-weight: bold;
+            background: rgba(255, 0, 255, 0.1);
+        }
+
+        .instagram-input .form-control {
+            border: none;
+            border-radius: 0;
+            background: transparent;
+        }
+
+        .instagram-input .form-control:focus {
+            box-shadow: none;
+        }
+
+        .required-note {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            padding: 12px;
+            background: rgba(255, 0, 255, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .checkbox-group {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            accent-color: var(--accent);
+        }
+
+        .checkbox-group label {
+            display: inline;
+            font-size: 0.9rem;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 0, 255, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Success Message */
+        .success-message {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .success-message i {
+            font-size: 4rem;
+            color: #00ff00;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .success-message h2 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .success-message p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .btn-back {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: var(--accent);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .btn-back:hover {
+            background: var(--accent-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 0, 255, 0.4);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-secondary);
+            padding: 1.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 0, 255, 0.2);
+        }
+
+        .footer-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .newsletter-container {
+                padding: 2rem;
+            }
+
+            .newsletter-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .header-title {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .newsletter-container {
+                padding: 1.5rem;
+            }
+
+            .newsletter-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-control {
+                padding: 0.7rem;
+            }
+
+            .btn-submit {
+                padding: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>Volver al inicio</span>
+        </a>
+        <span class="header-title">
+            <i class="fas fa-envelope" style="color: var(--accent); margin-right: 5px;"></i>
+            Club de Descuentos - Makatatuajes
+        </span>
+    </header>
+
+    <div class="main-content">
+        <div class="newsletter-container" id="newsletterContainer">
+            <!-- Form Section -->
+            <div id="formSection">
+                <div class="newsletter-header">
+                    <div class="logo">
+                        <img src="Logo (2).png" alt="Makatatuajes Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <div style="display: none; color: var(--accent); font-size: 2rem; font-weight: bold;">MAKATATUAJES</div>
+                    </div>
+                    <h1>📬 Club de Descuentos </h1>
+                    <p>Suscríbete para recibir novedades, promociones y contenido exclusivo</p>
+                </div>
+
+                <div class="required-note">
+                    <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+                    <strong>Todos los campos son obligatorios</strong>
+                </div>
+
+                <form id="newsletterForm">
+                    <div class="form-group">
+                        <label for="nombre">
+                            <i class="fas fa-user"></i> Nombre
+                        </label>
+                        <input type="text" id="nombre" class="form-control" placeholder="Tu nombre" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apellido">
+                            <i class="fas fa-user"></i> Apellido
+                        </label>
+                        <input type="text" id="apellido" class="form-control" placeholder="Tu apellido" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">
+                            <i class="fas fa-phone"></i> Teléfono
+                        </label>
+                        <input type="tel" id="telefono" class="form-control" placeholder="+56 9 1234 5678" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="instagram">
+                            <i class="fab fa-instagram"></i> Instagram
+                        </label>
+                        <div class="instagram-input">
+                            <span class="instagram-prefix">@</span>
+                            <input type="text" id="instagram" class="form-control" placeholder="usuario" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Correo Electrónico
+                        </label>
+                        <input type="email" id="email" class="form-control" placeholder="tucorreo@ejemplo.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="consent" required>
+                            <label for="consent">
+                                Acepto recibir comunicaciones comerciales y novedades de Makatatuajes
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-bell"></i>
+                        Suscribirme al Newsletter
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success Section (initially hidden) -->
+            <div id="successSection" style="display: none;">
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <h2>¡Gracias por suscribirte!</h2>
+                    <p>Hemos enviado un correo de confirmación a tu dirección de email.<br>Pronto recibirás nuestras novedades.</p>
+                    <a href="index.html" class="btn-back">
+                        <i class="fas fa-home"></i>
+                        Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2026 Makatatuajes. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const newsletterForm = document.getElementById('newsletterForm');
+            const formSection = document.getElementById('formSection');
+            const successSection = document.getElementById('successSection');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const originalText = submitBtn.innerHTML;
+                    
+                    try {
+                        // Show loading state
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+                        submitBtn.disabled = true;
+
+                        // Get form data
+                        const formData = {
+                            nombre: document.getElementById('nombre').value.trim(),
+                            apellido: document.getElementById('apellido').value.trim(),
+                            telefono: document.getElementById('telefono').value.trim(),
+                            instagram: document.getElementById('instagram').value.trim().replace('@', ''),
+                            email: document.getElementById('email').value.trim()
+                        };
+
+                        // Validate required fields
+                        if (!formData.nombre || !formData.apellido || !formData.telefono || !formData.instagram || !formData.email) {
+                            throw new Error('Por favor completa todos los campos');
+                        }
+
+                        // Email validation
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(formData.email)) {
+                            throw new Error('Por favor ingresa un email válido');
+                        }
+
+                        // Phone validation
+                        const phoneRegex = /^[0-9+\-\s]{9,}$/;
+                        if (!phoneRegex.test(formData.telefono)) {
+                            throw new Error('Por favor ingresa un teléfono válido (mínimo 9 dígitos)');
+                        }
+
+                        // Build API URL
+                        let API_URL;
+                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                            API_URL = 'http://localhost:3000/api/newsletter';
+                        } else {
+                            API_URL = window.location.origin + '/api/newsletter';
+                        }
+
+                        console.log('Enviando a:', API_URL);
+                        console.log('Datos:', formData);
+
+                        // Make the request
+                        const response = await fetch(API_URL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(formData)
+                        });
+
+                        // Get response as text
+                        const responseText = await response.text();
+                        console.log('Respuesta:', responseText);
+
+                        // Parse JSON
+                        let result;
+                        try {
+                            result = JSON.parse(responseText);
+                        } catch (parseError) {
+                            console.error('Error parseando JSON:', parseError);
+                            throw new Error('Error al procesar la respuesta del servidor');
+                        }
+
+                        if (!response.ok) {
+                            throw new Error(result.error || `Error ${response.status}`);
+                        }
+
+                        if (result.success) {
+                            // Show success message
+                            formSection.style.display = 'none';
+                            successSection.style.display = 'block';
+                            
+                            // Optional: Send to analytics
+                            if (typeof gtag !== 'undefined') {
+                                gtag('event', 'newsletter_subscription', {
+                                    'event_category': 'engagement',
+                                    'event_label': 'newsletter'
+                                });
+                            }
+                        } else {
+                            throw new Error(result.error || 'Error al procesar la suscripción');
+                        }
+
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error: ' + error.message);
+                        
+                        // Reset button
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                });
+            }
+
+            // Format phone input
+            const phoneInput = document.getElementById('telefono');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 0) {
+                        if (value.length <= 2) {
+                            value = '+' + value;
+                        } else if (value.length <= 5) {
+                            value = '+' + value.substring(0, 2) + ' ' + value.substring(2);
+                        } else if (value.length <= 9) {
+                            value = '+' + value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5);
+                        } else {
+                            value = '+' + value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5, 9) + ' ' + value.substring(9, 12);
+                        }
+                        e.target.value = value;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

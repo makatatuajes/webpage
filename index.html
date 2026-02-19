@@ -1564,6 +1564,134 @@
         font-size: 1rem;
     }
 }
+
+/* Newsletter Button - Versión mejorada */
+.newsletter-btn {
+    position: fixed;
+    bottom: 5rem;
+    right: 2rem;
+    background: var(--accent);
+    color: var(--text-primary);
+    padding: 12px 18px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    z-index: 99;
+    box-shadow: 0 5px 15px rgba(255, 0, 255, 0.3);
+    transition: var(--transition);
+    font-weight: 300;
+    border: none;
+    text-decoration: none;
+    animation: pulse 2s infinite;
+}
+
+.newsletter-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 0, 255, 0.5);
+    animation: none;
+}
+
+.newsletter-btn i {
+    font-size: 1.2rem;
+}
+
+/* Responsive adjustments for newsletter button */
+@media (max-width: 768px) {
+    .newsletter-btn {
+        bottom: auto;
+        top: 4.5rem;
+        right: 1rem;
+        padding: 10px 15px;
+        font-weight: 300;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .newsletter-btn {
+        bottom: auto;
+        top: 4rem;
+        right: 0.8rem;
+        padding: 8px 12px;
+        font-weight: 300;
+        font-size: 0.85rem;
+    }
+    
+    .newsletter-btn i {
+        font-size: 1rem;
+    }
+}
+
+/* Estilos para el popup de éxito con descuento */
+.discount-info {
+    background: rgba(255, 0, 255, 0.1);
+    border-left: 4px solid var(--accent);
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.discount-code-display {
+    font-family: monospace;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--accent);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px 25px;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 15px 0;
+    border: 2px dashed var(--accent);
+    letter-spacing: 3px;
+}
+
+.discount-note {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+}
+
+.discount-note i {
+    color: #00ff00;
+    margin-right: 5px;
+}
+
+#userEmail {
+    color: var(--accent);
+    font-weight: bold;
+}
+
+#emailWarning {
+    background: rgba(255, 165, 0, 0.1);
+    border-left: 4px solid orange;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+    text-align: left;
+}
+
+#emailWarning i {
+    color: orange;
+    margin-right: 8px;
+}
+
+#fallbackDiscountCode {
+    color: var(--accent);
+    font-weight: bold;
+    font-size: 18px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-left: 5px;
+}
+    
 </style>
 </head>
 <body>
@@ -1968,12 +2096,43 @@
                 </button>
             </form>
 
-            <div id="newsletter-success" style="display: none; text-align: center; padding: 2rem;">
-                <i class="fas fa-check-circle" style="color: #00ff00; font-size: 3rem; margin-bottom: 1rem;"></i>
-                <h4 style="color: var(--accent); margin-bottom: 1rem;">¡Gracias por suscribirte!</h4>
-                <p style="color: var(--text-secondary);">Pronto recibirás nuestras novedades en tu correo.</p>
-                <button class="btn" style="margin-top: 1.5rem;" onclick="closeNewsletterPopup()">Cerrar</button>
-            </div>
+            <!-- Success Section con descuento -->
+<div id="newsletter-success" style="display: none; text-align: center; padding: 1rem;">
+    <i class="fas fa-check-circle" style="color: #00ff00; font-size: 3rem; margin-bottom: 1rem;"></i>
+    <h4 style="color: var(--accent); margin-bottom: 1rem;">¡Gracias por suscribirte!</h4>
+    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+        Hemos enviado un correo a <span id="userEmail" style="color: var(--accent); font-weight: bold;"></span>
+    </p>
+    
+    <!-- Código de descuento -->
+    <div class="discount-info">
+        <i class="fas fa-gift" style="color: var(--accent); font-size: 24px; margin-bottom: 10px;"></i>
+        <h3 style="color: var(--accent); margin-bottom: 10px;">¡10% DE DESCUENTO!</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 15px;">Tu código exclusivo para la próxima sesión:</p>
+        <div class="discount-code-display" id="discountCodeDisplay"></div>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-top: 15px;">
+            <i class="fas fa-info-circle"></i> 
+            Válido por 3 meses. Presenta este código al cotizar tu tatuaje.
+        </p>
+    </div>
+    
+    <!-- Advertencia si el email no se pudo enviar -->
+    <div id="emailWarning" style="display: none;">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong style="color: orange;">Importante:</strong>
+        <p style="color: var(--text-secondary); margin-top: 8px; margin-bottom: 5px;">
+            No pudimos enviar el email automáticamente, pero <strong>guarda este código:</strong>
+        </p>
+        <div style="font-size: 22px; color: var(--accent); font-weight: bold; margin: 10px 0;" id="fallbackDiscountCode"></div>
+    </div>
+    
+    <div class="discount-note">
+        <i class="fas fa-envelope"></i>
+        ¿No recibiste el correo? Revisa tu bandeja de spam
+    </div>
+    
+    <button class="btn" style="margin-top: 1.5rem;" onclick="closeNewsletterPopup()">Cerrar</button>
+</div>
         </div>
     </div>
 </div>
@@ -2088,7 +2247,7 @@
     
 <script>
 
-// Newsletter functionality
+// Newsletter functionality - Versión actualizada con descuento
 document.addEventListener('DOMContentLoaded', function() {
     const newsletterBtn = document.getElementById('newsletter-btn');
     const newsletterPopup = document.getElementById('newsletter-popup');
@@ -2096,6 +2255,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const newsletterForm = document.getElementById('newsletter-form');
     const newsletterSuccess = document.getElementById('newsletter-success');
     const newsletterSubmit = document.getElementById('newsletter-submit');
+    const userEmailSpan = document.getElementById('userEmail');
+    const discountCodeDisplay = document.getElementById('discountCodeDisplay');
+    const emailWarning = document.getElementById('emailWarning');
+    const fallbackDiscountCode = document.getElementById('fallbackDiscountCode');
 
     // Open newsletter popup
     if (newsletterBtn) {
@@ -2107,6 +2270,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 newsletterForm.reset();
             }
             if (newsletterSuccess) newsletterSuccess.style.display = 'none';
+            if (emailWarning) emailWarning.style.display = 'none';
         });
     }
 
@@ -2161,19 +2325,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error('Por favor ingresa un email válido');
                 }
 
-                // CONSTRUIR LA URL CORRECTA
+                // Phone validation
+                const phoneRegex = /^[0-9+\-\s]{9,}$/;
+                if (!phoneRegex.test(formData.telefono)) {
+                    throw new Error('Por favor ingresa un teléfono válido (mínimo 9 dígitos)');
+                }
+
+                // Build API URL
                 let API_URL;
-                
-                // Si estamos en desarrollo local
                 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
                     API_URL = 'http://localhost:3000/api/newsletter';
                 } else {
-                    // En producción: usa la URL completa de Vercel
-                    // Reemplaza con tu URL real de Vercel
                     API_URL = 'https://webpage-nine-mu.vercel.app/api/newsletter';
-                    
-                    // O usa la URL relativa (que debería funcionar)
-                    // API_URL = '/api/newsletter';
                 }
 
                 console.log('Enviando a:', API_URL);
@@ -2200,14 +2363,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     result = JSON.parse(responseText);
                 } catch (parseError) {
                     console.error('Error parseando JSON:', parseError);
-                    console.error('Primeros 200 caracteres:', responseText.substring(0, 200));
-                    
-                    // Si es HTML, muestra un mensaje más claro
-                    if (responseText.includes('<!DOCTYPE html>')) {
-                        throw new Error('La API devolvió HTML. Verifica que la URL sea correcta.');
-                    } else {
-                        throw new Error(`Respuesta no válida: ${responseText.substring(0, 100)}`);
-                    }
+                    throw new Error('Error al procesar la respuesta del servidor');
                 }
 
                 if (!response.ok) {
@@ -2215,27 +2371,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 if (result.success) {
-                    // Hide form and show success message
+                    // Mostrar el email del usuario
+                    if (userEmailSpan) {
+                        userEmailSpan.textContent = formData.email;
+                    }
+                    
+                    // Mostrar el código de descuento
+                    if (discountCodeDisplay && result.discountCode) {
+                        discountCodeDisplay.textContent = result.discountCode;
+                    }
+                    
+                    // Si hay advertencia de email no enviado, mostrarla
+                    if (result.warning) {
+                        if (emailWarning) emailWarning.style.display = 'block';
+                        if (fallbackDiscountCode && result.discountCode) {
+                            fallbackDiscountCode.textContent = result.discountCode;
+                        }
+                        console.warn('Advertencia:', result.warning);
+                    }
+                    
+                    // Guardar en localStorage para recordar la suscripción
+                    localStorage.setItem('newsletter_subscribed', 'true');
+                    localStorage.setItem('newsletter_email', formData.email);
+                    if (result.discountCode) {
+                        localStorage.setItem('discount_code', result.discountCode);
+                    }
+                    
+                    // Ocultar formulario y mostrar éxito
                     newsletterForm.style.display = 'none';
                     newsletterSuccess.style.display = 'block';
                     
-                    // Auto close after 5 seconds
-                    setTimeout(() => {
-                        closeNewsletterPopup();
-                        // Reset for next time
-                        setTimeout(() => {
-                            newsletterForm.style.display = 'block';
-                            newsletterSuccess.style.display = 'none';
-                            newsletterForm.reset();
-                        }, 300);
-                    }, 5000);
                 } else {
                     throw new Error(result.error || 'Error al procesar la suscripción');
                 }
 
             } catch (error) {
                 console.error('Error completo:', error);
-                alert('Error: ' + error.message);
+                
+                // Mensaje de error amigable
+                let errorMessage = error.message;
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage = 'Error de conexión. Por favor intenta nuevamente.';
+                }
+                
+                alert('Error: ' + errorMessage);
                 
                 // Reset button
                 submitBtn.innerHTML = originalText;
@@ -2243,8 +2422,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
-    
+
+    // Formato de teléfono
+    const phoneInput = document.getElementById('newsletter-telefono');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value.length <= 2) {
+                    value = '+' + value;
+                } else if (value.length <= 5) {
+                    value = '+' + value.substring(0, 2) + ' ' + value.substring(2);
+                } else if (value.length <= 9) {
+                    value = '+' + value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5);
+                } else {
+                    value = '+' + value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5, 9) + ' ' + value.substring(9, 12);
+                }
+                e.target.value = value;
+            }
+        });
+    }
+});    
 // Lightbox functionality
 document.addEventListener('DOMContentLoaded', function() {
     const lightbox = document.getElementById('lightbox');

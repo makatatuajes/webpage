@@ -55,12 +55,12 @@ export default async function handler(req, res) {
         const discountCode = generateDiscountCode(nombre, apellido);
         
         // EMAIL 1: Para el administrador (notificación de nuevo suscriptor)
-        const adminEmailContent = createAdminEmail(nombre, apellido, telefono, instagram, email);
+        const adminEmailContent = createAdminEmail(nombre, apellido, telefono, instagram, email, discountCode);
         
         // EMAIL 2: Para el cliente (bienvenida con cupón de descuento)
         const clientEmailContent = createClientEmail(nombre, apellido, discountCode);
 
-        // Enviar ambos emails en paralelo para mejor rendimiento
+        // Enviar ambos emails en paralelo
         const [adminEmailResult, clientEmailResult] = await Promise.allSettled([
             // Email al administrador
             fetch('https://api.resend.com/emails', {
@@ -70,8 +70,8 @@ export default async function handler(req, res) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    from: 'Makatatuajes <hola@makatatuajes.cl>',
-                    to: ['makatatuajes@outlook.com'],
+                    from: 'Makatatuajes <hola@makatatuajes.com>',
+                    to: ['hola@makatatuajes.com'],
                     subject: '📬 Nuevo suscriptor Newsletter - Makatatuajes',
                     html: adminEmailContent,
                     replyTo: email
@@ -86,26 +86,45 @@ export default async function handler(req, res) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    from: 'Makatatuajes <hola@makatatuajes.cl>',
-                    to: [email], // Enviar al email del suscriptor
-                    subject: '🎁 Bienvenido al Club de Descuentos de Makatatuajes - 10% de descuento',
+                    from: 'Makatatuajes <hola@makatatuajes.com>',
+                    to: [email],
+                    subject: '🎁 Bienvenido a Makatatuajes - 10% de descuento',
                     html: clientEmailContent
                 })
             })
         ]);
 
         // Verificar resultados
-        if (adminEmailResult.status === 'rejected' || clientEmailResult.status === 'rejected') {
-            console.error('Error enviando emails:', { adminEmailResult, clientEmailResult });
-            // Aún así retornamos éxito parcial porque al menos se procesó la suscripción
+        let adminSuccess = false;
+        let clientSuccess = false;
+        let warning = null;
+
+        if (adminEmailResult.status === 'fulfilled') {
+            const adminResponse = await adminEmailResult.value.json();
+            console.log('Email admin enviado:', adminResponse);
+            adminSuccess = true;
+        } else {
+            console.error('Error email admin:', adminEmailResult.reason);
+        }
+
+        if (clientEmailResult.status === 'fulfilled') {
+            const clientResponse = await clientEmailResult.value.json();
+            console.log('Email cliente enviado:', clientResponse);
+            clientSuccess = true;
+        } else {
+            console.error('Error email cliente:', clientEmailResult.reason);
+            warning = 'No se pudo enviar el email al cliente. Pero aquí tienes tu código de descuento.';
         }
 
         return res.status(200).json({ 
             success: true, 
-            message: 'Suscripción exitosa - Revisa tu correo para el cupón de descuento',
+            message: 'Suscripción exitosa',
+            warning: warning,
             discountCode: discountCode,
             data: { 
-                email: email 
+                email: email,
+                adminEmailSent: adminSuccess,
+                clientEmailSent: clientSuccess 
             }
         });
 
@@ -130,7 +149,7 @@ function generateDiscountCode(nombre, apellido) {
 }
 
 // Función para crear email del administrador
-function createAdminEmail(nombre, apellido, telefono, instagram, email) {
+function createAdminEmail(nombre, apellido, telefono, instagram, email, discountCode) {
     return `
         <!DOCTYPE html>
         <html>
@@ -143,13 +162,24 @@ function createAdminEmail(nombre, apellido, telefono, instagram, email) {
                 .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
                 .field { margin-bottom: 15px; }
                 .label { font-weight: bold; color: #ff00ff; }
+                .discount-code { 
+                    background: #ff00ff; 
+                    color: white; 
+                    padding: 10px 20px; 
+                    font-family: monospace; 
+                    font-size: 24px; 
+                    font-weight: bold;
+                    border-radius: 8px;
+                    display: inline-block;
+                    margin: 10px 0;
+                }
                 hr { border: 1px solid #ff00ff; margin: 20px 0; }
             </style>
         </head>
         <body>
             <div class="container">
                 <div class="header">
-                    <h1>🎨 Nuevo Suscriptor del Club de Descuentos</h1>
+                    <h1>🎨 Nuevo Suscriptor del Club de Descuentos </h1>
                 </div>
                 <div class="content">
                     <p><strong>Fecha:</strong> ${new Date().toLocaleString('es-CL')}</p>
@@ -178,6 +208,12 @@ function createAdminEmail(nombre, apellido, telefono, instagram, email) {
                     </div>
                     
                     <hr>
+                    
+                    <h3 style="color: #ff00ff;">🎁 Código de descuento generado:</h3>
+                    <div class="discount-code">${discountCode}</div>
+                    <p style="color: #666; margin-top: 10px;">Este código ha sido enviado al cliente.</p>
+                    
+                    <hr>
                     <p style="color: #666; font-size: 12px; text-align: center;">
                         Se ha enviado un email de bienvenida con cupón de descuento al suscriptor.
                     </p>
@@ -202,7 +238,6 @@ function createClientEmail(nombre, apellido, discountCode) {
                 body { 
                     font-family: 'Segoe UI', Arial, sans-serif; 
                     line-height: 1.6; 
-                    color: #333; 
                     margin: 0;
                     padding: 0;
                     background-color: #000;
@@ -220,10 +255,6 @@ function createClientEmail(nombre, apellido, discountCode) {
                     background: linear-gradient(135deg, #ff00ff 0%, #ff66ff 100%);
                     padding: 30px 20px;
                     text-align: center;
-                }
-                .header img {
-                    max-width: 150px;
-                    margin-bottom: 15px;
                 }
                 .header h1 {
                     color: white;
@@ -282,7 +313,6 @@ function createClientEmail(nombre, apellido, discountCode) {
                 }
                 .button:hover {
                     background: #ff66ff;
-                    transform: scale(1.05);
                 }
                 .footer {
                     background: #000;
@@ -292,14 +322,11 @@ function createClientEmail(nombre, apellido, discountCode) {
                     font-size: 12px;
                     border-top: 1px solid rgba(255, 0, 255, 0.2);
                 }
-                .social-links {
-                    margin: 15px 0;
-                }
                 .social-links a {
                     color: #ff00ff;
                     text-decoration: none;
                     margin: 0 10px;
-                    font-size: 20px;
+                    font-size: 16px;
                 }
                 .expiry {
                     color: #ff00ff;
@@ -311,8 +338,7 @@ function createClientEmail(nombre, apellido, discountCode) {
         <body>
             <div class="container">
                 <div class="header">
-                    <img src="https://tu-dominio.com/Logo (2).png" alt="Makatatuajes" style="max-width: 150px;">
-                    <h1>🎉 ¡Bienvenido al Clubd de Descuentos de Makatatuajes!</h1>
+                    <h1>🎉 ¡Bienvenido al Club de Descuentos de Makatatuajes!</h1>
                 </div>
                 
                 <div class="content">
@@ -330,34 +356,33 @@ function createClientEmail(nombre, apellido, discountCode) {
                         
                         <div class="info-box">
                             <p style="margin: 5px 0;"><strong>🎨 ¿Cómo usar tu descuento?</strong></p>
-                            <p style="margin: 5px 0; color: #ccc;">Presenta este código al cotizar tu tatuaje, ya sea:</p>
-                            <p style="margin: 10px 0;">💻 Mencionándolo en tu consulta online</p>
-                            <p style="margin: 5px 0;">🏠 O directamente durante tu cita presencial</p>
+                            <p style="margin: 5px 0; color: #ccc;">Presenta este código al cotizar tu tatuaje:</p>
+                            <p style="margin: 5px 0;">💻 En tu consulta online</p>
+                            <p style="margin: 5px 0;">🏠 O durante tu cita presencial</p>
                         </div>
                         
                         <p class="expiry">
-                            <i class="fas fa-clock"></i> 
-                            Válido hasta: ${fechaExpiracion.toLocaleDateString('es-CL')}
+                            ⏰ Válido hasta: ${fechaExpiracion.toLocaleDateString('es-CL')}
                         </p>
                     </div>
                     
                     <div style="text-align: center;">
                         <a href="https://instagram.com/maka.tatuajes" class="button" target="_blank">
-                            <i class="fab fa-instagram"></i> Ver mi trabajo
+                            📷 Ver mi trabajo en Instagram
                         </a>
                     </div>
                     
                     <div style="text-align: center; margin-top: 30px;">
                         <p style="color: #ccc;">¿Tienes alguna idea en mente?</p>
-                        <p style="color: #ff00ff; font-weight: bold;">¡Conversemos! Estoy aquí para hacer realidad tu próximo tatuaje.</p>
+                        <p style="color: #ff00ff; font-weight: bold;">¡Conversemos! Escríbeme para agendar tu cita.</p>
                     </div>
                 </div>
                 
                 <div class="footer">
                     <div class="social-links">
-                        <a href="https://instagram.com/maka.tatuajes" target="_blank">📷 Instagram</a>
-                        <a href="https://facebook.com/mvjaque" target="_blank">📘 Facebook</a>
-                        <a href="https://tiktok.com/@maka.tatuajes0" target="_blank">🎵 TikTok</a>
+                        <a href="https://instagram.com/maka.tatuajes" target="_blank">Instagram</a>
+                        <a href="https://facebook.com/mvjaque" target="_blank">Facebook</a>
+                        <a href="https://tiktok.com/@maka.tatuajes0" target="_blank">TikTok</a>
                     </div>
                     <p>© 2026 Makatatuajes. Todos los derechos reservados.</p>
                     <p>Si no solicitaste este correo, por favor ignóralo.</p>

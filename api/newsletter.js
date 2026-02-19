@@ -70,7 +70,7 @@ export default async function handler(req, res) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    from: 'Makatatuajes <onboarding@resend.dev>',
+                    from: 'Makatatuajes <hola@makatatuajes.cl>',
                     to: ['makatatuajes@outlook.com'],
                     subject: '📬 Nuevo suscriptor Newsletter - Makatatuajes',
                     html: adminEmailContent,
@@ -86,7 +86,7 @@ export default async function handler(req, res) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    from: 'Makatatuajes <onboarding@resend.dev>',
+                    from: 'Makatatuajes <hola@makatatuajes.cl>',
                     to: [email], // Enviar al email del suscriptor
                     subject: '🎁 Bienvenido al Club de Descuentos de Makatatuajes - 10% de descuento',
                     html: clientEmailContent

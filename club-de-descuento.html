@@ -347,6 +347,42 @@
                 padding: 0.8rem;
             }
         }
+
+        /* Estilos adicionales para el email de confirmación en el frontend */
+.discount-info {
+    background: rgba(255, 0, 255, 0.1);
+    border-left: 4px solid var(--accent);
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+.discount-code-display {
+    font-family: monospace;
+    font-size: 24px;
+    color: var(--accent);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 10px 0;
+    border: 1px dashed var(--accent);
+    letter-spacing: 2px;
+}
+
+.success-message .discount-note {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+}
+
+.success-message .discount-note i {
+    color: #00ff00;
+    margin-right: 5px;
+}
     </style>
 </head>
 <body>
@@ -434,20 +470,36 @@
                 </form>
             </div>
 
-            <!-- Success Section (initially hidden) -->
-            <div id="successSection" style="display: none;">
-                <div class="success-message">
-                    <i class="fas fa-check-circle"></i>
-                    <h2>¡Gracias por suscribirte!</h2>
-                    <p>Hemos enviado un correo de confirmación a tu dirección de email.<br>Pronto recibirás nuestras novedades.</p>
-                    <a href="index.html" class="btn-back">
-                        <i class="fas fa-home"></i>
-                        Volver al inicio
-                    </a>
-                </div>
-            </div>
+<!-- Success Section (actualizado) -->
+<div id="successSection" style="display: none;">
+    <div class="success-message">
+        <i class="fas fa-check-circle"></i>
+        <h2>¡Gracias por suscribirte!</h2>
+        <p>Hemos enviado un correo de confirmación a <span id="userEmail" style="color: var(--accent);"></span></p>
+        
+        <!-- Nueva sección de descuento -->
+        <div class="discount-info">
+            <i class="fas fa-gift" style="color: var(--accent); font-size: 24px; margin-bottom: 10px;"></i>
+            <h3 style="color: var(--accent); margin-bottom: 10px;">¡Tienes un 10% de descuento!</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 15px;">Revisa tu correo para obtener tu código exclusivo de descuento para tu próxima sesión.</p>
+            <div class="discount-code-display" id="discountCodeDisplay"></div>
+            <p style="color: var(--text-secondary); font-size: 14px; margin-top: 15px;">
+                <i class="fas fa-info-circle"></i> 
+                Válido por 3 meses. Presenta este código al cotizar tu tatuaje.
+            </p>
         </div>
+        
+        <div class="discount-note">
+            <i class="fas fa-envelope"></i>
+            ¿No recibiste el correo? Revisa tu bandeja de spam o correo no deseado.
+        </div>
+        
+        <a href="index.html" class="btn-back" style="margin-top: 20px;">
+            <i class="fas fa-home"></i>
+            Volver al inicio
+        </a>
     </div>
+</div>
 
     <footer>
         <div class="footer-content">
@@ -456,133 +508,163 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const newsletterForm = document.getElementById('newsletterForm');
-            const formSection = document.getElementById('formSection');
-            const successSection = document.getElementById('successSection');
-            const submitBtn = document.getElementById('submitBtn');
+        // Newsletter functionality - Actualizado
+document.addEventListener('DOMContentLoaded', function() {
+    const newsletterForm = document.getElementById('newsletterForm');
+    const formSection = document.getElementById('formSection');
+    const successSection = document.getElementById('successSection');
+    const submitBtn = document.getElementById('submitBtn');
+    const userEmailSpan = document.getElementById('userEmail');
+    const discountCodeDisplay = document.getElementById('discountCodeDisplay');
 
-            if (newsletterForm) {
-                newsletterForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+                submitBtn.disabled = true;
+
+                // Get form data
+                const formData = {
+                    nombre: document.getElementById('nombre').value.trim(),
+                    apellido: document.getElementById('apellido').value.trim(),
+                    telefono: document.getElementById('telefono').value.trim(),
+                    instagram: document.getElementById('instagram').value.trim().replace('@', ''),
+                    email: document.getElementById('email').value.trim()
+                };
+
+                // Validate required fields
+                if (!formData.nombre || !formData.apellido || !formData.telefono || !formData.instagram || !formData.email) {
+                    throw new Error('Por favor completa todos los campos');
+                }
+
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(formData.email)) {
+                    throw new Error('Por favor ingresa un email válido');
+                }
+
+                // Phone validation
+                const phoneRegex = /^[0-9+\-\s]{9,}$/;
+                if (!phoneRegex.test(formData.telefono)) {
+                    throw new Error('Por favor ingresa un teléfono válido (mínimo 9 dígitos)');
+                }
+
+                // Build API URL
+                let API_URL;
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    API_URL = 'http://localhost:3000/api/newsletter';
+                } else {
+                    API_URL = 'https://webpage-nine-mu.vercel.app/';
+                }
+
+                console.log('Enviando a:', API_URL);
+                console.log('Datos:', formData);
+
+                // Make the request
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                // Get response as text
+                const responseText = await response.text();
+                console.log('Respuesta:', responseText);
+
+                // Parse JSON
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('Error parseando JSON:', parseError);
+                    throw new Error('Error al procesar la respuesta del servidor');
+                }
+
+                if (!response.ok) {
+                    throw new Error(result.error || `Error ${response.status}`);
+                }
+
+                if (result.success) {
+                    // Mostrar el email del usuario en el mensaje de éxito
+                    if (userEmailSpan) {
+                        userEmailSpan.textContent = formData.email;
+                    }
                     
-                    const originalText = submitBtn.innerHTML;
+                    // Mostrar el código de descuento si viene en la respuesta
+                    if (discountCodeDisplay && result.discountCode) {
+                        discountCodeDisplay.textContent = result.discountCode;
+                    }
                     
-                    try {
-                        // Show loading state
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-                        submitBtn.disabled = true;
-
-                        // Get form data
-                        const formData = {
-                            nombre: document.getElementById('nombre').value.trim(),
-                            apellido: document.getElementById('apellido').value.trim(),
-                            telefono: document.getElementById('telefono').value.trim(),
-                            instagram: document.getElementById('instagram').value.trim().replace('@', ''),
-                            email: document.getElementById('email').value.trim()
-                        };
-
-                        // Validate required fields
-                        if (!formData.nombre || !formData.apellido || !formData.telefono || !formData.instagram || !formData.email) {
-                            throw new Error('Por favor completa todos los campos');
-                        }
-
-                        // Email validation
-                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        if (!emailRegex.test(formData.email)) {
-                            throw new Error('Por favor ingresa un email válido');
-                        }
-
-                        // Phone validation
-                        const phoneRegex = /^[0-9+\-\s]{9,}$/;
-                        if (!phoneRegex.test(formData.telefono)) {
-                            throw new Error('Por favor ingresa un teléfono válido (mínimo 9 dígitos)');
-                        }
-
-                        // Build API URL
-                        let API_URL;
-                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                            API_URL = 'http://localhost:3000/api/newsletter';
-                        } else {
-                            API_URL = 'https://webpage-nine-mu.vercel.app/api/newsletter';
-                        }
-
-                        console.log('Enviando a:', API_URL);
-                        console.log('Datos:', formData);
-
-                        // Make the request
-                        const response = await fetch(API_URL, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(formData)
+                    // Show success message
+                    formSection.style.display = 'none';
+                    successSection.style.display = 'block';
+                    
+                    // Opcional: Guardar en localStorage para recordar la suscripción
+                    localStorage.setItem('newsletter_subscribed', 'true');
+                    localStorage.setItem('newsletter_email', formData.email);
+                    if (result.discountCode) {
+                        localStorage.setItem('discount_code', result.discountCode);
+                    }
+                    
+                    // Evento para analytics (si lo tienes configurado)
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'newsletter_subscription', {
+                            'event_category': 'engagement',
+                            'event_label': 'newsletter_with_discount'
                         });
-
-                        // Get response as text
-                        const responseText = await response.text();
-                        console.log('Respuesta:', responseText);
-
-                        // Parse JSON
-                        let result;
-                        try {
-                            result = JSON.parse(responseText);
-                        } catch (parseError) {
-                            console.error('Error parseando JSON:', parseError);
-                            throw new Error('Error al procesar la respuesta del servidor');
-                        }
-
-                        if (!response.ok) {
-                            throw new Error(result.error || `Error ${response.status}`);
-                        }
-
-                        if (result.success) {
-                            // Show success message
-                            formSection.style.display = 'none';
-                            successSection.style.display = 'block';
-                            
-                            // Optional: Send to analytics
-                            if (typeof gtag !== 'undefined') {
-                                gtag('event', 'newsletter_subscription', {
-                                    'event_category': 'engagement',
-                                    'event_label': 'newsletter'
-                                });
-                            }
-                        } else {
-                            throw new Error(result.error || 'Error al procesar la suscripción');
-                        }
-
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('Error: ' + error.message);
-                        
-                        // Reset button
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
                     }
-                });
-            }
+                } else {
+                    throw new Error(result.error || 'Error al procesar la suscripción');
+                }
 
-            // Format phone input
-            const phoneInput = document.getElementById('telefono');
-            if (phoneInput) {
-                phoneInput.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/\D/g, '');
-                    if (value.length > 0) {
-                        if (value.length <= 2) {
-                            value = '+' + value;
-                        } else if (value.length <= 5) {
-                            value = '+' + value.substring(0, 2) + ' ' + value.substring(2);
-                        } else if (value.length <= 9) {
-                            value = '+' + value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5);
-                        } else {
-                            value = '+' + value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5, 9) + ' ' + value.substring(9, 12);
-                        }
-                        e.target.value = value;
-                    }
-                });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
             }
         });
+    }
+
+    // Formato de teléfono
+    const phoneInput = document.getElementById('telefono');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value.length <= 2) {
+                    value = '+' + value;
+                } else if (value.length <= 5) {
+                    value = '+' + value.substring(0, 2) + ' ' + value.substring(2);
+                } else if (value.length <= 9) {
+                    value = '+' + value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5);
+                } else {
+                    value = '+' + value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5, 9) + ' ' + value.substring(9, 12);
+                }
+                e.target.value = value;
+            }
+        });
+    }
+
+    // Verificar si ya está suscrito (opcional)
+    const isSubscribed = localStorage.getItem('newsletter_subscribed');
+    if (isSubscribed && window.location.pathname.includes('newsletter.html')) {
+        const email = localStorage.getItem('newsletter_email');
+        const discountCode = localStorage.getItem('discount_code');
+        
+        // Mostrar mensaje de que ya está suscrito
+        console.log('Usuario ya suscrito:', email, 'Código:', discountCode);
+    }
+});
     </script>
 </body>
 </html>

@@ -1691,6 +1691,146 @@
     border-radius: 4px;
     margin-left: 5px;
 }
+
+/* Tienda Menu Item with Coming Soon Badge */
+.tienda-item {
+    position: relative;
+}
+
+.tienda-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.coming-soon-badge {
+    position: absolute;
+    top: -15px;
+    right: -25px;
+    background: linear-gradient(135deg, #ff00ff, #ff66ff);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(255, 0, 255, 0.3);
+    white-space: nowrap;
+    animation: pulse-badge 2s infinite;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.coming-soon-badge::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -3px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-right: 4px solid #ff00ff;
+}
+
+@keyframes pulse-badge {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 2px 5px rgba(255, 0, 255, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 10px rgba(255, 0, 255, 0.5);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 2px 5px rgba(255, 0, 255, 0.3);
+    }
+}
+
+/* Mobile adjustments for tienda item */
+@media (max-width: 768px) {
+    .tienda-link {
+        justify-content: center;
+        position: relative;
+    }
+    
+    .coming-soon-badge {
+        position: absolute;
+        top: -20px;
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.55rem;
+        padding: 2px 6px;
+        white-space: nowrap;
+    }
+    
+    .coming-soon-badge::before {
+        display: none; /* Ocultar la flecha en móvil */
+    }
+    
+    /* Ajuste para el hover effect en móvil */
+    .tienda-link:hover .coming-soon-badge {
+        animation: none;
+    }
+}
+
+/* Ajuste para pantallas muy pequeñas */
+@media (max-width: 380px) {
+    .coming-soon-badge {
+        font-size: 0.5rem;
+        padding: 2px 4px;
+        top: -18px;
+    }
+}
+
+/* Estilo para cuando el usuario hace hover sobre el enlace */
+.tienda-link:hover .coming-soon-badge {
+    background: linear-gradient(135deg, #ff66ff, #ff00ff);
+    box-shadow: 0 4px 12px rgba(255, 0, 255, 0.6);
+}
+
+/* Tooltip opcional para desktop */
+.tienda-link {
+    position: relative;
+    cursor: default; /* Cambia el cursor para indicar que no es clickeable */
+}
+
+.tienda-link:hover::after {
+    content: '⚡ Próximamente podrás comprar diseños exclusivos';
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.75rem;
+    padding: 8px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+    border: 1px solid var(--accent);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    pointer-events: none;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Ocultar tooltip en móvil */
+@media (max-width: 768px) {
+    .tienda-link:hover::after {
+        display: none;
+    }
+}
+
+/* Ajuste del nav para desktop */
+@media (min-width: 769px) {
+    nav ul {
+        gap: 2.5rem; /* Aumentamos el gap para dar espacio al badge */
+    }
+}
     
 </style>
 </head>
@@ -1698,19 +1838,25 @@
     <!-- Updated Header -->
 <header>
     <nav id="mainNav">
-        <ul>
-            <li><a href="#hero">Inicio</a></li>
-            <li><a href="#arte">Arte</a></li>
-            <li><a href="#sobre-mi">Sobre Mí</a></li>
-            <li><a href="#contacto">Contacto</a></li>
-        </ul>
-        <!-- FIXED: Added TikTok icon to mobile navigation -->
-        <div class="social-icons-mobile">
-            <a href="https://www.instagram.com/maka.tatuajes" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
-            <a href="https://facebook.com/mvjaque" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
-            <a href="https://www.tiktok.com/@maka.tatuajes0?_r=1&_t=ZM-925Ivfzqxie" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i></a>
-        </div>
-    </nav>
+    <ul>
+        <li><a href="#hero">Inicio</a></li>
+        <li><a href="#arte">Arte</a></li>
+        <li><a href="#sobre-mi">Sobre Mí</a></li>
+        <li class="tienda-item">
+            <a href="#" class="tienda-link" onclick="return false;">
+                Tienda
+                <span class="coming-soon-badge">Próximamente</span>
+            </a>
+        </li>
+        <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <!-- FIXED: Added TikTok icon to mobile navigation -->
+    <div class="social-icons-mobile">
+        <a href="https://www.instagram.com/maka.tatuajes" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+        <a href="https://facebook.com/mvjaque" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
+        <a href="https://www.tiktok.com/@maka.tatuajes0?_r=1&_t=ZM-925Ivfzqxie" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i></a>
+    </div>
+</nav>
     
     <div class="social-icons">
         <a href="https://www.instagram.com/maka.tatuajes" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>

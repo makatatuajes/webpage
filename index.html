@@ -1564,42 +1564,6 @@
         font-size: 1rem;
     }
 }
-
- /* Estilos adicionales para el email de confirmación en el frontend */
-.discount-info {
-    background: rgba(255, 0, 255, 0.1);
-    border-left: 4px solid var(--accent);
-    padding: 15px;
-    margin: 20px 0;
-    border-radius: 8px;
-}
-
-.discount-code-display {
-    font-family: monospace;
-    font-size: 24px;
-    color: var(--accent);
-    background: rgba(0, 0, 0, 0.5);
-    padding: 10px 20px;
-    border-radius: 8px;
-    display: inline-block;
-    margin: 10px 0;
-    border: 1px dashed var(--accent);
-    letter-spacing: 2px;
-}
-
-.success-message .discount-note {
-    color: var(--text-secondary);
-    font-size: 14px;
-    margin-top: 15px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 5px;
-}
-
-.success-message .discount-note i {
-    color: #00ff00;
-    margin-right: 5px;
-}
 </style>
 </head>
 <body>
@@ -2124,19 +2088,52 @@
     
 <script>
 
-// Newsletter functionality - Actualizado
+// Newsletter functionality
 document.addEventListener('DOMContentLoaded', function() {
-    const newsletterForm = document.getElementById('newsletterForm');
-    const formSection = document.getElementById('formSection');
-    const successSection = document.getElementById('successSection');
-    const submitBtn = document.getElementById('submitBtn');
-    const userEmailSpan = document.getElementById('userEmail');
-    const discountCodeDisplay = document.getElementById('discountCodeDisplay');
+    const newsletterBtn = document.getElementById('newsletter-btn');
+    const newsletterPopup = document.getElementById('newsletter-popup');
+    const newsletterClose = document.getElementById('newsletter-close');
+    const newsletterForm = document.getElementById('newsletter-form');
+    const newsletterSuccess = document.getElementById('newsletter-success');
+    const newsletterSubmit = document.getElementById('newsletter-submit');
 
+    // Open newsletter popup
+    if (newsletterBtn) {
+        newsletterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            newsletterPopup.classList.add('active');
+            if (newsletterForm) {
+                newsletterForm.style.display = 'block';
+                newsletterForm.reset();
+            }
+            if (newsletterSuccess) newsletterSuccess.style.display = 'none';
+        });
+    }
+
+    function closeNewsletterPopup() {
+        newsletterPopup.classList.remove('active');
+    }
+
+    window.closeNewsletterPopup = closeNewsletterPopup;
+
+    if (newsletterClose) {
+        newsletterClose.addEventListener('click', closeNewsletterPopup);
+    }
+
+    if (newsletterPopup) {
+        newsletterPopup.addEventListener('click', function(e) {
+            if (e.target === newsletterPopup) {
+                closeNewsletterPopup();
+            }
+        });
+    }
+
+    // Handle form submission
     if (newsletterForm) {
         newsletterForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const submitBtn = newsletterSubmit;
             const originalText = submitBtn.innerHTML;
             
             try {
@@ -2146,11 +2143,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Get form data
                 const formData = {
-                    nombre: document.getElementById('nombre').value.trim(),
-                    apellido: document.getElementById('apellido').value.trim(),
-                    telefono: document.getElementById('telefono').value.trim(),
-                    instagram: document.getElementById('instagram').value.trim().replace('@', ''),
-                    email: document.getElementById('email').value.trim()
+                    nombre: document.getElementById('newsletter-nombre').value.trim(),
+                    apellido: document.getElementById('newsletter-apellido').value.trim(),
+                    telefono: document.getElementById('newsletter-telefono').value.trim(),
+                    instagram: document.getElementById('newsletter-instagram').value.trim().replace('@', ''),
+                    email: document.getElementById('newsletter-email').value.trim()
                 };
 
                 // Validate required fields
@@ -2164,18 +2161,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error('Por favor ingresa un email válido');
                 }
 
-                // Phone validation
-                const phoneRegex = /^[0-9+\-\s]{9,}$/;
-                if (!phoneRegex.test(formData.telefono)) {
-                    throw new Error('Por favor ingresa un teléfono válido (mínimo 9 dígitos)');
-                }
-
-                // Build API URL
+                // CONSTRUIR LA URL CORRECTA
                 let API_URL;
+                
+                // Si estamos en desarrollo local
                 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
                     API_URL = 'http://localhost:3000/api/newsletter';
                 } else {
+                    // En producción: usa la URL completa de Vercel
+                    // Reemplaza con tu URL real de Vercel
                     API_URL = 'https://webpage-nine-mu.vercel.app/api/newsletter';
+                    
+                    // O usa la URL relativa (que debería funcionar)
+                    // API_URL = '/api/newsletter';
                 }
 
                 console.log('Enviando a:', API_URL);
@@ -2190,17 +2188,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: JSON.stringify(formData)
                 });
 
-                // Get response as text
-                const responseText = await response.text();
-                console.log('Respuesta:', responseText);
+                console.log('Status:', response.status);
 
-                // Parse JSON
+                // Get response as text first
+                const responseText = await response.text();
+                console.log('Respuesta raw:', responseText);
+
+                // Try to parse as JSON
                 let result;
                 try {
                     result = JSON.parse(responseText);
                 } catch (parseError) {
                     console.error('Error parseando JSON:', parseError);
-                    throw new Error('Error al procesar la respuesta del servidor');
+                    console.error('Primeros 200 caracteres:', responseText.substring(0, 200));
+                    
+                    // Si es HTML, muestra un mensaje más claro
+                    if (responseText.includes('<!DOCTYPE html>')) {
+                        throw new Error('La API devolvió HTML. Verifica que la URL sea correcta.');
+                    } else {
+                        throw new Error(`Respuesta no válida: ${responseText.substring(0, 100)}`);
+                    }
                 }
 
                 if (!response.ok) {
@@ -2208,40 +2215,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 if (result.success) {
-                    // Mostrar el email del usuario en el mensaje de éxito
-                    if (userEmailSpan) {
-                        userEmailSpan.textContent = formData.email;
-                    }
+                    // Hide form and show success message
+                    newsletterForm.style.display = 'none';
+                    newsletterSuccess.style.display = 'block';
                     
-                    // Mostrar el código de descuento si viene en la respuesta
-                    if (discountCodeDisplay && result.discountCode) {
-                        discountCodeDisplay.textContent = result.discountCode;
-                    }
-                    
-                    // Show success message
-                    formSection.style.display = 'none';
-                    successSection.style.display = 'block';
-                    
-                    // Opcional: Guardar en localStorage para recordar la suscripción
-                    localStorage.setItem('newsletter_subscribed', 'true');
-                    localStorage.setItem('newsletter_email', formData.email);
-                    if (result.discountCode) {
-                        localStorage.setItem('discount_code', result.discountCode);
-                    }
-                    
-                    // Evento para analytics (si lo tienes configurado)
-                    if (typeof gtag !== 'undefined') {
-                        gtag('event', 'newsletter_subscription', {
-                            'event_category': 'engagement',
-                            'event_label': 'newsletter_with_discount'
-                        });
-                    }
+                    // Auto close after 5 seconds
+                    setTimeout(() => {
+                        closeNewsletterPopup();
+                        // Reset for next time
+                        setTimeout(() => {
+                            newsletterForm.style.display = 'block';
+                            newsletterSuccess.style.display = 'none';
+                            newsletterForm.reset();
+                        }, 300);
+                    }, 5000);
                 } else {
                     throw new Error(result.error || 'Error al procesar la suscripción');
                 }
 
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error completo:', error);
                 alert('Error: ' + error.message);
                 
                 // Reset button
@@ -2250,38 +2243,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-    // Formato de teléfono
-    const phoneInput = document.getElementById('telefono');
-    if (phoneInput) {
-        phoneInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 0) {
-                if (value.length <= 2) {
-                    value = '+' + value;
-                } else if (value.length <= 5) {
-                    value = '+' + value.substring(0, 2) + ' ' + value.substring(2);
-                } else if (value.length <= 9) {
-                    value = '+' + value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5);
-                } else {
-                    value = '+' + value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5, 9) + ' ' + value.substring(9, 12);
-                }
-                e.target.value = value;
-            }
-        });
-    }
-
-    // Verificar si ya está suscrito (opcional)
-    const isSubscribed = localStorage.getItem('newsletter_subscribed');
-    if (isSubscribed && window.location.pathname.includes('newsletter.html')) {
-        const email = localStorage.getItem('newsletter_email');
-        const discountCode = localStorage.getItem('discount_code');
-        
-        // Mostrar mensaje de que ya está suscrito
-        console.log('Usuario ya suscrito:', email, 'Código:', discountCode);
-    }
 });
-
     
 // Lightbox functionality
 document.addEventListener('DOMContentLoaded', function() {

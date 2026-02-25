@@ -2311,14 +2311,12 @@
                     <label for="popup-abono">Selecciona tu Abono</label>
                     <select id="popup-abono" class="form-control" required>
                         <option value="" disabled selected>Elige tu abono</option>
-                        <!-- 🔴 OPCIÓN DE PRUEBA - $900 CLP 🔴 -->
-                        <option value="Abono PRUEBA $900 CLP" data-price="900">🧪 PRUEBA - $900 CLP</option>
                         <option value="Abono $15.000 CLP" data-price="15000">Abono $15.000 CLP</option>
                         <option value="Abono $20.000 CLP" data-price="20000">Abono $20.000 CLP</option>
                         <option value="Abono $30.000 CLP" data-price="30000">Abono $30.000 CLP</option>
                         <option value="Abono $40.000 CLP" data-price="40000">Abono $40.000 CLP</option>
                         <option value="Abono $60.000 CLP" data-price="60000">Abono $60.000 CLP</option>
-                        <option value="Abono $80.000 CLP" data-price="80000">Abono $80.000 CLP</option> 
+                        <option value="Abono $80.000 CLP" data-price="80000">Abono $80.000 CLP</option>
                         <option value="Abono $100.000 CLP" data-price="100000">Abono $100.000 CLP</option>
                         <option value="Abono $120.000 CLP" data-price="120000">Abono $120.000 CLP</option>
                         <option value="custom" data-price="custom">💰 Personalizar monto</option>
@@ -3163,15 +3161,16 @@ if (abonoSelect && customPriceGroup && customPriceInput) {
         }
     });
 
-// Validate custom price on input - 🔴 MODO PRUEBA 🔴
-customPriceInput.addEventListener('input', function() {
-    const value = parseInt(this.value);
-    if (value < 900) {  // Cambiado de 15000 a 900
-        this.setCustomValidity('El monto mínimo es $900 CLP (modo prueba)');
-    } else {
-        this.setCustomValidity('');
-    }
-});
+    // Validate custom price on input
+    customPriceInput.addEventListener('input', function() {
+        const value = parseInt(this.value);
+        if (value < 500) {
+            this.setCustomValidity('El monto mínimo es $15.000 CLP');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+}
 
 // Update the form submission handler to handle custom prices
 const paymentForm = document.getElementById('payment-form');

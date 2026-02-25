@@ -8,12 +8,10 @@ const FLOW_CONFIG = {
   API_URL: process.env.FLOW_API_URL || 'https://sandbox.flow.cl/api',
   API_KEY: process.env.FLOW_API_KEY,
   SECRET_KEY: process.env.FLOW_SECRET_KEY,
-  URL_CONFIRMATION: process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}/api/flow/confirm` 
-    : 'http://localhost:3000/api/flow/confirm',
-  URL_RETURN: process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}/success.html` 
-    : 'https://makatatuajes.com/success.html'
+  // Usar SITE_URL si existe, si no, usar VERCEL_URL como fallback
+  BASE_URL: process.env.SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
+  URL_CONFIRMATION: `${process.env.SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')}/api/flow/confirm`,
+  URL_RETURN: `${process.env.SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')}/success.html`
 };
 
 console.log('Makatatuajes Flow config check:', {

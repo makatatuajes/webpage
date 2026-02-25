@@ -27,8 +27,8 @@ const FLOW_CONFIG = {
   API_URL: process.env.FLOW_API_URL || 'https://sandbox.flow.cl/api',
   API_KEY: process.env.FLOW_API_KEY,
   SECRET_KEY: process.env.FLOW_SECRET_KEY,
-  URL_CONFIRMATION: `${BASE_URL}/api/flow/confirm`,
-  URL_RETURN: `${BASE_URL}/api/flow/success`
+  URL_CONFIRMATION: `${BASE_URL}/api/flow/confirm.js`,
+  URL_RETURN: `${BASE_URL}/api/flow/success.js`
 };
 
 console.log('Makatatuajes Flow config check:', {

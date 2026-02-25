@@ -3196,7 +3196,7 @@ if (paymentForm) {
             
             if (isCustomPrice) {
                 const customPrice = document.getElementById('popup-custom-price').value;
-                if (!customPrice || parseInt(customPrice) < 15000) {
+                if (!customPrice || parseInt(customPrice) < 500) {
                     throw new Error('Por favor ingresa un monto válido (mínimo $15.000 CLP)');
                 }
                 finalPrice = customPrice;

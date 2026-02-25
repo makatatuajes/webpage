@@ -3,15 +3,32 @@ const crypto = require('crypto');
 
 console.log('=== MAKATATUAJES PAYMENT.JS LOADED ===');
 
+// Función para determinar la URL base correcta
+function getBaseUrl() {
+  // 1. Si hay SITE_URL configurado (recomendado para dominio personalizado)
+  if (process.env.SITE_URL) {
+    return process.env.SITE_URL;
+  }
+  
+  // 2. En producción con Vercel (puede ser dominio personalizado o vercel.app)
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  
+  // 3. Desarrollo local
+  return 'http://localhost:3000';
+}
+
+const BASE_URL = getBaseUrl();
+console.log('🔧 BASE_URL detectada:', BASE_URL);
+
 // Configuración de Flow para Makatatuajes
 const FLOW_CONFIG = {
   API_URL: process.env.FLOW_API_URL || 'https://sandbox.flow.cl/api',
   API_KEY: process.env.FLOW_API_KEY,
   SECRET_KEY: process.env.FLOW_SECRET_KEY,
-  // Usar SITE_URL si existe, si no, usar VERCEL_URL como fallback
-  BASE_URL: process.env.SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
-  URL_CONFIRMATION: `${process.env.SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')}/api/flow/confirm`,
-  URL_RETURN: `${process.env.SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `${BASE_URL}/api/success`
+  URL_CONFIRMATION: `${BASE_URL}/api/flow/confirm`,
+  URL_RETURN: `${BASE_URL}/api/success`
 };
 
 console.log('Makatatuajes Flow config check:', {
@@ -19,7 +36,8 @@ console.log('Makatatuajes Flow config check:', {
   hasSecretKey: !!FLOW_CONFIG.SECRET_KEY,
   apiUrl: FLOW_CONFIG.API_URL,
   urlReturn: FLOW_CONFIG.URL_RETURN,
-  urlConfirmation: FLOW_CONFIG.URL_CONFIRMATION
+  urlConfirmation: FLOW_CONFIG.URL_CONFIRMATION,
+  baseUrl: BASE_URL
 });
 
 // Función para generar firma Flow
@@ -27,14 +45,16 @@ function generateFlowSignature(params, secretKey) {
   try {
     const sortedKeys = Object.keys(params).sort();
     const signString = sortedKeys.map(key => `${key}${params[key]}`).join('');
-    return crypto.createHmac('sha256', secretKey).update(signString).digest('hex');
+    const signature = crypto.createHmac('sha256', secretKey).update(signString).digest('hex');
+    console.log('✅ Firma generada exitosamente');
+    return signature;
   } catch (error) {
-    console.error('Signature generation error:', error);
+    console.error('❌ Signature generation error:', error);
     throw error;
   }
 }
 
-// Función para generar número de orden único para Makatatuajes
+// Función para generar número de orden único
 function generateOrderNumber() {
   const timestamp = Date.now();
   const random = Math.floor(Math.random() * 1000);
@@ -67,7 +87,7 @@ module.exports = async function handler(req, res) {
 
   // Validate environment variables
   if (!FLOW_CONFIG.API_KEY || !FLOW_CONFIG.SECRET_KEY) {
-    console.error('MISSING CREDENTIALS:', {
+    console.error('❌ MISSING CREDENTIALS:', {
       API_KEY: FLOW_CONFIG.API_KEY,
       SECRET_KEY: FLOW_CONFIG.SECRET_KEY
     });
@@ -78,7 +98,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    console.log('Request body received');
+    console.log('📦 Request body received');
     
     // Parse body
     let body;
@@ -88,14 +108,16 @@ module.exports = async function handler(req, res) {
       body = req.body;
     }
     
-    console.log('Body:', body);
+    console.log('📦 Body recibido:', JSON.stringify(body, null, 2));
 
     // Obtener datos del formulario
     const { abono, nombre, email, celular, genero, comentarios, price } = body;
 
     // Validación de campos requeridos
+    console.log('🔍 Validando campos:', { abono, nombre, email, celular, genero, comentarios, price });
+    
     if (!abono || !nombre || !email || !celular || !genero || !comentarios || !price) {
-      console.log('Missing required fields:', { abono, nombre, email, celular, genero, comentarios, price });
+      console.log('❌ Missing required fields:', { abono, nombre, email, celular, genero, comentarios, price });
       return res.status(400).json({ 
         error: 'Faltan datos requeridos',
         received: { abono, nombre, email, celular, genero, comentarios, price }
@@ -103,16 +125,17 @@ module.exports = async function handler(req, res) {
     }
 
     const amount = parseInt(price);
+    console.log('💰 Amount parsed:', amount);
+    
     if (isNaN(amount) || amount <= 0) {
-      console.log('Invalid price:', price);
+      console.log('❌ Invalid price:', price);
       return res.status(400).json({ error: 'Precio inválido' });
     }
 
     const commerceOrder = generateOrderNumber();
-    console.log('Generated order:', commerceOrder);
+    console.log('📝 Order generated:', commerceOrder);
 
-    // IMPORTANTE: Guardar todos los datos del cliente en optional
-    // para que estén disponibles en confirm.js
+    // Datos del cliente para optional
     const customerData = {
       nombre: nombre,
       email: email,
@@ -124,7 +147,7 @@ module.exports = async function handler(req, res) {
       fecha: new Date().toISOString()
     };
 
-    console.log('Customer data para confirmación:', customerData);
+    console.log('👤 Customer data:', customerData);
 
     // Preparar parámetros para Flow
     const flowParams = {
@@ -134,18 +157,23 @@ module.exports = async function handler(req, res) {
       currency: 'CLP',
       amount: amount,
       email: email,
-      paymentMethod: 9, // 9 = Todos los medios de pago
+      paymentMethod: 9,
       urlConfirmation: FLOW_CONFIG.URL_CONFIRMATION,
       urlReturn: FLOW_CONFIG.URL_RETURN,
-      // Datos adicionales para confirmación - TODOS los datos del cliente
       optional: JSON.stringify(customerData)
     };
 
-    console.log('Flow params prepared:', flowParams);
+    console.log('📤 Flow params prepared:', {
+      ...flowParams,
+      apiKey: '***HIDDEN***',
+      optional: '***JSON_STRING***'
+    });
 
     // Generar firma
+    console.log('🔐 Generando firma...');
     const signature = generateFlowSignature(flowParams, FLOW_CONFIG.SECRET_KEY);
     flowParams.s = signature;
+    console.log('🔐 Firma generada:', signature.substring(0, 20) + '...');
 
     // Crear formulario URL-encoded para Flow
     const formData = new URLSearchParams();
@@ -153,7 +181,7 @@ module.exports = async function handler(req, res) {
       formData.append(key, flowParams[key]);
     });
 
-    console.log('Calling Flow API...', FLOW_CONFIG.API_URL);
+    console.log('🌐 Llamando a Flow API:', FLOW_CONFIG.API_URL + '/payment/create');
 
     // Llamar a Flow API
     const flowResponse = await fetch(`${FLOW_CONFIG.API_URL}/payment/create`, {
@@ -164,16 +192,26 @@ module.exports = async function handler(req, res) {
       body: formData.toString()
     });
 
-    console.log('Flow API response status:', flowResponse.status);
+    console.log('📥 Flow API response status:', flowResponse.status);
 
-    const flowResult = await flowResponse.json();
-    console.log('Flow API response:', flowResult);
+    const responseText = await flowResponse.text();
+    console.log('📥 Flow API response text:', responseText);
+
+    // Intentar parsear JSON
+    let flowResult;
+    try {
+      flowResult = JSON.parse(responseText);
+      console.log('✅ Flow API response parsed:', flowResult);
+    } catch (e) {
+      console.error('❌ Error parsing Flow response as JSON:', e);
+      throw new Error('Respuesta inválida de Flow');
+    }
 
     if (flowResult.url && flowResult.token) {
-      console.log('✅ Payment created successfully for Makatatuajes');
+      console.log('✅ Payment created successfully!');
       
-      // Construir URL completa de Flow
       const flowPaymentUrl = `${flowResult.url}?token=${flowResult.token}`;
+      console.log('🔗 Payment URL:', flowPaymentUrl);
       
       return res.status(200).json({
         success: true,
@@ -187,7 +225,9 @@ module.exports = async function handler(req, res) {
     }
 
   } catch (error) {
-    console.error('❌ FATAL ERROR in handler:', error);
+    console.error('❌❌❌ FATAL ERROR in handler:', error);
+    console.error('Error stack:', error.stack);
+    
     return res.status(500).json({ 
       error: 'Error interno del servidor',
       details: error.message

@@ -4,29 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pago Exitoso - Makatatuajes</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
     <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --accent: #ff00ff;
+            --accent-hover: #ff66ff;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #000;
-            color: #fff;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
         }
+        
         .success-container {
             text-align: center;
             padding: 2rem;
-            background: #111;
-            border-radius: 10px;
-            border: 1px solid #ff00ff;
+            max-width: 600px;
         }
+        
         .success-icon {
+            font-size: 5rem;
             color: #00ff00;
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+        
+        .message-box {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 0, 255, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: var(--accent);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 0, 255, 0.4);
+        }
+        
+        .footer {
+            margin-top: 2rem;
+            color: var(--text-secondary);
         }
     </style>
 </head>
@@ -34,8 +81,23 @@
     <div class="success-container">
         <div class="success-icon">✓</div>
         <h1>¡Pago Exitoso!</h1>
-        <p>Tu reserva ha sido confirmada. Te contactaremos pronto.</p>
-        <a href="/" style="color: #ff00ff;">Volver al inicio</a>
+        
+        <div class="message-box">
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">
+                Tu reserva ha sido confirmada
+            </p>
+            <p style="color: var(--text-secondary);">
+                Hemos enviado un correo con los detalles de tu reserva.<br>
+                Pronto me pondré en contacto contigo para coordinar tu cita.
+            </p>
+        </div>
+        
+        <a href="/" class="btn">Volver al Inicio</a>
+        <a href="https://wa.me/56912345678" class="btn" style="background: #25D366;">Contactar por WhatsApp</a>
+        
+        <div class="footer">
+            <p>Makatatuajes - Arte en piel con estilo urbano</p>
+        </div>
     </div>
 </body>
 </html>

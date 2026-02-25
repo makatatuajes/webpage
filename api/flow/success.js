@@ -1,10 +1,11 @@
-// /api/success.js - Versión CommonJS
+// /api/flow/success.js - Versión que acepta GET y POST de Flow
 console.log('=== SUCCESS.JS LOADED ===');
 
 module.exports = async function handler(req, res) {
   console.log('=== SUCCESS HANDLER CALLED ===', {
     method: req.method,
     url: req.url,
+    query: req.query,
     headers: req.headers
   });
 
@@ -19,25 +20,25 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Si es POST de Flow
-    if (req.method === 'POST') {
-      console.log('📨 POST recibido de Flow');
-      console.log('Body:', req.body);
-      
-      // Redirigir al success.html
-      console.log('🔄 Redirigiendo a /success.html');
-      return res.redirect(303, '/success.html');
+    // PARA FLOW: Aceptar tanto GET como POST como confirmación exitosa
+    // Porque en producción a veces Flow hace GET en lugar de POST
+    console.log(`📨 Solicitud recibida de Flow o usuario (${req.method})`);
+    
+    // Verificar si viene de Flow (tiene token en query o body)
+    const hasToken = req.query.token || (req.body && req.body.token);
+    
+    if (hasToken) {
+      console.log('✅ Solicitud de Flow detectada (con token)');
+    } else {
+      console.log('👤 Solicitud de usuario directo detectada');
     }
     
-    // Si es GET del usuario
-    if (req.method === 'GET') {
-      console.log('👤 GET recibido de usuario');
-      return res.redirect(307, '/success.html');
-    }
-
-    // Si es otro método
-    console.log('❌ Método no permitido:', req.method);
-    return res.status(405).send('Método no permitido');
+    // Redirigir al success.html
+    console.log('🔄 Redirigiendo a /success.html');
+    
+    // Usar 303 para POST, 307 para GET (preserva método)
+    const statusCode = req.method === 'POST' ? 303 : 307;
+    return res.redirect(statusCode, '/success.html');
 
   } catch (error) {
     console.error('❌ Error:', error);

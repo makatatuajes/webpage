@@ -11,7 +11,7 @@ const FLOW_CONFIG = {
   // Usar SITE_URL si existe, si no, usar VERCEL_URL como fallback
   BASE_URL: process.env.SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
   URL_CONFIRMATION: `${process.env.SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')}/api/flow/confirm`,
-  URL_RETURN: `${process.env.SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')}/success.html`
+  URL_RETURN: `${BASE_URL}/api/success` // Cambiado de /success.html a /api/success
 };
 
 console.log('Makatatuajes Flow config check:', {

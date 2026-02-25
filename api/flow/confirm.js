@@ -1,62 +1,146 @@
-// /api/flow/confirm.js - Versión Corregida
+// /api/flow/confirm.js - Versión con Resend
 const crypto = require('crypto');
 
-// --- Configuración (asegúrate que tus variables de entorno estén bien) ---
 const FLOW_CONFIG = {
-  // Es importante que esta URL sea la de producción cuando estés en vivo
-  API_URL: process.env.FLOW_API_URL || 'https://www.flow.cl/api', // Cambia a producción si es necesario
+  API_URL: process.env.FLOW_API_URL || 'https://www.flow.cl/api',
   API_KEY: process.env.FLOW_API_KEY,
   SECRET_KEY: process.env.FLOW_SECRET_KEY
 };
 
-// --- Función para generar firma (igual, pero la usaremos bien) ---
+// Función para generar firma Flow
 function generateFlowSignature(params, secretKey) {
-  // 1. Ordenar las claves alfabéticamente
   const sortedKeys = Object.keys(params).sort();
-  // 2. Crear el string de la forma "key1valor1key2valor2..."
   const signString = sortedKeys.map(key => `${key}${params[key]}`).join('');
-  // 3. Generar HMAC-SHA256
   return crypto.createHmac('sha256', secretKey).update(signString).digest('hex');
 }
 
+// Función para enviar email usando Resend API
+async function sendConfirmationEmailWithResend(paymentData, customerEmail, customerName) {
+  console.log('📧 Enviando email con Resend...');
+  
+  // Lista de destinatarios admin (CCO)
+  const adminEmails = [
+    'macatrabajosdiseno@gmail.com',
+    'hola@makatatuajes.com',
+    'makatatuajes@outlook.com',
+    'junglesoul.c@gmail.com'
+  ];
+  
+  try {
+    const emailData = {
+      from: 'Makatatuajes <onboarding@resend.dev>', // Cambia esto por tu dominio verificado
+      to: [customerEmail], // Cliente como destinatario principal
+      bcc: adminEmails, // Admins en copia oculta
+      subject: '✅ Confirmación de Pago - Makatatuajes',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; background: #000; color: #fff; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { text-align: center; padding: 20px; }
+                .header h1 { color: #ff00ff; }
+                .content { background: #111; padding: 30px; border-radius: 10px; }
+                .details { margin: 20px 0; }
+                .detail-item { margin: 10px 0; }
+                .btn { display: inline-block; padding: 10px 20px; background: #ff00ff; color: #fff; text-decoration: none; border-radius: 5px; }
+                .footer { text-align: center; margin-top: 30px; color: #666; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>✨ ¡Pago Confirmado! ✨</h1>
+                </div>
+                
+                <div class="content">
+                    <h2>Hola ${customerName},</h2>
+                    
+                    <p>Hemos recibido tu pago correctamente. Aquí están los detalles:</p>
+                    
+                    <div class="details">
+                        <div class="detail-item"><strong>Número de transacción:</strong> ${paymentData.commerceOrder || 'N/A'}</div>
+                        <div class="detail-item"><strong>Monto pagado:</strong> $${parseInt(paymentData.amount).toLocaleString('es-CL')} CLP</div>
+                        <div class="detail-item"><strong>Concepto:</strong> ${paymentData.subject || 'Reserva de hora'}</div>
+                        <div class="detail-item"><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-CL')}</div>
+                    </div>
+                    
+                    <p>Próximos pasos:</p>
+                    <ol>
+                        <li>Te contactaré dentro de las próximas 48 horas</li>
+                        <li>Coordinaremos los detalles de tu diseño</li>
+                        <li>Agendaremos la fecha para tu tatuaje</li>
+                    </ol>
+                    
+                    <p style="text-align: center;">
+                        <a href="https://makatatuajes.com" class="btn">Visitar Sitio Web</a>
+                    </p>
+                    
+                    <p>Saludos,<br>
+                    <strong>Maka</strong><br>
+                    Makatatuajes</p>
+                </div>
+                
+                <div class="footer">
+                    <p>© 2026 Makatatuajes - Todos los derechos reservados</p>
+                </div>
+            </div>
+        </body>
+        </html>
+      `
+    };
+
+    // Aquí haces la llamada a tu API de Resend
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(emailData)
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Error Resend: ${error}`);
+    }
+
+    const result = await response.json();
+    console.log('✅ Email enviado exitosamente:', result);
+    return true;
+
+  } catch (error) {
+    console.error('❌ Error enviando email con Resend:', error);
+    return false;
+  }
+}
+
 module.exports = async function handler(req, res) {
-  // Flow siempre enviará POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método no permitido' });
   }
 
   try {
-    // 1. Obtener los parámetros que Flow envía en el BODY de la petición
-    const { token, s } = req.body; // 's' es la firma que envía Flow
+    const { token, s } = req.body;
 
     if (!token || !s) {
-      console.error('❌ Token o firma no recibidos:', { token, s });
       return res.status(400).send('ERROR: Faltan parámetros');
     }
 
-    // 2. ¡IMPORTANTE! La firma que recibes en 's' fue generada por Flow
-    //    USANDO EL MISMO TOKEN. Para verificarla, debes reconstruirla.
+    // Verificar firma
     const paramsForVerification = {
       apiKey: FLOW_CONFIG.API_KEY,
       token: token
     };
-
-    // 3. Recalcular la firma que DEBERÍA haber enviado Flow
     const expectedSignature = generateFlowSignature(paramsForVerification, FLOW_CONFIG.SECRET_KEY);
 
-    // 4. Comparar la firma que recibiste (s) con la que acabas de calcular (expectedSignature)
     if (s !== expectedSignature) {
       console.error('❌ Firma inválida');
-      console.error('  Recibida (s):', s);
-      console.error('  Calculada    :', expectedSignature);
-      // Respondemos con error 401 (No autorizado) que es justo lo que viste
       return res.status(401).send('ERROR: Firma inválida');
     }
 
-    console.log('✅ Firma verificada correctamente. Token:', token);
-
-    // 5. (Opcional pero recomendado) Consultar el estado real del pago a Flow
-    //    para tener la información actualizada, aunque con la firma ya es seguro.
+    // Consultar estado del pago
     const statusParams = {
       apiKey: FLOW_CONFIG.API_KEY,
       token: token
@@ -76,65 +160,33 @@ module.exports = async function handler(req, res) {
 
     const paymentData = await flowResponse.json();
 
-    if (paymentData.status === 2) { // 2 es "Pagado"
-      console.log('💰 Pago confirmado por Flow:', paymentData);
-
-      // --- Aquí puedes poner tu lógica de negocio: ---
-      // 1. Guardar en base de datos que el pago fue exitoso.
-      // 2. Enviar email de confirmación (como ya lo haces).
-      // 3. etc.
-      let optionalData = {};
+    if (paymentData.status === 2) { // Pago exitoso
+      console.log('💰 Pago confirmado:', paymentData);
+      
+      // Recuperar datos del cliente (deberías tenerlos en paymentData.optional)
+      let customerData = {};
       try {
-        optionalData = JSON.parse(paymentData.optional || '{}');
+        customerData = JSON.parse(paymentData.optional || '{}');
       } catch (e) {
-        console.log('Optional data no es JSON válido:', paymentData.optional);
+        console.log('No hay datos adicionales del cliente');
       }
 
-      await sendConfirmationEmail({ // Asegúrate que esta función exista o la manejes aquí
-        ...paymentData,
-        optional: optionalData
-      });
-      // --- Fin lógica de negocio ---
+      // Enviar email de confirmación
+      await sendConfirmationEmailWithResend(
+        paymentData, 
+        customerData.email || paymentData.payer, 
+        customerData.nombre || 'Cliente'
+      );
 
-      // 6. RESPONDER A FLOW CON EL MENSAJE EXACTO QUE ESPERA
-      //    Esto es lo que estaba fallando: debes responder con un HTTP 200 y este texto.
       return res.status(200).send('PAYMENT_CONFIRMED');
       
     } else {
-      console.log('⏳ Pago no está en estado "Pagado" (2). Estado actual:', paymentData.status);
-      // Aún así, para que Flow no marque error, puedes responder OK pero con otro mensaje.
-      return res.status(200).send(`PAYMENT_NOT_CONFIRMED_STATUS_${paymentData.status}`);
+      console.log('Pago no confirmado, estado:', paymentData.status);
+      return res.status(200).send(`PAYMENT_NOT_CONFIRMED`);
     }
 
   } catch (error) {
-    console.error('💥 Error fatal en confirmación:', error);
-    // En caso de error interno del servidor, Flow espera un 500
-    return res.status(500).json({ 
-      error: 'Error interno del servidor',
-      details: error.message 
-    });
+    console.error('💥 Error en confirmación:', error);
+    return res.status(500).json({ error: 'Error interno', details: error.message });
   }
 };
-
-// --- Función auxiliar para emails (asegúrate que esté definida) ---
-async function sendConfirmationEmail(paymentData) {
-  console.log('📧 Preparando envío de email para:', paymentData.payer);
-  // ... (tu código para enviar email, que ya funciona) ...
-  try {
-    await fetch('https://formsubmit.co/makatatuajes@outlook.com', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        _subject: '✅ Pago Confirmado - Maka Tatuajes',
-        _template: 'table',
-        commerce_order: paymentData.commerceOrder,
-        amount: paymentData.amount,
-        payer_email: paymentData.payer,
-        status: paymentData.status,
-      })
-    });
-    console.log('✅ Email de confirmación enviado');
-  } catch (error) {
-    console.error('❌ Error enviando email:', error);
-  }
-}

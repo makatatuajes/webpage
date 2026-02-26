@@ -234,3 +234,15 @@ module.exports = async function handler(req, res) {
     });
   }
 };
+// En payment.js - después de crear el pago
+if (flowResult.url && flowResult.token) {
+  // Guardar token en cookie para que success.js pueda leerlo
+  res.setHeader('Set-Cookie', `payment_token=${flowResult.token}; Path=/; HttpOnly; Max-Age=3600`);
+  
+  return res.status(200).json({
+    success: true,
+    flowUrl: `${flowResult.url}?token=${flowResult.token}`,
+    commerceOrder: commerceOrder,
+    token: flowResult.token
+  });
+}

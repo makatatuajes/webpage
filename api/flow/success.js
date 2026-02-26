@@ -1,4 +1,4 @@
-// /api/flow/success.js - Versión que acepta GET y POST de Flow
+// /api/flow/success.js - Versión combinada
 console.log('=== SUCCESS.JS LOADED ===');
 
 module.exports = async function handler(req, res) {
@@ -20,28 +20,34 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // PARA FLOW: Aceptar tanto GET como POST como confirmación exitosa
-    // Porque en producción a veces Flow hace GET en lugar de POST
+    // Obtener token de body o query params
+    const token = req.body?.token || req.query?.token || '';
+    
+    console.log('🔑 Flow return token:', token || 'No token');
     console.log(`📨 Solicitud recibida de Flow o usuario (${req.method})`);
     
-    // Verificar si viene de Flow (tiene token en query o body)
-    const hasToken = req.query.token || (req.body && req.body.token);
+    // Verificar si viene de Flow (tiene token)
+    const hasToken = !!token;
     
     if (hasToken) {
-      console.log('✅ Solicitud de Flow detectada (con token)');
+      console.log('✅ Solicitud de Flow detectada con token:', token);
     } else {
       console.log('👤 Solicitud de usuario directo detectada');
     }
     
-    // Redirigir al success.html
-    console.log('🔄 Redirigiendo a /success.html');
+    // Construir URL de redirección
+    const redirectUrl = hasToken 
+      ? `/success.html?token=${encodeURIComponent(token)}`
+      : '/success.html';
     
-    // Usar 303 para POST, 307 para GET (preserva método)
-    const statusCode = req.method === 'POST' ? 303 : 307;
-    return res.redirect(statusCode, '/success.html');
+    console.log('🔄 Redirigiendo a:', redirectUrl);
+    
+    // Usar 302 (Found) que es universal y funciona bien para ambos casos
+    return res.redirect(302, redirectUrl);
 
   } catch (error) {
     console.error('❌ Error:', error);
-    return res.status(500).json({ error: error.message });
+    // En caso de error, redirigir a success.html sin token
+    return res.redirect(302, '/success.html');
   }
 };

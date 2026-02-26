@@ -1,6 +1,12 @@
 // /api/flow/success.js - Versión combinada
 console.log('=== SUCCESS.JS LOADED ===');
 
+// En success.js
+const cookies = req.headers.cookie || '';
+const token = cookies.split(';')
+  .find(c => c.trim().startsWith('payment_token='))
+  ?.split('=')[1] || '';
+
 module.exports = async function handler(req, res) {
   console.log('=== SUCCESS HANDLER CALLED ===', {
     method: req.method,

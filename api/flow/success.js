@@ -20,24 +20,34 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // ✅ LEER TOKEN DE COOKIE (CORREGIDO)
-    const cookies = req.headers.cookie || '';
-    console.log('🍪 Cookies recibidas:', cookies);
-    
-    const tokenFromCookie = cookies.split(';')
-      .map(c => c.trim())
-      .find(c => c.startsWith('payment_token='))
-      ?.split('=')[1] || '';
-    
-    console.log('🔑 Token desde cookie:', tokenFromCookie || 'No token en cookie');
-    
-    // También obtener de query params por si acaso
-    const tokenFromQuery = req.query?.token || '';
-    const token = tokenFromCookie || tokenFromQuery;
+    // ✅ READ TOKEN: Flow sends it via POST body on return redirect
+    let token = '';
+
+    // 1. Try POST body first (Flow sends token here on return)
+    if (req.method === 'POST' && req.body) {
+      token = req.body.token || '';
+      console.log('🔑 Token desde POST body:', token || 'No token en body');
+    }
+
+    // 2. Try query params (fallback)
+    if (!token) {
+      token = req.query?.token || '';
+      console.log('🔑 Token desde query params:', token || 'No token en query');
+    }
+
+    // 3. Try cookie (fallback)
+    if (!token) {
+      const cookies = req.headers.cookie || '';
+      token = cookies.split(';')
+        .map(c => c.trim())
+        .find(c => c.startsWith('payment_token='))
+        ?.split('=')[1] || '';
+      console.log('🔑 Token desde cookie:', token || 'No token en cookie');
+    }
     
     console.log(`📨 Solicitud recibida (${req.method})`);
     console.log('🔑 Token final:', token || 'No token');
-    
+
     // Verificar si viene de Flow (tiene token)
     const hasToken = !!token;
     

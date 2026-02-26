@@ -1,11 +1,5 @@
-// /api/flow/success.js - Versión combinada
+// /api/flow/success.js - Versión combinada CORREGIDA
 console.log('=== SUCCESS.JS LOADED ===');
-
-// En success.js
-const cookies = req.headers.cookie || '';
-const token = cookies.split(';')
-  .find(c => c.trim().startsWith('payment_token='))
-  ?.split('=')[1] || '';
 
 module.exports = async function handler(req, res) {
   console.log('=== SUCCESS HANDLER CALLED ===', {
@@ -26,17 +20,29 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Obtener token de body o query params
-    const token = req.body?.token || req.query?.token || '';
+    // ✅ LEER TOKEN DE COOKIE (CORREGIDO)
+    const cookies = req.headers.cookie || '';
+    console.log('🍪 Cookies recibidas:', cookies);
     
-    console.log('🔑 Flow return token:', token || 'No token');
-    console.log(`📨 Solicitud recibida de Flow o usuario (${req.method})`);
+    const tokenFromCookie = cookies.split(';')
+      .map(c => c.trim())
+      .find(c => c.startsWith('payment_token='))
+      ?.split('=')[1] || '';
+    
+    console.log('🔑 Token desde cookie:', tokenFromCookie || 'No token en cookie');
+    
+    // También obtener de query params por si acaso
+    const tokenFromQuery = req.query?.token || '';
+    const token = tokenFromCookie || tokenFromQuery;
+    
+    console.log(`📨 Solicitud recibida (${req.method})`);
+    console.log('🔑 Token final:', token || 'No token');
     
     // Verificar si viene de Flow (tiene token)
     const hasToken = !!token;
     
     if (hasToken) {
-      console.log('✅ Solicitud de Flow detectada con token:', token);
+      console.log('✅ Solicitud con token detectada');
     } else {
       console.log('👤 Solicitud de usuario directo detectada');
     }
@@ -48,12 +54,11 @@ module.exports = async function handler(req, res) {
     
     console.log('🔄 Redirigiendo a:', redirectUrl);
     
-    // Usar 302 (Found) que es universal y funciona bien para ambos casos
+    // Usar 302 Found
     return res.redirect(302, redirectUrl);
 
   } catch (error) {
     console.error('❌ Error:', error);
-    // En caso de error, redirigir a success.html sin token
     return res.redirect(302, '/success.html');
   }
 };

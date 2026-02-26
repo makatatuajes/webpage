@@ -5,17 +5,12 @@ console.log('=== MAKATATUAJES PAYMENT.JS LOADED ===');
 
 // Función para determinar la URL base correcta
 function getBaseUrl() {
-  // 1. Si hay SITE_URL configurado (recomendado para dominio personalizado)
   if (process.env.SITE_URL) {
     return process.env.SITE_URL;
   }
-  
-  // 2. En producción con Vercel (puede ser dominio personalizado o vercel.app)
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
-  
-  // 3. Desarrollo local
   return 'http://localhost:3000';
 }
 
@@ -73,24 +68,18 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
   
-  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     console.log('Handling OPTIONS request');
     return res.status(200).end();
   }
 
-  // Only allow POST
   if (req.method !== 'POST') {
     console.log('Method not allowed:', req.method);
     return res.status(405).json({ error: 'Método no permitido' });
   }
 
-  // Validate environment variables
   if (!FLOW_CONFIG.API_KEY || !FLOW_CONFIG.SECRET_KEY) {
-    console.error('❌ MISSING CREDENTIALS:', {
-      API_KEY: FLOW_CONFIG.API_KEY,
-      SECRET_KEY: FLOW_CONFIG.SECRET_KEY
-    });
+    console.error('❌ MISSING CREDENTIALS');
     return res.status(500).json({ 
       error: 'Configuración incompleta',
       details: 'Credenciales de Flow no configuradas correctamente'
@@ -100,7 +89,6 @@ module.exports = async function handler(req, res) {
   try {
     console.log('📦 Request body received');
     
-    // Parse body
     let body;
     if (typeof req.body === 'string') {
       body = JSON.parse(req.body);
@@ -110,32 +98,20 @@ module.exports = async function handler(req, res) {
     
     console.log('📦 Body recibido:', JSON.stringify(body, null, 2));
 
-    // Obtener datos del formulario
     const { abono, nombre, email, celular, genero, comentarios, price } = body;
 
-    // Validación de campos requeridos
-    console.log('🔍 Validando campos:', { abono, nombre, email, celular, genero, comentarios, price });
-    
     if (!abono || !nombre || !email || !celular || !genero || !comentarios || !price) {
-      console.log('❌ Missing required fields:', { abono, nombre, email, celular, genero, comentarios, price });
-      return res.status(400).json({ 
-        error: 'Faltan datos requeridos',
-        received: { abono, nombre, email, celular, genero, comentarios, price }
-      });
+      return res.status(400).json({ error: 'Faltan datos requeridos' });
     }
 
     const amount = parseInt(price);
-    console.log('💰 Amount parsed:', amount);
-    
     if (isNaN(amount) || amount <= 0) {
-      console.log('❌ Invalid price:', price);
       return res.status(400).json({ error: 'Precio inválido' });
     }
 
     const commerceOrder = generateOrderNumber();
     console.log('📝 Order generated:', commerceOrder);
 
-    // Datos del cliente para optional
     const customerData = {
       nombre: nombre,
       email: email,
@@ -149,7 +125,6 @@ module.exports = async function handler(req, res) {
 
     console.log('👤 Customer data:', customerData);
 
-    // Preparar parámetros para Flow
     const flowParams = {
       apiKey: FLOW_CONFIG.API_KEY,
       commerceOrder: commerceOrder,
@@ -163,27 +138,19 @@ module.exports = async function handler(req, res) {
       optional: JSON.stringify(customerData)
     };
 
-    console.log('📤 Flow params prepared:', {
-      ...flowParams,
-      apiKey: '***HIDDEN***',
-      optional: '***JSON_STRING***'
-    });
+    console.log('📤 Flow params prepared');
 
-    // Generar firma
-    console.log('🔐 Generando firma...');
     const signature = generateFlowSignature(flowParams, FLOW_CONFIG.SECRET_KEY);
     flowParams.s = signature;
-    console.log('🔐 Firma generada:', signature.substring(0, 20) + '...');
+    console.log('🔐 Firma generada');
 
-    // Crear formulario URL-encoded para Flow
     const formData = new URLSearchParams();
     Object.keys(flowParams).forEach(key => {
       formData.append(key, flowParams[key]);
     });
 
-    console.log('🌐 Llamando a Flow API:', FLOW_CONFIG.API_URL + '/payment/create');
+    console.log('🌐 Llamando a Flow API');
 
-    // Llamar a Flow API
     const flowResponse = await fetch(`${FLOW_CONFIG.API_URL}/payment/create`, {
       method: 'POST',
       headers: {
@@ -197,7 +164,6 @@ module.exports = async function handler(req, res) {
     const responseText = await flowResponse.text();
     console.log('📥 Flow API response text:', responseText);
 
-    // Intentar parsear JSON
     let flowResult;
     try {
       flowResult = JSON.parse(responseText);
@@ -209,6 +175,9 @@ module.exports = async function handler(req, res) {
 
     if (flowResult.url && flowResult.token) {
       console.log('✅ Payment created successfully!');
+      
+      // ✅ GUARDAR TOKEN EN COOKIE (AHORA ANTES DE RESPONDER)
+      res.setHeader('Set-Cookie', `payment_token=${flowResult.token}; Path=/; HttpOnly; Max-Age=3600; SameSite=Lax`);
       
       const flowPaymentUrl = `${flowResult.url}?token=${flowResult.token}`;
       console.log('🔗 Payment URL:', flowPaymentUrl);
@@ -226,23 +195,9 @@ module.exports = async function handler(req, res) {
 
   } catch (error) {
     console.error('❌❌❌ FATAL ERROR in handler:', error);
-    console.error('Error stack:', error.stack);
-    
     return res.status(500).json({ 
       error: 'Error interno del servidor',
       details: error.message
     });
   }
 };
-// En payment.js - después de crear el pago
-if (flowResult.url && flowResult.token) {
-  // Guardar token en cookie para que success.js pueda leerlo
-  res.setHeader('Set-Cookie', `payment_token=${flowResult.token}; Path=/; HttpOnly; Max-Age=3600`);
-  
-  return res.status(200).json({
-    success: true,
-    flowUrl: `${flowResult.url}?token=${flowResult.token}`,
-    commerceOrder: commerceOrder,
-    token: flowResult.token
-  });
-}

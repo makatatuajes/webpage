@@ -100,4 +100,16 @@
         </div>
     </div>
 </body>
+
+<script>
+  // Obtener token de la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
+  
+  if (token) {
+    console.log('Token de pago:', token);
+    // Puedes mostrar el token en la página si quieres
+    document.getElementById('token-display')?.textContent = token;
+  }
+</script>
 </html>

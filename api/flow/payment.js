@@ -1,15 +1,23 @@
-// /api/flow/payment.js - Handles payment creation AND Flow return
 const crypto = require('crypto');
 
+// ⚠️ IMPORTANT: Use Vercel URL directly for Flow callbacks
+// Custom domain blocks form-encoded POSTs from Flow's servers
+const VERCEL_URL = 'https://webpage-nine-mu.vercel.app';
 const PRODUCTION_URL = 'https://makatatuajes.com';
 
 const FLOW_CONFIG = {
   API_URL: 'https://www.flow.cl/api',
   API_KEY: process.env.FLOW_API_KEY,
   SECRET_KEY: process.env.FLOW_SECRET_KEY,
-  URL_CONFIRMATION: 'https://webpage-nine-mu.vercel.app/api/flow/confirm',
-  URL_RETURN: 'https://webpage-nine-mu.vercel.app/api/flow/payment'
+  URL_CONFIRMATION: `${VERCEL_URL}/api/flow/confirm`,
+  URL_RETURN: `${VERCEL_URL}/api/flow/payment`
 };
+
+console.log('=== PAYMENT.JS LOADED ===');
+console.log('URL_RETURN:', FLOW_CONFIG.URL_RETURN);
+console.log('URL_CONFIRMATION:', FLOW_CONFIG.URL_CONFIRMATION);
+console.log('HAS API_KEY:', !!FLOW_CONFIG.API_KEY);
+console.log('HAS SECRET_KEY:', !!FLOW_CONFIG.SECRET_KEY);
 
 function generateFlowSignature(params, secretKey) {
   const sortedKeys = Object.keys(params).sort();
@@ -47,14 +55,15 @@ const SUCCESS_HTML = `<!DOCTYPE html>
             <p style="font-size:1.2rem;margin-bottom:1rem">Tu reserva ha sido confirmada</p>
             <p style="color:var(--text-secondary)">Hemos enviado un correo con los detalles de tu reserva.<br>Pronto me pondré en contacto contigo para coordinar tu cita.</p>
         </div>
-        <a href="/" class="btn">Volver al Inicio</a>
+        <a href="${PRODUCTION_URL}" class="btn">Volver al Inicio</a>
         <div class="footer"><p>Makatatuajes - Arte en piel con estilo urbano</p></div>
     </div>
 </body>
 </html>`;
 
 module.exports = async function handler(req, res) {
-  console.log('=== PAYMENT.JS CALLED ===', req.method);
+  console.log('=== PAYMENT.JS HANDLER ===', req.method);
+  console.log('Content-Type:', req.headers['content-type']);
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -65,38 +74,39 @@ module.exports = async function handler(req, res) {
   }
 
   // ==============================
-  // FLOW RETURN — GET or POST with token = user came back from Flow
+  // FLOW RETURN — detect by token without price field
   // ==============================
   if (req.method === 'GET' || req.method === 'POST') {
-    // Check if this is a Flow return (has token but no payment form fields)
     let token = '';
 
     if (req.method === 'GET' && req.query && req.query.token) {
       token = req.query.token;
+      console.log('✅ Flow GET return, token:', token);
     }
 
     if (req.method === 'POST' && req.body) {
       const body = typeof req.body === 'string'
         ? Object.fromEntries(new URLSearchParams(req.body))
         : req.body;
-
-      // If body has token but no 'price' field → this is Flow's return POST, not a new payment
+      console.log('📦 POST body keys:', Object.keys(body));
       if (body.token && !body.price) {
         token = body.token;
+        console.log('✅ Flow POST return, token:', token);
       }
     }
 
     if (token) {
-      console.log('✅ Flow return detected, token:', token);
+      console.log('🎉 Serving success page for token:', token);
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       return res.status(200).send(SUCCESS_HTML);
     }
   }
 
   // ==============================
-  // NEW PAYMENT — POST from frontend form
+  // NEW PAYMENT — POST from frontend
   // ==============================
   if (req.method !== 'POST') {
+    console.log('❌ Method not allowed:', req.method);
     return res.status(405).json({ error: 'Método no permitido' });
   }
 
@@ -107,7 +117,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    console.log('📦 Body recibido:', JSON.stringify(body, null, 2));
+    console.log('📦 New payment body:', JSON.stringify(body));
 
     const { abono, nombre, email, celular, genero, comentarios, price } = body;
 
@@ -152,10 +162,10 @@ module.exports = async function handler(req, res) {
     });
 
     const flowResult = JSON.parse(await flowResponse.text());
-    console.log('📥 Flow response:', flowResult);
+    console.log('📥 Flow response:', JSON.stringify(flowResult));
 
     if (flowResult.url && flowResult.token) {
-      console.log('✅ Payment created!');
+      console.log('✅ Payment created:', flowResult.flowOrder);
       return res.status(200).json({
         success: true,
         flowUrl: `${flowResult.url}?token=${flowResult.token}`,
@@ -167,7 +177,7 @@ module.exports = async function handler(req, res) {
     throw new Error(flowResult.message || 'Error creating payment');
 
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error('❌ Error:', error.message);
     return res.status(500).json({ error: 'Error interno', details: error.message });
   }
 };

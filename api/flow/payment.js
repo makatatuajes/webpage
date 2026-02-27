@@ -23,7 +23,7 @@ const FLOW_CONFIG = {
   API_KEY: process.env.FLOW_API_KEY,
   SECRET_KEY: process.env.FLOW_SECRET_KEY,
   URL_CONFIRMATION: `${PRODUCTION_URL}/api/flow/confirm`,
-  URL_RETURN: `${PRODUCTION_URL}/success.html`
+  URL_RETURN: `${PRODUCTION_URL}/api/flow/success`
 };
 
 console.log('🚨 FLOW URLs being used:');

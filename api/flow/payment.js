@@ -96,9 +96,39 @@ module.exports = async function handler(req, res) {
     }
 
     if (token) {
-      console.log('🎉 Serving success page for token:', token);
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      return res.status(200).send(SUCCESS_HTML);
+      console.log('🔍 Checking payment status for token:', token);
+
+      try {
+        // Query Flow for the real payment status
+        const apiKey = process.env.FLOW_API_KEY;
+        const secretKey = process.env.FLOW_SECRET_KEY;
+
+        const params = new URLSearchParams({ apiKey, token });
+        const signature = crypto
+          .createHmac('sha256', secretKey)
+          .update(params.toString())
+          .digest('hex');
+        params.append('s', signature);
+
+        const statusRes = await fetch(`${FLOW_CONFIG.API_URL}/payment/getStatus?${params.toString()}`);
+        const paymentData = await statusRes.json();
+        console.log('📦 Payment status:', paymentData.status, 'order:', paymentData.commerceOrder);
+
+        if (paymentData.status === 2) {
+          // Payment successful
+          console.log('✅ Payment success, redirecting to success page');
+          res.writeHead(302, { Location: `${PRODUCTION_URL}/success.html` });
+        } else {
+          // Payment rejected, cancelled or pending
+          console.log('❌ Payment not successful, status:', paymentData.status);
+          res.writeHead(302, { Location: `${PRODUCTION_URL}/error.html?status=${paymentData.status}` });
+        }
+      } catch (err) {
+        console.error('❌ Error checking status:', err.message);
+        res.writeHead(302, { Location: `${PRODUCTION_URL}/error.html` });
+      }
+
+      return res.end();
     }
   }
 

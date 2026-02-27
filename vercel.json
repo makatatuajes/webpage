@@ -1,33 +1,7 @@
 {
-  "functions": {
-    "api/flow/success.js": {
-      "memory": 128,
-      "maxDuration": 10
-    },
-    "api/flow/payment.js": {
-      "memory": 128,
-      "maxDuration": 10
-    },
-    "api/flow/confirm.js": {
-      "memory": 128,
-      "maxDuration": 10
-    }
-  },
-  "routes": [
-    {
-      "src": "/api/flow/success",
-      "methods": ["GET", "POST", "OPTIONS"],
-      "dest": "/api/flow/success"
-    },
-    {
-      "src": "/api/flow/confirm",
-      "methods": ["GET", "POST", "OPTIONS"],
-      "dest": "/api/flow/confirm"
-    },
-    {
-      "src": "/api/flow/payment",
-      "methods": ["GET", "POST", "OPTIONS"],
-      "dest": "/api/flow/payment"
-    }
+  "rewrites": [
+    { "source": "/api/flow/success", "destination": "/api/flow/success" },
+    { "source": "/api/flow/confirm", "destination": "/api/flow/confirm" },
+    { "source": "/api/flow/payment", "destination": "/api/flow/payment" }
   ]
 }

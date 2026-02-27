@@ -1,14 +1,37 @@
-import crypto from "crypto";
+const crypto = require("crypto");
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
+  console.log("🔔 CONFIRM.JS CALLED ===", req.method);
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== "POST") {
     return res.status(405).send("Method Not Allowed");
   }
 
   try {
-    const { token } = req.body;
+    // Parse token from form-encoded or JSON body
+    let token = '';
+    if (req.body) {
+      if (typeof req.body === 'object') {
+        token = req.body.token || '';
+      } else if (typeof req.body === 'string') {
+        try {
+          token = JSON.parse(req.body).token || '';
+        } catch(e) {
+          token = new URLSearchParams(req.body).get('token') || '';
+        }
+      }
+    }
 
     if (!token) {
+      console.log("❌ No token in request");
       return res.status(400).send("Token missing");
     }
 
@@ -16,34 +39,21 @@ export default async function handler(req, res) {
 
     const apiKey = process.env.FLOW_API_KEY;
     const secretKey = process.env.FLOW_SECRET_KEY;
-    const baseUrl = "https://www.flow.cl/api"; // Producción
+    const baseUrl = "https://www.flow.cl/api";
 
-    // ==============================
-    // 1️⃣ Consultar estado real en Flow
-    // ==============================
-
-    const params = new URLSearchParams({
-      apiKey,
-      token
-    });
-
+    const params = new URLSearchParams({ apiKey, token });
     const signature = crypto
       .createHmac("sha256", secretKey)
       .update(params.toString())
       .digest("hex");
-
     params.append("s", signature);
 
-    const flowResponse = await fetch(
-      `${baseUrl}/payment/getStatus?${params.toString()}`
-    );
-
+    const flowResponse = await fetch(`${baseUrl}/payment/getStatus?${params.toString()}`);
     const paymentData = await flowResponse.json();
-
     console.log("📦 Flow status:", paymentData);
 
     if (paymentData.status !== 2) {
-      console.log("❌ Payment not completed");
+      console.log("❌ Payment not completed, status:", paymentData.status);
       return res.status(200).send("Payment not completed");
     }
 
@@ -51,15 +61,9 @@ export default async function handler(req, res) {
     const commerceOrder = paymentData.commerceOrder;
     const customerEmail = paymentData.payer;
     const amount = paymentData.amount;
-
     console.log("✅ Payment confirmed:", orderId);
 
-    // ==============================
-    // 2️⃣ Configuración dominio real
-    // ==============================
-
     const FROM_EMAIL = "Reservas Makatatuajes <hola@makatatuajes.com>";
-
     const ADMIN_EMAILS = [
       "macatrabajosdiseno@gmail.com",
       "hola@makatatuajes.com",
@@ -67,11 +71,8 @@ export default async function handler(req, res) {
       "junglesoul.c@gmail.com"
     ];
 
-    // ==============================
-    // 3️⃣ Email al CLIENTE
-    // ==============================
-
-    await fetch("https://api.resend.com/emails", {
+    // Email al cliente
+    const clientRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
@@ -92,12 +93,10 @@ export default async function handler(req, res) {
         `
       })
     });
+    console.log("📧 Client email status:", clientRes.status);
 
-    // ==============================
-    // 4️⃣ Email al ADMIN
-    // ==============================
-
-    await fetch("https://api.resend.com/emails", {
+    // Email al admin
+    const adminRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
@@ -116,13 +115,13 @@ export default async function handler(req, res) {
         `
       })
     });
+    console.log("📧 Admin email status:", adminRes.status);
 
     console.log("📧 Emails enviados correctamente");
-
     return res.status(200).send("OK");
 
   } catch (error) {
     console.error("🔥 Confirm error:", error);
     return res.status(500).send("Server Error");
   }
-}
+};

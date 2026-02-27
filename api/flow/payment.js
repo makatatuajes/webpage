@@ -4,7 +4,8 @@ const crypto = require('crypto');
 console.log('=== MAKATATUAJES PAYMENT.JS LOADED ===');
 
 // Función para determinar la URL base correcta
-function getBaseUrl() {
+// REMOVED: getBaseUrl was causing wrong URL to be sent to Flow
+function getBaseUrl_DISABLED() {
   if (process.env.SITE_URL) {
     return process.env.SITE_URL;
   }
@@ -14,17 +15,20 @@ function getBaseUrl() {
   return 'http://localhost:3000';
 }
 
-const BASE_URL = getBaseUrl();
-console.log('🔧 BASE_URL detectada:', BASE_URL);
+// Hardcoded production URLs - no env var dependencies
+const PRODUCTION_URL = 'https://makatatuajes.com';
 
-// Configuración de Flow para Makatatuajes
 const FLOW_CONFIG = {
-  API_URL: process.env.FLOW_API_URL || 'https://www.flow.cl/api',
+  API_URL: 'https://www.flow.cl/api',
   API_KEY: process.env.FLOW_API_KEY,
   SECRET_KEY: process.env.FLOW_SECRET_KEY,
-  URL_CONFIRMATION: `${BASE_URL}/api/flow/confirm`,
-  URL_RETURN: `${BASE_URL}/api/flow/success`
+  URL_CONFIRMATION: `${PRODUCTION_URL}/api/flow/confirm`,
+  URL_RETURN: `${PRODUCTION_URL}/success.html`
 };
+
+console.log('🚨 FLOW URLs being used:');
+console.log('  urlReturn:', FLOW_CONFIG.URL_RETURN);
+console.log('  urlConfirmation:', FLOW_CONFIG.URL_CONFIRMATION);
 
 console.log('Makatatuajes Flow config check:', {
   hasApiKey: !!FLOW_CONFIG.API_KEY,
@@ -32,7 +36,7 @@ console.log('Makatatuajes Flow config check:', {
   apiUrl: FLOW_CONFIG.API_URL,
   urlReturn: FLOW_CONFIG.URL_RETURN,
   urlConfirmation: FLOW_CONFIG.URL_CONFIRMATION,
-  baseUrl: BASE_URL
+  baseUrl: PRODUCTION_URL
 });
 
 // Función para generar firma Flow
@@ -138,7 +142,9 @@ module.exports = async function handler(req, res) {
       optional: JSON.stringify(customerData)
     };
 
-    console.log('📤 Flow params prepared');
+    console.log('📤 Flow params prepared:');
+    console.log('  ➡️  urlReturn:', flowParams.urlReturn);
+    console.log('  ➡️  urlConfirmation:', flowParams.urlConfirmation);
 
     const signature = generateFlowSignature(flowParams, FLOW_CONFIG.SECRET_KEY);
     flowParams.s = signature;

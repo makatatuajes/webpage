@@ -95,13 +95,6 @@
         <a href="/" class="btn">Volver al Inicio</a>
         <!-- <a href="https://wa.me/56912345678" class="btn" style="background: #25D366;">Contactar por WhatsApp</a> -->
         
-        <div id="order-info" style="display:none; margin: 1rem 0; padding: 1rem; background: rgba(0,255,0,0.05); border: 1px solid rgba(0,255,0,0.2); border-radius: 8px;">
-            <p style="color: #cccccc; font-size: 0.9rem;">
-                <strong style="color:#ffffff;">N° de referencia:</strong>
-                <span id="token-display" style="font-family: monospace; color: #aaaaaa; font-size: 0.8rem; word-break: break-all;"></span>
-            </p>
-        </div>
-
         <div class="footer">
             <p>Makatatuajes - Arte en piel con estilo urbano</p>
         </div>
@@ -109,18 +102,13 @@
 </body>
 
 <script>
-  // Flow redirects the user's browser here via GET with ?token=TOKEN in the URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('token');
+  // Token comes from either:
+  // 1. window.__FLOW_TOKEN__ injected by /api/flow/success (Flow POST)
+  // 2. ?token= query param (direct URL access)
+  const token = window.__FLOW_TOKEN__ || new URLSearchParams(window.location.search).get('token') || '';
 
   if (token) {
-    console.log('✅ Pago confirmado, token recibido:', token);
-    const tokenDisplay = document.getElementById('token-display');
-    const orderInfo = document.getElementById('order-info');
-    if (tokenDisplay) tokenDisplay.textContent = token;
-    if (orderInfo) orderInfo.style.display = 'block';
-  } else {
-    console.log('ℹ️ Página cargada sin token (acceso directo)');
+    console.log('✅ Pago confirmado, token:', token);
   }
 </script>
 </html>

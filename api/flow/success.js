@@ -1,74 +1,65 @@
-// /api/flow/success.js - Versión combinada CORREGIDA
+// /api/flow/success.js
 console.log('=== SUCCESS.JS LOADED ===');
 
 module.exports = async function handler(req, res) {
   console.log('=== SUCCESS HANDLER CALLED ===', {
     method: req.method,
     url: req.url,
-    query: req.query,
-    headers: req.headers
+    query: req.query
   });
 
-  // Configurar CORS
+  // Allow ALL methods - never return 405
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Manejar OPTIONS
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
   try {
-    // ✅ READ TOKEN: Flow sends it via POST body on return redirect
     let token = '';
 
-    // 1. Try POST body first (Flow sends token here on return)
-    if (req.method === 'POST' && req.body) {
-      token = req.body.token || '';
-      console.log('🔑 Token desde POST body:', token || 'No token en body');
+    // 1. Query string: ?token=XXX  (Flow GET redirect)
+    if (req.query && req.query.token) {
+      token = req.query.token;
+      console.log('🔑 Token from query string:', token);
     }
 
-    // 2. Try query params (fallback)
-    if (!token) {
-      token = req.query?.token || '';
-      console.log('🔑 Token desde query params:', token || 'No token en query');
+    // 2. POST body - application/x-www-form-urlencoded or JSON
+    if (!token && req.body) {
+      if (typeof req.body === 'object') {
+        token = req.body.token || '';
+      } else if (typeof req.body === 'string') {
+        const params = new URLSearchParams(req.body);
+        token = params.get('token') || '';
+      }
+      if (token) console.log('🔑 Token from POST body:', token);
     }
 
-    // 3. Try cookie (fallback)
+    // 3. Cookie fallback
     if (!token) {
       const cookies = req.headers.cookie || '';
-      token = cookies.split(';')
+      const match = cookies.split(';')
         .map(c => c.trim())
-        .find(c => c.startsWith('payment_token='))
-        ?.split('=')[1] || '';
-      console.log('🔑 Token desde cookie:', token || 'No token en cookie');
+        .find(c => c.startsWith('payment_token='));
+      if (match) {
+        token = match.split('=')[1] || '';
+        console.log('🔑 Token from cookie:', token);
+      }
     }
-    
-    console.log(`📨 Solicitud recibida (${req.method})`);
-    console.log('🔑 Token final:', token || 'No token');
 
-    // Verificar si viene de Flow (tiene token)
-    const hasToken = !!token;
-    
-    if (hasToken) {
-      console.log('✅ Solicitud con token detectada');
-    } else {
-      console.log('👤 Solicitud de usuario directo detectada');
-    }
-    
-    // Construir URL de redirección
-    const redirectUrl = hasToken 
+    console.log('🔑 Final token:', token || 'none');
+
+    const redirectUrl = token
       ? `/success.html?token=${encodeURIComponent(token)}`
       : '/success.html';
-    
-    console.log('🔄 Redirigiendo a:', redirectUrl);
-    
-    // Usar 302 Found
+
+    console.log('🔄 Redirecting to:', redirectUrl);
     return res.redirect(302, redirectUrl);
 
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error('❌ Error in success handler:', error);
     return res.redirect(302, '/success.html');
   }
 };

@@ -1831,10 +1831,43 @@
         gap: 2.5rem; /* Aumentamos el gap para dar espacio al badge */
     }
 }
+
+    /* Payment error banner */
+.payment-error-banner {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a0000;
+    border: 1px solid #ff4444;
+    color: #ff6666;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    z-index: 2000;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 5px 20px rgba(255, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease;
+}
+.payment-error-banner.active { display: block; }
+.payment-error-banner .close-banner {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #ff6666;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+.payment-error-banner strong { display: block; margin-bottom: 0.5rem; font-size: 1.1rem; }
     
 </style>
 </head>
 <body>
+
     <!-- Updated Header -->
 <header>
     <nav id="mainNav">
@@ -1871,6 +1904,14 @@
         <span></span>
     </button>
 </header>
+
+    
+    <div class="payment-error-banner" id="payment-error-banner">
+    <button class="close-banner" onclick="document.getElementById('payment-error-banner').classList.remove('active')">✕</button>
+    <strong>❌ Pago no completado</strong>
+    <span id="payment-error-msg">Tu pago fue rechazado o cancelado. Por favor intenta nuevamente.</span>
+    </div>
+    
 
     <!-- Lightbox Overlay -->
     <div class="lightbox-overlay" id="lightbox">
@@ -2392,6 +2433,22 @@
 </div>
     
 <script>
+
+    // Rejection banner 
+
+      (function() {
+    const params = new URLSearchParams(window.location.search);
+    const paymentStatus = params.get('payment');
+    if (paymentStatus === 'rejected') {
+      document.getElementById('payment-error-banner').classList.add('active');
+      document.getElementById('payment-error-msg').textContent = 'Tu pago fue rechazado o cancelado. Por favor intenta nuevamente.';
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (paymentStatus === 'error') {
+      document.getElementById('payment-error-banner').classList.add('active');
+      document.getElementById('payment-error-msg').textContent = 'Ocurrió un error al procesar tu pago. Por favor intenta nuevamente.';
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  })();
 
 // Newsletter functionality - Versión actualizada con descuento
 document.addEventListener('DOMContentLoaded', function() {

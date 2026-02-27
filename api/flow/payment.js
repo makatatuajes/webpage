@@ -7,7 +7,7 @@ const FLOW_CONFIG = {
   API_URL: 'https://www.flow.cl/api',
   API_KEY: process.env.FLOW_API_KEY,
   SECRET_KEY: process.env.FLOW_SECRET_KEY,
-  URL_CONFIRMATION: `${PRODUCTION_URL}/api/flow/confirm`,
+  URL_CONFIRMATION: 'https://webpage-nine-mu.vercel.app/api/flow/confirm',
   URL_RETURN: 'https://webpage-nine-mu.vercel.app/api/flow/payment'
 };
 

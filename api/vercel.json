@@ -1,7 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/api/flow/success", "destination": "/api/flow/success" },
-    { "source": "/api/flow/confirm", "destination": "/api/flow/confirm" },
-    { "source": "/api/flow/payment", "destination": "/api/flow/payment" }
-  ]
-}
